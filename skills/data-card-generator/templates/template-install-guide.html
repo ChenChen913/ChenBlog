@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>安装引导模板 · 文档风格</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Noto Sans SC', "PingFang SC", "Microsoft YaHei", sans-serif; }
+
+        :root {
+            /* === 用户可修改区域 === */
+            --card-width: 420px;
+            /* 苹果蓝文档配色 */
+            --bg-page:     #f0f4fa;
+            --bg-card:     #ffffff;
+            --bg-code:     #f3f4f6;
+            --bg-url:      #eff6ff;
+            --bg-tip:      #f0fdf4;
+            --bg-warn:     #fffbeb;
+            --accent:      #2563eb;      /* 主蓝 */
+            --accent-lt:   #dbeafe;      /* 浅蓝 */
+            --green:       #16a34a;
+            --green-lt:    #dcfce7;
+            --amber:       #d97706;
+            --amber-lt:    #fef3c7;
+            --text-pri:    #111827;
+            --text-sec:    #374151;
+            --text-dim:    #9ca3af;
+            --border:      #e5e7eb;
+            --border-code: #d1d5db;
+            --border-radius: 20px;
+        }
+
+        body {
+            background: var(--bg-page);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            gap: 24px;
+        }
+
+        .poster-wrapper {
+            width: 100%;
+            max-width: var(--card-width);
+            border-radius: var(--border-radius);
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.80),
+                0 0 0 1px rgba(0,0,0,0.06),
+                0 12px 40px rgba(0,0,0,0.10);
+        }
+
+        .poster-container {
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            min-height: 800px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            /* 顶部内发光 */
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.90);
+        }
+
+        /* ── 顶部蓝色工具栏 ── */
+        .doc-header {
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+            padding: 20px 22px 18px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .doc-header::after {
+            content: '</>';
+            position: absolute;
+            right: 16px; bottom: -8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 52px; font-weight: 700;
+            color: rgba(255,255,255,0.07);
+            line-height: 1;
+        }
+        .doc-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: rgba(255,255,255,0.90);
+            font-size: 9px; font-weight: 700;
+            letter-spacing: 1.5px;
+            padding: 3px 10px; border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .doc-badge-dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: #4ade80;
+        }
+        .doc-title {
+            font-size: 20px; font-weight: 900;
+            color: #fff;
+            line-height: 1.35; letter-spacing: 0.3px;
+            margin-bottom: 7px;
+        }
+        .doc-subtitle {
+            font-size: 12px; color: rgba(255,255,255,0.72); line-height: 1.55;
+        }
+
+        /* ── 内容区 ── */
+        .body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 20px 18px;
+            gap: 14px;
+        }
+
+        /* ── URL 徽章 ── */
+        .url-block {
+            background: var(--bg-url);
+            border: 1px solid var(--accent-lt);
+            border-radius: 10px;
+            padding: 10px 13px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            flex-shrink: 0;
+        }
+        .url-icon {
+            font-size: 15px; flex-shrink: 0;
+        }
+        .url-content { flex: 1; min-width: 0; }
+        .url-label {
+            font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+            color: var(--accent); margin-bottom: 2px;
+        }
+        .url-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; color: var(--text-sec);
+            white-space: nowrap; overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ── 步骤列表 ── */
+        .step-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+
+        .step {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 步骤头部 */
+        .step-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 13px 9px;
+            background: #fafafa;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .step-num {
+            width: 22px; height: 22px; border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            font-size: 11px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .step-title {
+            font-size: 13px; font-weight: 700; color: var(--text-pri); flex: 1;
+        }
+        /* 步骤类型标签 */
+        .step-tag {
+            font-size: 9px; font-weight: 700; letter-spacing: 1px;
+            padding: 2px 7px; border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .tag-cmd  { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
+        .tag-url  { background: var(--accent-lt); color: var(--accent); border: 1px solid #bfdbfe; }
+        .tag-tip  { background: var(--green-lt); color: var(--green); border: 1px solid #bbf7d0; }
+        .tag-warn { background: var(--amber-lt); color: var(--amber); border: 1px solid #fde68a; }
+
+        /* 步骤内容 */
+        .step-body {
+            padding: 10px 13px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+        .step-desc {
+            font-size: 12px; color: var(--text-sec); line-height: 1.60;
+        }
+        .step-desc b { color: var(--text-pri); font-weight: 600; }
+
+        /* 代码块 */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border-code);
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #1e293b;
+            line-height: 1.65;
+            word-break: break-all;
+            position: relative;
+        }
+        /* 提示符 */
+        .code-block::before {
+            content: '$';
+            color: var(--accent); margin-right: 6px;
+            font-weight: 700;
+        }
+        .code-block.no-prompt::before { content: ''; margin-right: 0; }
+        .code-hl { color: #7c3aed; font-weight: 600; }   /* 关键词紫 */
+        .code-str { color: #16a34a; }                      /* 字符串绿 */
+        .code-flag { color: #d97706; }                     /* 参数橙 */
+
+        /* 提示 / 警告框 */
+        .tip-box {
+            border-radius: 8px;
+            padding: 8px 11px;
+            display: flex;
+            align-items: flex-start;
+            gap: 7px;
+            font-size: 11.5px;
+            line-height: 1.58;
+        }
+        .tip-box.tip  { background: var(--bg-tip);  color: #15803d; border: 1px solid #bbf7d0; }
+        .tip-box.warn { background: var(--bg-warn); color: #92400e; border: 1px solid #fde68a; }
+        .tip-icon { flex-shrink: 0; font-size: 13px; line-height: 1.3; }
+
+        /* ── 底部 ── */
+        .footer {
+            flex-shrink: 0;
+            padding: 12px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fafafa;
+        }
+        .footer-brand { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; }
+        .footer-version {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; color: var(--accent);
+            background: var(--accent-lt);
+            padding: 2px 8px; border-radius: 4px;
+        }
+
+        /* ── 下载按钮 ── */
+        .action-wrapper {
+            width: 100%; max-width: var(--card-width);
+            display: flex; justify-content: center;
+        }
+        .download-btn {
+            background: var(--accent);
+            color: #fff; border: none; border-radius: 50px;
+            padding: 14px 36px;
+            font-size: 14px; font-weight: 600;
+            font-family: 'Noto Sans SC', sans-serif;
+            cursor: pointer; display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 14px rgba(37,99,235,0.30);
+            transition: all 0.2s ease;
+        }
+        .download-btn:hover  { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,0.40); }
+        .download-btn:active { transform: scale(0.96); }
+        .download-btn:disabled { opacity: 0.50; cursor: not-allowed; transform: none; }
+        .download-btn svg { width: 17px; height: 17px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <div class="poster-wrapper">
+        <div class="poster-container" id="poster">
+
+            <!-- ===== 用户数据区，修改这里的文字即可 ===== -->
+
+            <div class="doc-header">
+                <div class="doc-badge"><div class="doc-badge-dot"></div>安装指南</div>
+                <h1 class="doc-title">Claude Code<br>安装与配置教程</h1>
+                <p class="doc-subtitle">从零开始，5 分钟完成安装，开始 AI 辅助编程</p>
+            </div>
+
+            <div class="body">
+
+                <!-- 官网 URL -->
+                <div class="url-block">
+                    <span class="url-icon">🔗</span>
+                    <div class="url-content">
+                        <div class="url-label">官方下载地址</div>
+                        <div class="url-text">https://claude.ai/download</div>
+                    </div>
+                </div>
+
+                <div class="step-list">
+
+                    <!-- 步骤 1 -->
+                    <div class="step">
+                        <div class="step-head">
+                            <div class="step-num">1</div>
+                            <span class="step-title">安装 Node.js（必须 v18+）</span>
+                            <span class="step-tag tag-cmd">命令行</span>
+                        </div>
+                        <div class="step-body">
+                            <p class="step-desc">打开终端，检查已安装的版本：</p>
+                            <div class="code-block"><span class="code-hl">node</span> <span class="code-flag">--version</span></div>
+                            <div class="tip-box tip">
+                                <span class="tip-icon">✅</span>
+                                显示 v18.x 或以上即满足要求，否则前往 nodejs.org 更新
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤 2 -->
+                    <div class="step">
+                        <div class="step-head">
+                            <div class="step-num">2</div>
+                            <span class="step-title">全局安装 Claude Code</span>
+                            <span class="step-tag tag-cmd">命令行</span>
+                        </div>
+                        <div class="step-body">
+                            <div class="code-block"><span class="code-hl">npm</span> install <span class="code-flag">-g</span> <span class="code-str">@anthropic-ai/claude-code</span></div>
+                            <div class="tip-box warn">
+                                <span class="tip-icon">⚠️</span>
+                                Mac 用户如遇权限错误，在命令前加 sudo，Windows 需以管理员身份运行
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤 3 -->
+                    <div class="step">
+                        <div class="step-head">
+                            <div class="step-num">3</div>
+                            <span class="step-title">进入项目目录并启动</span>
+                            <span class="step-tag tag-tip">完成</span>
+                        </div>
+                        <div class="step-body">
+                            <p class="step-desc">进入你的项目文件夹后运行：</p>
+                            <div class="code-block"><span class="code-hl">cd</span> <span class="code-str">你的项目路径</span> &amp;&amp; <span class="code-hl">claude</span></div>
+                            <div class="tip-box tip">
+                                <span class="tip-icon">🎉</span>
+                                首次启动会引导你登录 Anthropic 账号，完成后即可开始使用
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="footer">
+                <span class="footer-brand">AI 探索笔记 · 安装指南</span>
+                <span class="footer-version">v1.0</span>
+            </div>
+
+            <!-- ===== 数据区结束 ===== -->
+        </div>
+    </div>
+
+    <div class="action-wrapper">
+        <button class="download-btn" id="downloadBtn">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <span id="btnText">保存为高清图片</span>
+        </button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('downloadBtn');
+        const btnTxt = document.getElementById('btnText');
+        const poster = document.getElementById('poster');
+        btn.addEventListener('click', () => {
+            const orig = btnTxt.innerText;
+            btnTxt.innerText = '正在生成超清原图...';
+            btn.disabled = true;
+            // 无气泡动画，直接截图
+            htmlToImage.toPng(poster, { pixelRatio: 3, style: { transform: 'none' } })
+            .then(dataUrl => {
+                const a = document.createElement('a');
+                a.download = 'card-install-guide.png'; a.href = dataUrl; a.click();
+                btnTxt.innerText = '保存成功 ✅';
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; }, 2000);
+            })
+            .catch(err => {
+                console.error(err); btnTxt.innerText = '生成失败，请重试';
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

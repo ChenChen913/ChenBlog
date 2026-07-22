@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双卡片模板 · 横向并排</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans SC', "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        :root {
+            /* === 用户可修改区域 === */
+            --card-width: 420px;
+            --card-bg: linear-gradient(135deg, #fff8ee 0%, #ffffff 100%);
+            --accent-color-1: #f7c59f;   /* 气泡色 1 */
+            --accent-color-2: #ffd166;   /* 气泡色 2 */
+            --accent-color-3: #f093fb;   /* 气泡色 3 */
+            --title-gradient: linear-gradient(135deg, #e85d04, #f7971e);
+            --text-primary: #2d2d2d;
+            --text-secondary: #555555;
+            --text-light: #888888;
+            --border-radius: 28px;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+            min-height: 100vh;
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+        }
+
+        /* 页面标题（不被截图） */
+        .page-header { text-align: center; }
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .page-subtitle { font-size: 13px; color: rgba(255,255,255,0.82); }
+
+        /* ===== 横向网格：2 列并排（3 列改为 repeat(3, var(--card-width))） ===== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, var(--card-width));
+            gap: 24px;
+            justify-content: center;
+            align-items: start;   /* 卡片高度不一时顶部对齐，不拉伸 */
+        }
+
+        /* 单个卡片包裹器（宽度由 grid 控制，不再需要 max-width） */
+        .poster-wrapper {
+            width: var(--card-width);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 20px 55px rgba(0, 0, 0, 0.12);
+        }
+
+        /* 被截图的区域 */
+        .poster-container {
+            position: relative;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 36px 24px;
+            min-height: 760px;
+            overflow: hidden;
+        }
+
+        /* 气泡 */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(48px);
+            opacity: 0.75;
+            animation: float 9s ease-in-out infinite;
+        }
+        .blob-1 { width: 230px; height: 230px; background: var(--accent-color-1); top: -65px;  left: -65px;  animation-delay: 0s; }
+        .blob-2 { width: 190px; height: 190px; background: var(--accent-color-2); bottom: -45px; right: -45px; animation-delay: 3s; }
+        .blob-3 { width: 150px; height: 150px; background: var(--accent-color-3); top: 42%; left: 48%;   animation-delay: 6s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50%       { transform: translateY(-18px) rotate(8deg); }
+        }
+
+        .content-layer { position: relative; z-index: 10; }
+
+        /* 标题 */
+        .header { text-align: center; margin-bottom: 28px; }
+        .main-title {
+            font-size: 26px;
+            font-weight: 900;
+            background: var(--title-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .sub-title {
+            font-size: 12px;
+            color: var(--text-light);
+            letter-spacing: 2px;
+        }
+
+        /* 毛玻璃容器 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.50);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.82);
+            border-radius: 22px;
+            padding: 20px 16px;
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.70),
+                        0 8px 24px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        /* 条目 */
+        .item {
+            position: relative;
+            background: rgba(255, 255, 255, 0.90);
+            border-radius: 14px;
+            padding: 16px 18px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+            border: 1px solid rgba(255,255,255,0.95);
+            overflow: hidden;
+        }
+        .item-number-bg {
+            position: absolute;
+            top: -4px; right: 10px;
+            font-size: 52px;
+            font-weight: 900;
+            color: rgba(247, 151, 30, 0.07);
+            font-style: italic;
+            line-height: 1;
+            z-index: 0;
+        }
+        .item-header {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .item-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 8px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        /* 四种徽章配色 */
+        .b-orange { background: linear-gradient(135deg, #ffecd2, #fcb69f); color: #c04a00; }
+        .b-yellow { background: linear-gradient(135deg, #fff6cc, #ffd166); color: #7a5900; }
+        .b-pink   { background: linear-gradient(135deg, #f9d0ff, #f093fb); color: #860096; }
+        .b-blue   { background: linear-gradient(135deg, #d0eeff, #74c0fc); color: #005fa3; }
+
+        .item-title {
+            position: relative;
+            z-index: 1;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            flex: 1;
+        }
+        .item-desc {
+            position: relative;
+            z-index: 1;
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        /* 底部 */
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.45);
+            font-size: 11px;
+            color: var(--text-light);
+            letter-spacing: 1px;
+        }
+
+        /* 下载按钮区（在 cards-grid 外面） */
+        .action-wrapper {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .download-btn {
+            background: linear-gradient(135deg, #e85d04, #f7971e);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 28px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Noto Sans SC', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(232, 93, 4, 0.40);
+            transition: all 0.2s ease;
+        }
+        .download-btn:hover  { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232,93,4,0.50); }
+        .download-btn:active { transform: scale(0.96); }
+        .download-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+        .download-btn svg { width: 17px; height: 17px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <!-- 页面标题（不被截图） -->
+    <div class="page-header">
+        <h1 class="page-title">高效工作法则 · 双卡横排模板</h1>
+        <p class="page-subtitle">分别点击下方按钮保存两张高清图片</p>
+    </div>
+
+    <!-- ===== 横向网格容器：所有卡片放在这里 ===== -->
+    <div class="cards-grid">
+
+        <!-- 卡片 1 -->
+        <div class="poster-wrapper">
+            <div class="poster-container" id="poster1">
+                <div class="blob blob-1"></div>
+                <div class="blob blob-2"></div>
+                <div class="blob blob-3"></div>
+                <div class="content-layer">
+                    <!-- ===== 用户数据区，修改这里的文字即可 ===== -->
+                    <div class="header">
+                        <h1 class="main-title">高效工作法则</h1>
+                        <p class="sub-title">Productivity Principles · 上篇</p>
+                    </div>
+                    <div class="glass-card">
+                        <div class="item">
+                            <div class="item-number-bg">01</div>
+                            <div class="item-header">
+                                <span class="item-badge b-orange">RULE 1</span>
+                                <span class="item-title">要事优先</span>
+                            </div>
+                            <p class="item-desc">每天开始前列出最重要的三件事，先完成它们，再处理其余事务</p>
+                        </div>
+                        <div class="item">
+                            <div class="item-number-bg">02</div>
+                            <div class="item-header">
+                                <span class="item-badge b-yellow">RULE 2</span>
+                                <span class="item-title">时间分块</span>
+                            </div>
+                            <p class="item-desc">将工作时间切割成 90 分钟专注块，中间穿插 15 分钟休息</p>
+                        </div>
+                        <div class="item">
+                            <div class="item-number-bg">03</div>
+                            <div class="item-header">
+                                <span class="item-badge b-pink">RULE 3</span>
+                                <span class="item-title">环境隔离</span>
+                            </div>
+                            <p class="item-desc">深度工作时关闭通知、使用降噪耳机，让大脑进入心流状态</p>
+                        </div>
+                        <div class="item">
+                            <div class="item-number-bg">04</div>
+                            <div class="item-header">
+                                <span class="item-badge b-blue">RULE 4</span>
+                                <span class="item-title">每日复盘</span>
+                            </div>
+                            <p class="item-desc">睡前用 5 分钟记录当天完成的事和明日计划，形成正向循环</p>
+                        </div>
+                    </div>
+                    <div class="footer-text">— 高效工作法则 · 上 —</div>
+                    <!-- ===== 数据区结束 ===== -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 卡片 2 -->
+        <div class="poster-wrapper">
+            <div class="poster-container" id="poster2">
+                <div class="blob blob-1"></div>
+                <div class="blob blob-2"></div>
+                <div class="blob blob-3"></div>
+                <div class="content-layer">
+                    <!-- ===== 用户数据区，修改这里的文字即可 ===== -->
+                    <div class="header">
+                        <h1 class="main-title">高效工作法则</h1>
+                        <p class="sub-title">Productivity Principles · 下篇</p>
+                    </div>
+                    <div class="glass-card">
+                        <div class="item">
+                            <div class="item-number-bg">05</div>
+                            <div class="item-header">
+                                <span class="item-badge b-orange">RULE 5</span>
+                                <span class="item-title">拒绝完美主义</span>
+                            </div>
+                            <p class="item-desc">80% 完成即可发布，完美是进步的敌人，先出结果再迭代优化</p>
+                        </div>
+                        <div class="item">
+                            <div class="item-number-bg">06</div>
+                            <div class="item-header">
+                                <span class="item-badge b-yellow">RULE 6</span>
+                                <span class="item-title">批量处理</span>
+                            </div>
+                            <p class="item-desc">同类型任务集中在一个时间段完成，减少上下文切换的心智损耗</p>
+                        </div>
+                        <div class="item">
+                            <div class="item-number-bg">07</div>
+                            <div class="item-header">
+                                <span class="item-badge b-pink">RULE 7</span>
+                                <span class="item-title">说不的勇气</span>
+                            </div>
+                            <p class="item-desc">对非核心任务和无意义会议勇敢说不，保护自己的高质量时间</p>
+                        </div>
+                        <div class="item">
+                            <div class="item-number-bg">08</div>
+                            <div class="item-header">
+                                <span class="item-badge b-blue">RULE 8</span>
+                                <span class="item-title">系统思维</span>
+                            </div>
+                            <p class="item-desc">建立可复用的工作流和模板库，让重复性工作自动化或标准化</p>
+                        </div>
+                    </div>
+                    <div class="footer-text">— 高效工作法则 · 下 —</div>
+                    <!-- ===== 数据区结束 ===== -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- ===== cards-grid 结束 ===== -->
+
+    <!-- 下载按钮区域（在 cards-grid 外面） -->
+    <div class="action-wrapper">
+        <button class="download-btn" id="downloadBtn1">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            保存第 1 张
+        </button>
+        <button class="download-btn" id="downloadBtn2">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            保存第 2 张
+        </button>
+    </div>
+
+    <script>
+        // 多卡片下载：封装为函数，避免重复代码
+        function setupDownload(btnId, posterId, filename) {
+            const btn    = document.getElementById(btnId);
+            const poster = document.getElementById(posterId);
+
+            btn.addEventListener('click', () => {
+                const orig = btn.innerText;
+                btn.innerText = '正在生成超清原图...';
+                btn.disabled  = true;
+
+                // 截图前暂停该卡片内的气泡动画
+                const blobs = poster.querySelectorAll('.blob');
+                blobs.forEach(b => b.style.animation = 'none');
+
+                htmlToImage.toPng(poster, {
+                    pixelRatio: 3,
+                    style: { transform: 'none' }
+                })
+                .then(dataUrl => {
+                    const a = document.createElement('a');
+                    a.download = filename;
+                    a.href = dataUrl;
+                    a.click();
+                    btn.innerText = '保存成功 ✅';
+                    setTimeout(() => {
+                        btn.innerText = orig;
+                        btn.disabled  = false;
+                        blobs.forEach(b => b.style.animation = ''); // 恢复动画
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error(err);
+                    btn.innerText = '生成失败，请重试';
+                    blobs.forEach(b => b.style.animation = '');
+                    setTimeout(() => { btn.innerText = orig; btn.disabled = false; }, 2000);
+                });
+            });
+        }
+
+        setupDownload('downloadBtn1', 'poster1', '高效工作法则_上篇.png');
+        setupDownload('downloadBtn2', 'poster2', '高效工作法则_下篇.png');
+    </script>
+</body>
+</html>

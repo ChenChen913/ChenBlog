@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>排行 TOP 卡片</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box;
+            font-family:'Noto Sans SC',"PingFang SC","Microsoft YaHei",sans-serif; }
+        :root {
+            --card-width: 420px;
+            /* 深靛金朱配色 */
+            --bg-page:   #141928;
+            --bg-card:   #1a2138;
+            --bg-item:   #20263a;
+            --accent:    #ecb365;
+            --accent-2:  #c84b31;
+            --accent-3:  #4a6fa5;
+            --text-pri:  #f0ece0;
+            --text-sec:  #a09880;
+            --text-dim:  #5a5545;
+            --border:    rgba(236,179,101,0.12);
+            --border-radius: 24px;
+            /* 奖牌色 */
+            --gold:   #f5d07a;
+            --silver: #c0c8d8;
+            --bronze: #cd8c5a;
+        }
+        body {
+            background: var(--bg-page);
+            background-image: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(236,179,101,0.06) 0%, transparent 60%);
+            display:flex; flex-direction:column; align-items:center;
+            min-height:100vh; padding:40px 20px; gap:28px;
+        }
+        .poster-wrapper {
+            width:100%; max-width:var(--card-width); border-radius:var(--border-radius);
+            box-shadow: 0 0 0 1px rgba(236,179,101,0.15), 0 24px 60px rgba(0,0,0,0.60);
+        }
+        .poster-container {
+            position:relative; width:100%;
+            background: var(--bg-card); border-radius:var(--border-radius);
+            padding:36px 24px 30px; min-height:800px; overflow:hidden;
+            display:flex; flex-direction:column;
+        }
+        .poster-container::before {
+            content:''; position:absolute; inset:0;
+            background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(236,179,101,0.10) 0%, transparent 70%);
+            z-index:0;
+        }
+        .poster-container::after {
+            content:''; position:absolute; inset:0;
+            background-image:
+                repeating-linear-gradient(45deg, rgba(236,179,101,0.02) 0px, rgba(236,179,101,0.02) 1px, transparent 1px, transparent 20px);
+            z-index:0;
+        }
+        .blob { position:absolute; border-radius:50%; filter:blur(70px); opacity:0.12; animation:float 13s ease-in-out infinite; }
+        .blob-1 { width:280px; height:280px; background:var(--accent);   top:-80px;   left:-80px;   animation-delay:0s; }
+        .blob-2 { width:220px; height:220px; background:var(--accent-2); bottom:-60px; right:-60px; animation-delay:5s; }
+        .blob-3 { width:160px; height:160px; background:var(--accent-3); top:45%; left:38%; animation-delay:10s; }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-16px)} }
+        .content-layer { position:relative; z-index:10; flex:1; display:flex; flex-direction:column; }
+
+        /* 标题 */
+        .header { margin-bottom:22px; flex-shrink:0; }
+        .kicker { font-size:10px; font-weight:700; letter-spacing:3px; color:var(--accent); margin-bottom:8px; }
+        .main-title { font-size:22px; font-weight:900; color:var(--text-pri); line-height:1.35; margin-bottom:6px; }
+        .sub-title { font-size:11.5px; color:var(--text-sec); }
+
+        /* TOP 3 大卡区 */
+        .top3 {
+            display:grid; grid-template-columns:1fr 1.15fr 1fr;
+            gap:8px; margin-bottom:16px; flex-shrink:0;
+            align-items:end;
+        }
+        .podium-card {
+            border-radius:14px; padding:16px 10px 14px;
+            text-align:center; border:1px solid var(--border);
+            position:relative; overflow:hidden;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+        .podium-card::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:2px;
+        }
+        .rank-1 { background:linear-gradient(160deg,rgba(245,208,122,0.15),var(--bg-item)); }
+        .rank-2 { background:var(--bg-item); }
+        .rank-3 { background:var(--bg-item); }
+        .rank-1::before { background:var(--gold); box-shadow:0 0 8px var(--gold); }
+        .rank-2::before { background:var(--silver); }
+        .rank-3::before { background:var(--bronze); }
+
+        .medal { font-size:24px; margin-bottom:6px; display:block; }
+        .podium-name { font-size:12px; font-weight:700; color:var(--text-pri); margin-bottom:4px; line-height:1.3; }
+        .podium-value {
+            font-family:'JetBrains Mono',monospace;
+            font-size:18px; font-weight:700; line-height:1;
+        }
+        .rank-1 .podium-value { color:var(--gold); font-size:22px; }
+        .rank-2 .podium-value { color:var(--silver); }
+        .rank-3 .podium-value { color:var(--bronze); }
+        .podium-unit { font-size:9px; color:var(--text-dim); margin-top:3px; }
+
+        /* 分割线 */
+        .divider { height:1px; background:var(--border); margin:4px 0 12px; flex-shrink:0; }
+
+        /* 4-5 名列表区 */
+        .rank-list { flex:1; display:flex; flex-direction:column; gap:8px; }
+
+        .rank-row {
+            display:flex; align-items:center; gap:12px;
+            background:var(--bg-item); border:1px solid var(--border);
+            border-radius:12px; padding:12px 14px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+            flex:1;
+        }
+        .rank-num {
+            font-family:'JetBrains Mono',monospace;
+            font-size:13px; font-weight:700; color:var(--text-dim);
+            min-width:22px; flex-shrink:0;
+        }
+        .rank-info { flex:1; }
+        .rank-name { font-size:13px; font-weight:700; color:var(--text-pri); margin-bottom:5px; }
+        /* 进度条 */
+        .rank-bar-wrap { display:flex; align-items:center; gap:8px; }
+        .rank-bar-track { flex:1; height:4px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+        .rank-bar-fill  { height:100%; border-radius:2px; background:linear-gradient(90deg, var(--accent-3), var(--accent)); }
+        .rank-pct { font-size:10px; color:var(--text-dim); min-width:32px; text-align:right; flex-shrink:0; }
+        .rank-value {
+            font-family:'JetBrains Mono',monospace;
+            font-size:14px; font-weight:700; color:var(--accent);
+            flex-shrink:0;
+        }
+
+        /* 底部 */
+        .footer { flex-shrink:0; margin-top:16px; padding-top:14px; border-top:1px solid var(--border);
+            display:flex; align-items:center; justify-content:space-between; }
+        .footer-brand { font-size:10px; color:var(--text-dim); letter-spacing:1.5px; }
+        .footer-date  { font-size:10px; color:var(--text-dim); }
+
+        /* 下载 */
+        .action-wrapper { width:100%; max-width:var(--card-width); display:flex; justify-content:center; }
+        .download-btn {
+            background:linear-gradient(145deg, var(--accent), #d4963a); color:#1a1000;
+            border:none; border-radius:50px; padding:14px 36px;
+            font-size:14px; font-weight:700; font-family:'Noto Sans SC',sans-serif;
+            cursor:pointer; display:flex; align-items:center; gap:10px;
+            box-shadow:0 4px 20px rgba(236,179,101,0.30); transition:all 0.2s ease;
+        }
+        .download-btn:hover  { transform:translateY(-2px); box-shadow:0 6px 24px rgba(236,179,101,0.42); }
+        .download-btn:active { transform:scale(0.96); }
+        .download-btn:disabled { opacity:0.50; cursor:not-allowed; transform:none; }
+        .download-btn svg { width:17px; height:17px; fill:currentColor; }
+    </style>
+</head>
+<body>
+<div class="poster-wrapper">
+  <div class="poster-container" id="poster">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+    <div class="content-layer">
+      <!-- ===== 用户数据区，修改这里的文字即可 ===== -->
+      <div class="header">
+        <p class="kicker">TOP 5 RANKING · 2026.03</p>
+        <h1 class="main-title">本月销售额<br>城市排行榜</h1>
+        <p class="sub-title">2026 年 3 月全国门店销售额排名</p>
+      </div>
+
+      <!-- TOP 3 颁奖台 -->
+      <div class="top3">
+        <!-- 第2名（左） -->
+        <div class="podium-card rank-2">
+          <span class="medal">🥈</span>
+          <div class="podium-name">上海</div>
+          <div class="podium-value">892</div>
+          <div class="podium-unit">万元</div>
+        </div>
+        <!-- 第1名（中，最高） -->
+        <div class="podium-card rank-1">
+          <span class="medal">🥇</span>
+          <div class="podium-name">北京</div>
+          <div class="podium-value">1,240</div>
+          <div class="podium-unit">万元</div>
+        </div>
+        <!-- 第3名（右） -->
+        <div class="podium-card rank-3">
+          <span class="medal">🥉</span>
+          <div class="podium-name">深圳</div>
+          <div class="podium-value">756</div>
+          <div class="podium-unit">万元</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- 4-5 名 -->
+      <div class="rank-list">
+        <div class="rank-row">
+          <span class="rank-num">4</span>
+          <div class="rank-info">
+            <div class="rank-name">广州</div>
+            <div class="rank-bar-wrap">
+              <div class="rank-bar-track"><div class="rank-bar-fill" style="width:52%"></div></div>
+              <span class="rank-pct">52%</span>
+            </div>
+          </div>
+          <span class="rank-value">643万</span>
+        </div>
+        <div class="rank-row">
+          <span class="rank-num">5</span>
+          <div class="rank-info">
+            <div class="rank-name">成都</div>
+            <div class="rank-bar-wrap">
+              <div class="rank-bar-track"><div class="rank-bar-fill" style="width:41%"></div></div>
+              <span class="rank-pct">41%</span>
+            </div>
+          </div>
+          <span class="rank-value">508万</span>
+        </div>
+      </div>
+
+      <div class="footer">
+        <span class="footer-brand">销售数据报告</span>
+        <span class="footer-date">2026.03 月度</span>
+      </div>
+      <!-- ===== 数据区结束 ===== -->
+    </div>
+  </div>
+</div>
+<div class="action-wrapper">
+  <button class="download-btn" id="downloadBtn">
+    <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+    <span id="btnText">保存为高清图片</span>
+  </button>
+</div>
+<script>
+  const btn=document.getElementById('downloadBtn'),btnTxt=document.getElementById('btnText'),poster=document.getElementById('poster');
+  btn.addEventListener('click',()=>{
+    const orig=btnTxt.innerText; btnTxt.innerText='正在生成超清原图...'; btn.disabled=true;
+    const blobs=poster.querySelectorAll('.blob'); blobs.forEach(b=>b.style.animation='none');
+    htmlToImage.toPng(poster,{pixelRatio:3,style:{transform:'none'}})
+    .then(d=>{const a=document.createElement('a');a.download='card-ranking.png';a.href=d;a.click();btnTxt.innerText='保存成功 ✅';setTimeout(()=>{btnTxt.innerText=orig;btn.disabled=false;blobs.forEach(b=>b.style.animation='');},2000);})
+    .catch(e=>{console.error(e);btnTxt.innerText='生成失败，请重试';blobs.forEach(b=>b.style.animation='');setTimeout(()=>{btnTxt.innerText=orig;btn.disabled=false;},2000);});
+  });
+</script>
+</body>
+</html>

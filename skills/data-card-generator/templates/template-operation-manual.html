@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>操作手册模板 · 深色沉浸</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Noto Sans SC', "PingFang SC", "Microsoft YaHei", sans-serif; }
+
+        :root {
+            /* === 用户可修改区域 === */
+            --card-width: 420px;
+            /* 深色手册配色（改 --accent 换整体强调色）*/
+            --bg-page:    #0e1117;
+            --bg-card:    #161b22;
+            --bg-panel:   #1c2230;
+            --bg-code:    #0d1117;
+            --border:     rgba(255,255,255,0.08);
+            --border-str: rgba(255,255,255,0.14);
+            --accent:     #f97316;      /* 主橙色 */
+            --accent-lt:  rgba(249,115,22,0.12);
+            --accent-bd:  rgba(249,115,22,0.30);
+            --green:      #22c55e;
+            --red:        #ef4444;
+            --blue:       #60a5fa;
+            --yellow:     #fbbf24;
+            --text-pri:   #f1f5f9;
+            --text-sec:   #94a3b8;
+            --text-dim:   #475569;
+            --text-code:  #e2e8f0;
+            --border-radius: 20px;
+        }
+
+        body {
+            background: var(--bg-page);
+            background-image: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(249,115,22,0.06) 0%, transparent 60%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            gap: 24px;
+        }
+
+        .poster-wrapper {
+            width: 100%;
+            max-width: var(--card-width);
+            border-radius: var(--border-radius);
+            box-shadow:
+                0 0 0 1px var(--border-str),
+                0 20px 60px rgba(0,0,0,0.50);
+        }
+
+        .poster-container {
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            min-height: 800px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── 顶部标题栏 ── */
+        .manual-header {
+            padding: 24px 22px 20px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        /* 橙色顶线 */
+        .manual-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--accent), rgba(249,115,22,0.30), transparent);
+        }
+        .header-top {
+            display: flex; align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .manual-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 9px; font-weight: 700; letter-spacing: 2px;
+            color: var(--accent);
+            background: var(--accent-lt);
+            border: 1px solid var(--accent-bd);
+            padding: 3px 10px; border-radius: 4px;
+        }
+        .header-steps {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; color: var(--text-dim); letter-spacing: 0.5px;
+        }
+        .manual-title {
+            font-size: 21px; font-weight: 900;
+            color: var(--text-pri);
+            line-height: 1.35; letter-spacing: 0.3px;
+            margin-bottom: 7px;
+        }
+        .manual-subtitle {
+            font-size: 12px; color: var(--text-sec); line-height: 1.58;
+        }
+
+        /* ── 平台选项标签（可展示多平台命令） ── */
+        .platform-tabs {
+            display: flex;
+            gap: 6px;
+            padding: 14px 22px 0;
+            flex-shrink: 0;
+        }
+        .ptab {
+            font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+            padding: 5px 12px; border-radius: 6px;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            background: transparent;
+        }
+        .ptab.active {
+            background: var(--accent-lt);
+            border-color: var(--accent-bd);
+            color: var(--accent);
+        }
+
+        /* ── 内容区 ── */
+        .body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 16px 20px 18px;
+            gap: 10px;
+        }
+
+        /* ── 步骤卡 ── */
+        .step {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+
+        .step-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        /* 序号 */
+        .step-num {
+            width: 24px; height: 24px;
+            border-radius: 6px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 12px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        /* 不同颜色序号 */
+        .step:nth-child(2) .step-num { background: var(--blue); }
+        .step:nth-child(3) .step-num { background: var(--green); }
+        .step:nth-child(4) .step-num { background: var(--yellow); }
+
+        .step-title { font-size: 13px; font-weight: 700; color: var(--text-pri); flex: 1; }
+        .step-badge {
+            font-size: 9px; font-weight: 700; letter-spacing: 1px;
+            padding: 2px 8px; border-radius: 4px;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .sb-required { background: rgba(239,68,68,0.12); color: var(--red);   border: 1px solid rgba(239,68,68,0.25); }
+        .sb-optional { background: rgba(96,165,250,0.12); color: var(--blue);  border: 1px solid rgba(96,165,250,0.25); }
+        .sb-done     { background: rgba(34,197,94,0.12);  color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+
+        .step-body {
+            padding: 11px 14px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .step-desc {
+            font-size: 12px; color: var(--text-sec); line-height: 1.60;
+        }
+        .step-desc b { color: var(--text-pri); font-weight: 600; }
+
+        /* 代码块（深色版）*/
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border-str);
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-code);
+            line-height: 1.70;
+            word-break: break-all;
+        }
+        .code-block .prompt  { color: var(--green); font-weight: 600; margin-right: 6px; }
+        .code-block .cmd     { color: var(--accent); font-weight: 600; }
+        .code-block .flag    { color: var(--yellow); }
+        .code-block .arg     { color: var(--blue); }
+        .code-block .comment { color: var(--text-dim); }
+        .code-block .url     { color: #a78bfa; text-decoration: underline; }
+
+        /* URL 行 */
+        .url-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(167,139,250,0.08);
+            border: 1px solid rgba(167,139,250,0.20);
+            border-radius: 8px;
+            padding: 8px 11px;
+        }
+        .url-icon { font-size: 13px; flex-shrink: 0; }
+        .url-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px; color: #a78bfa;
+            flex: 1; word-break: break-all; line-height: 1.5;
+        }
+
+        /* 提示/警告 */
+        .notice {
+            display: flex; align-items: flex-start; gap: 7px;
+            border-radius: 8px; padding: 8px 11px;
+            font-size: 11px; line-height: 1.58;
+        }
+        .notice-icon { flex-shrink: 0; font-size: 13px; line-height: 1.3; }
+        .notice.success { background: rgba(34,197,94,0.08);   color: #86efac; border: 1px solid rgba(34,197,94,0.20); }
+        .notice.warning { background: rgba(251,191,36,0.08);  color: #fde68a; border: 1px solid rgba(251,191,36,0.20); }
+        .notice.danger  { background: rgba(239,68,68,0.08);   color: #fca5a5; border: 1px solid rgba(239,68,68,0.20); }
+        .notice.info    { background: rgba(96,165,250,0.08);  color: #93c5fd; border: 1px solid rgba(96,165,250,0.20); }
+
+        /* ── 底部 ── */
+        .footer {
+            flex-shrink: 0;
+            padding: 12px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .footer-brand { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; }
+        .footer-right {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .footer-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+        .footer-status { font-size: 10px; color: var(--green); font-family: 'JetBrains Mono', monospace; }
+
+        /* ── 下载按钮 ── */
+        .action-wrapper {
+            width: 100%; max-width: var(--card-width);
+            display: flex; justify-content: center;
+        }
+        .download-btn {
+            background: var(--accent);
+            color: #fff; border: none; border-radius: 50px;
+            padding: 14px 36px;
+            font-size: 14px; font-weight: 600;
+            font-family: 'Noto Sans SC', sans-serif;
+            cursor: pointer; display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 16px rgba(249,115,22,0.30);
+            transition: all 0.2s ease;
+        }
+        .download-btn:hover  { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(249,115,22,0.40); }
+        .download-btn:active { transform: scale(0.96); }
+        .download-btn:disabled { opacity: 0.50; cursor: not-allowed; transform: none; }
+        .download-btn svg { width: 17px; height: 17px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <div class="poster-wrapper">
+        <div class="poster-container" id="poster">
+
+            <!-- ===== 用户数据区，修改这里的文字即可 ===== -->
+
+            <div class="manual-header">
+                <div class="header-top">
+                    <span class="manual-badge">📖 操作手册</span>
+                    <span class="header-steps">4 个步骤</span>
+                </div>
+                <h1 class="manual-title">配置 Claude Code<br>MCP 服务器接入</h1>
+                <p class="manual-subtitle">让 Claude Code 连接外部工具，解锁 Slack、GitHub、数据库等能力</p>
+            </div>
+
+            <!-- 平台标签（仅展示用，不可交互，截图里看起来很专业）-->
+            <div class="platform-tabs">
+                <span class="ptab active">macOS</span>
+                <span class="ptab">Windows</span>
+                <span class="ptab">Linux</span>
+            </div>
+
+            <div class="body">
+
+                <!-- 步骤 1 -->
+                <div class="step">
+                    <div class="step-head">
+                        <div class="step-num">1</div>
+                        <span class="step-title">找到配置文件目录</span>
+                        <span class="step-badge sb-required">必须</span>
+                    </div>
+                    <div class="step-body">
+                        <div class="code-block">
+                            <span class="prompt">$</span><span class="cmd">open</span> <span class="arg">~/.claude/</span>
+                        </div>
+                        <div class="notice info">
+                            <span class="notice-icon">ℹ️</span>
+                            若目录不存在，先运行一次 claude 命令让它自动创建
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 步骤 2 -->
+                <div class="step">
+                    <div class="step-head">
+                        <div class="step-num">2</div>
+                        <span class="step-title">编辑 claude_desktop_config.json</span>
+                        <span class="step-badge sb-required">必须</span>
+                    </div>
+                    <div class="step-body">
+                        <p class="step-desc">在配置文件中加入 mcpServers 字段，以 <b>Slack MCP</b> 为例：</p>
+                        <div class="code-block">
+                            <span class="comment">// claude_desktop_config.json</span><br>
+                            {<span class="arg">"mcpServers"</span>: {<br>
+                            &nbsp;&nbsp;<span class="arg">"slack"</span>: {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="arg">"url"</span>: <span class="flag">"https://mcp.slack.com/sse"</span><br>
+                            &nbsp;&nbsp;}<br>
+                            }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 步骤 3 -->
+                <div class="step">
+                    <div class="step-head">
+                        <div class="step-num">3</div>
+                        <span class="step-title">重启 Claude Code</span>
+                        <span class="step-badge sb-required">必须</span>
+                    </div>
+                    <div class="step-body">
+                        <div class="code-block">
+                            <span class="prompt">$</span><span class="cmd">claude</span> <span class="flag">--mcp-debug</span>
+                        </div>
+                        <div class="notice warning">
+                            <span class="notice-icon">⚠️</span>
+                            修改配置后必须完全退出重启，热更新不生效
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 步骤 4 -->
+                <div class="step">
+                    <div class="step-head">
+                        <div class="step-num">4</div>
+                        <span class="step-title">验证连接与授权</span>
+                        <span class="step-badge sb-done">完成</span>
+                    </div>
+                    <div class="step-body">
+                        <p class="step-desc">启动后输入 <b>/mcp</b> 指令查看已连接服务，或访问授权页完成 OAuth：</p>
+                        <div class="url-row">
+                            <span class="url-icon">🔗</span>
+                            <span class="url-text">https://docs.anthropic.com/zh-CN/docs/claude-code/mcp</span>
+                        </div>
+                        <div class="notice success">
+                            <span class="notice-icon">✅</span>
+                            看到服务名称旁边显示绿点即表示连接成功
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="footer">
+                <span class="footer-brand">AI 探索笔记 · 操作手册</span>
+                <div class="footer-right">
+                    <div class="footer-dot"></div>
+                    <span class="footer-status">READY</span>
+                </div>
+            </div>
+
+            <!-- ===== 数据区结束 ===== -->
+        </div>
+    </div>
+
+    <div class="action-wrapper">
+        <button class="download-btn" id="downloadBtn">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <span id="btnText">保存为高清图片</span>
+        </button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('downloadBtn');
+        const btnTxt = document.getElementById('btnText');
+        const poster = document.getElementById('poster');
+        btn.addEventListener('click', () => {
+            const orig = btnTxt.innerText;
+            btnTxt.innerText = '正在生成超清原图...';
+            btn.disabled = true;
+            htmlToImage.toPng(poster, { pixelRatio: 3, style: { transform: 'none' } })
+            .then(dataUrl => {
+                const a = document.createElement('a');
+                a.download = 'card-operation-manual.png'; a.href = dataUrl; a.click();
+                btnTxt.innerText = '保存成功 ✅';
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; }, 2000);
+            })
+            .catch(err => {
+                console.error(err); btnTxt.innerText = '生成失败，请重试';
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

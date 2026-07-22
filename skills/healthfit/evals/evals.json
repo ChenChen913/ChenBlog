@@ -1,0 +1,124 @@
+{
+  "skill_name": "healthfit",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "建档流程测试",
+      "prompt": "帮我建立健康档案，男性，28 岁，175cm，70kg，目标减脂",
+      "assertions": [
+        { "type": "contains", "value": "昵称" },
+        { "type": "contains", "value": "建档" },
+        { "type": "contains", "value": "生理性别" },
+        { "type": "role_prefix", "value": "[Coach Alex]|[Dr. Mei]|[Dr. Chen]" }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "eval_name": "运动记录测试",
+      "prompt": "今天跑了 5 公里 32 分钟，体重 70.2kg，睡眠 7 小时",
+      "assertions": [
+        { "type": "contains", "value": "5 公里" },
+        { "type": "contains", "value": "记录" },
+        { "type": "role_prefix", "value": "[Coach Alex]" }
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "eval_name": "中医体质辨识测试",
+      "prompt": "我总是怕冷，手脚凉，舌苔厚白，我是什么体质？",
+      "assertions": [
+        { "type": "contains", "value": "体质" },
+        { "type": "contains", "value": "问诊" },
+        { "type": "contains", "value": "三轮" },
+        { "type": "role_prefix", "value": "[Dr. Chen]" }
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "eval_name": "数据总结测试",
+      "prompt": "本周总结",
+      "assertions": [
+        { "type": "contains", "value": "周报" },
+        { "type": "contains", "value": "训练" },
+        { "type": "role_prefix", "value": "[Analyst Ray]" }
+      ],
+      "files": []
+    },
+    {
+      "id": 5,
+      "eval_name": "训练计划测试",
+      "prompt": "明天练什么？我只有一对哑铃",
+      "assertions": [
+        { "type": "contains", "value": "训练计划" },
+        { "type": "contains", "value": "哑铃" },
+        { "type": "contains", "value": "组" },
+        { "type": "role_prefix", "value": "[Coach Alex]" }
+      ],
+      "files": []
+    },
+    {
+      "id": 6,
+      "eval_name": "营养建议测试",
+      "prompt": "今天吃什么好？我想增肌",
+      "assertions": [
+        { "type": "contains", "value": "饮食" },
+        { "type": "contains", "value": "蛋白质" },
+        { "type": "contains", "value": "kcal" },
+        { "type": "role_prefix", "value": "[Dr. Mei]" }
+      ],
+      "files": []
+    },
+    {
+      "id": 7,
+      "eval_name": "术语查询测试",
+      "prompt": "解释一下 TDEE 是什么意思",
+      "assertions": [
+        { "type": "contains", "value": "TDEE" },
+        { "type": "contains", "value": "每日总能量消耗" },
+        { "type": "contains", "value": "#003" },
+        { "type": "role_prefix", "value": "[Analyst Ray]" }
+      ],
+      "files": []
+    },
+    {
+      "id": 8,
+      "eval_name": "中医术语查询测试",
+      "prompt": "什么是阳虚质",
+      "assertions": [
+        { "type": "contains", "value": "阳虚质" },
+        { "type": "contains", "value": "畏寒怕冷" },
+        { "type": "contains", "value": "#103" },
+        { "type": "role_prefix", "value": "[Dr. Chen]" }
+      ],
+      "files": []
+    },
+    {
+      "id": 9,
+      "eval_name": "启动菜单测试",
+      "prompt": "调用 healthfit",
+      "assertions": [
+        { "type": "contains", "value": "Coach Alex" },
+        { "type": "contains", "value": "Dr. Mei" },
+        { "type": "contains", "value": "Dr. Chen" },
+        { "type": "contains", "value": "[A]" },
+        { "type": "contains", "value": "[B]" },
+        { "type": "contains", "value": "[C]" }
+      ],
+      "files": []
+    },
+    {
+      "id": 10,
+      "eval_name": "性健康模块测试",
+      "prompt": "更新性健康记录",
+      "assertions": [
+        { "type": "contains", "value": "隐私" },
+        { "type": "contains", "value": "可选" },
+        { "type": "contains", "value": "确认" }
+      ],
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>金句引言模板 · Layout D</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            /* === 用户可修改区域 === */
+            --card-width: 420px;
+            --card-bg: linear-gradient(160deg, #fafafa 0%, #f0f0f0 100%);
+            --accent-color-1: #c084fc;   /* 气泡色 1 */
+            --accent-color-2: #818cf8;   /* 气泡色 2 */
+            --accent-color-3: #fb7185;   /* 气泡色 3 */
+            /* 金句文字颜色 */
+            --quote-color: #1e1b4b;
+            /* 大引号颜色 */
+            --big-quote-color: rgba(129,140,248,0.15);
+            /* 作者/来源颜色 */
+            --author-color: #6d28d9;
+            /* 标签颜色 */
+            --tag-bg: rgba(109,40,217,0.08);
+            --tag-border: rgba(109,40,217,0.20);
+            --tag-text: #6d28d9;
+            --text-light: #9ca3af;
+            --border-radius: 32px;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', "PingFang SC", sans-serif;
+            background: #e8e8f0;
+            background-image: radial-gradient(circle, rgba(129,140,248,0.10) 1px, transparent 1px);
+            background-size: 24px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            gap: 32px;
+        }
+
+        .poster-wrapper {
+            width: 100%;
+            max-width: var(--card-width);
+            border-radius: var(--border-radius);
+            box-shadow:
+                0 2px 0 rgba(255,255,255,0.80),
+                0 20px 60px rgba(109,40,217,0.12),
+                0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .poster-container {
+            position: relative;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            /* 金句卡不需要 min-height: 800px，高度由内容撑开，更紧凑 */
+            padding: 60px 40px 52px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 气泡 */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.30;
+            animation: float 12s ease-in-out infinite;
+        }
+        .blob-1 { width: 260px; height: 260px; background: var(--accent-color-1); top: -80px;   left: -80px;   animation-delay: 0s; }
+        .blob-2 { width: 220px; height: 220px; background: var(--accent-color-2); bottom: -60px; right: -60px;  animation-delay: 5s; }
+        .blob-3 { width: 160px; height: 160px; background: var(--accent-color-3); top: 50%;     left: 50%;     animation-delay: 10s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50%       { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 0;
+        }
+
+        /* 顶部装饰标签 */
+        .top-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--tag-bg);
+            border: 1px solid var(--tag-border);
+            color: var(--tag-text);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-bottom: 44px;
+        }
+        .top-tag-dot {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--author-color);
+        }
+
+        /* 大引号 */
+        .big-quote {
+            font-family: 'Noto Serif SC', Georgia, serif;
+            font-size: 120px;
+            font-weight: 900;
+            color: var(--big-quote-color);
+            line-height: 0.7;
+            margin-bottom: 24px;
+            user-select: none;
+            align-self: flex-start;
+            padding-left: 4px;
+        }
+
+        /* 金句正文 */
+        .quote-text {
+            font-family: 'Noto Serif SC', Georgia, serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--quote-color);
+            line-height: 1.65;
+            letter-spacing: 1px;
+            margin-bottom: 32px;
+            text-align: justify;
+        }
+
+        /* 英文副文（可选） */
+        .quote-en {
+            font-size: 13px;
+            font-weight: 300;
+            color: var(--text-light);
+            letter-spacing: 1.5px;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        /* 分割线 */
+        .quote-divider {
+            width: 48px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-color-1), var(--accent-color-2));
+            border-radius: 2px;
+            margin-bottom: 24px;
+        }
+
+        /* 作者信息 */
+        .author-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 48px;
+        }
+        .author-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--author-color);
+            letter-spacing: 1px;
+        }
+        .author-role {
+            font-size: 12px;
+            color: var(--text-light);
+            letter-spacing: 1px;
+        }
+
+        /* 底部署名 */
+        .footer {
+            width: 100%;
+            padding-top: 24px;
+            border-top: 1px solid rgba(129,140,248,0.12);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-brand {
+            font-size: 11px;
+            color: var(--text-light);
+            letter-spacing: 1.5px;
+        }
+        .footer-tags {
+            display: flex;
+            gap: 6px;
+        }
+        .footer-tag {
+            font-size: 10px;
+            color: var(--tag-text);
+            background: var(--tag-bg);
+            border: 1px solid var(--tag-border);
+            padding: 2px 8px;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        /* 下载按钮 */
+        .action-wrapper { width: 100%; max-width: var(--card-width); display: flex; justify-content: center; }
+        .download-btn {
+            background: linear-gradient(135deg, var(--accent-color-1), var(--accent-color-2));
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 38px;
+            font-size: 15px; font-weight: 600;
+            font-family: 'Noto Sans SC', sans-serif;
+            cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 20px rgba(192,132,252,0.35);
+            transition: all 0.2s ease;
+        }
+        .download-btn:hover  { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(192,132,252,0.45); }
+        .download-btn:active { transform: scale(0.96); }
+        .download-btn:disabled { opacity: 0.60; cursor: not-allowed; transform: none; }
+        .download-btn svg { width: 18px; height: 18px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <div class="poster-wrapper">
+        <div class="poster-container" id="poster">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+
+            <div class="content-layer">
+                <!-- ===== 用户数据区，修改这里的文字即可 ===== -->
+
+                <!-- 顶部小标签（可改为话题、栏目名等） -->
+                <div class="top-tag">
+                    <div class="top-tag-dot"></div>
+                    每日金句
+                    <div class="top-tag-dot"></div>
+                </div>
+
+                <!-- 大引号装饰（不用改） -->
+                <div class="big-quote">"</div>
+
+                <!-- 金句正文（核心内容，改这里） -->
+                <p class="quote-text">
+                    做难而正确的事，<br>
+                    然后耐心等待时间<br>
+                    给出答案。
+                </p>
+
+                <!-- 英文副文（可删除整行） -->
+                <p class="quote-en">
+                    Do what is hard and right,<br>then patiently let time reveal the answer.
+                </p>
+
+                <!-- 分割线 -->
+                <div class="quote-divider"></div>
+
+                <!-- 作者信息（可改为书名、出处等） -->
+                <div class="author-wrap">
+                    <span class="author-name">— 查理·芒格</span>
+                    <span class="author-role">伯克希尔·哈撒韦副主席</span>
+                </div>
+
+                <!-- 底部署名栏 -->
+                <div class="footer">
+                    <span class="footer-brand">AI 探索笔记</span>
+                    <div class="footer-tags">
+                        <span class="footer-tag">#长期主义</span>
+                        <span class="footer-tag">#智慧</span>
+                    </div>
+                </div>
+
+                <!-- ===== 数据区结束 ===== -->
+            </div>
+        </div>
+    </div>
+
+    <div class="action-wrapper">
+        <button class="download-btn" id="downloadBtn">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <span id="btnText">保存为高清图片</span>
+        </button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('downloadBtn');
+        const btnTxt = document.getElementById('btnText');
+        const poster = document.getElementById('poster');
+        btn.addEventListener('click', () => {
+            const orig = btnTxt.innerText;
+            btnTxt.innerText = '正在生成超清原图...';
+            btn.disabled = true;
+            const blobs = poster.querySelectorAll('.blob');
+            blobs.forEach(b => b.style.animation = 'none');
+            htmlToImage.toPng(poster, { pixelRatio: 3, style: { transform: 'none' } })
+            .then(dataUrl => {
+                const a = document.createElement('a');
+                a.download = 'card-quote.png'; a.href = dataUrl; a.click();
+                btnTxt.innerText = '保存成功 ✅';
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; blobs.forEach(b => b.style.animation = ''); }, 2000);
+            })
+            .catch(err => {
+                console.error(err); btnTxt.innerText = '生成失败，请重试';
+                blobs.forEach(b => b.style.animation = '');
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>黑金奢华模板 · Mobile 竖版</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Noto Sans SC', "PingFang SC", sans-serif; }
+
+        :root {
+            /* === 用户可修改区域 === */
+            --card-width: 420px;
+            --gold-bright:  #f5d07a;
+            --gold-mid:     #c9973a;
+            --gold-dark:    #8a6520;
+            --gold-shimmer: #fff3c0;
+            --text-primary:   #f0e4c0;
+            --text-secondary: #b89a6a;
+            --text-dim:       #6a5535;
+            --border-radius: 24px;
+        }
+
+        body {
+            background: #0a0800;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            gap: 32px;
+        }
+
+        .poster-wrapper {
+            width: 100%;
+            max-width: var(--card-width);
+            border-radius: var(--border-radius);
+            /* 金色外框光晕 */
+            box-shadow:
+                0 0 0 1px rgba(197,151,58,0.35),
+                0 0 0 2px rgba(197,151,58,0.10),
+                0 8px 60px rgba(0,0,0,0.70);
+        }
+
+        .poster-container {
+            position: relative;
+            width: 100%;
+            background: #0e0c07;
+            border-radius: var(--border-radius);
+            padding: 44px 28px 36px;
+            min-height: 800px;
+            overflow: hidden;
+        }
+
+        /* 暗金渐变背景 */
+        .poster-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 40% at 50% 0%, rgba(197,151,58,0.10) 0%, transparent 70%),
+                radial-gradient(ellipse 80% 50% at 50% 100%, rgba(138,101,32,0.08) 0%, transparent 60%);
+            z-index: 0;
+        }
+
+        /* 细腻菱形暗纹 */
+        .poster-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                repeating-linear-gradient(45deg, rgba(197,151,58,0.025) 0px, rgba(197,151,58,0.025) 1px, transparent 1px, transparent 24px),
+                repeating-linear-gradient(-45deg, rgba(197,151,58,0.025) 0px, rgba(197,151,58,0.025) 1px, transparent 1px, transparent 24px);
+            z-index: 0;
+        }
+
+        /* 气泡（用金色光晕替代彩色气泡） */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.18;
+            animation: float 13s ease-in-out infinite;
+        }
+        .blob-1 { width: 350px; height: 350px; background: var(--gold-mid);    top: -100px;  left: -100px;  animation-delay: 0s; }
+        .blob-2 { width: 280px; height: 280px; background: var(--gold-bright);  bottom: -70px; right: -70px;  animation-delay: 5s; }
+        .blob-3 { width: 200px; height: 200px; background: var(--gold-dark);    top: 42%;     left: 38%;     animation-delay: 10s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-18px); }
+        }
+
+        .content-layer { position: relative; z-index: 10; }
+
+        /* 顶部装饰 */
+        .crown-deco {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 8px rgba(245,208,122,0.60));
+        }
+
+        .header { text-align: center; margin-bottom: 32px; }
+
+        /* 顶部金色双线 */
+        .gold-rule {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .gold-rule::before,
+        .gold-rule::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-mid), transparent);
+        }
+        .gold-rule-diamond {
+            width: 6px; height: 6px;
+            background: var(--gold-bright);
+            transform: rotate(45deg);
+            box-shadow: 0 0 6px rgba(245,208,122,0.60);
+            flex-shrink: 0;
+        }
+
+        .main-title {
+            font-size: 26px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--gold-shimmer) 0%, var(--gold-bright) 40%, var(--gold-mid) 70%, var(--gold-bright) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 2px 8px rgba(197,151,58,0.30));
+        }
+        .sub-title {
+            font-size: 11px;
+            color: var(--gold-dark);
+            letter-spacing: 3px;
+        }
+
+        /* 条目 */
+        .item-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .luxury-item {
+            position: relative;
+            background: rgba(255,248,220,0.04);
+            border: 1px solid rgba(197,151,58,0.18);
+            border-radius: 14px;
+            padding: 18px 20px 16px 22px;
+            overflow: hidden;
+        }
+
+        /* 顶部金色细线 */
+        .luxury-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 20px; right: 20px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(245,208,122,0.40), transparent);
+        }
+
+        .item-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        /* 序号 */
+        .item-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gold-dark);
+            letter-spacing: 1px;
+            background: rgba(197,151,58,0.12);
+            border: 1px solid rgba(197,151,58,0.22);
+            border-radius: 4px;
+            padding: 2px 7px;
+            flex-shrink: 0;
+        }
+
+        .item-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--gold-bright);
+            flex: 1;
+            letter-spacing: 0.5px;
+        }
+
+        .item-desc {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.70;
+            padding-left: 2px;
+        }
+
+        /* 底部 */
+        .footer { margin-top: 28px; }
+        .footer .gold-rule { margin-bottom: 14px; }
+        .footer-text {
+            text-align: center;
+            font-size: 11px;
+            color: var(--gold-dark);
+            letter-spacing: 3px;
+        }
+
+        /* 下载按钮 */
+        .action-wrapper { width: 100%; max-width: var(--card-width); display: flex; justify-content: center; }
+        .download-btn {
+            background: linear-gradient(135deg, #1a1508, #2a2010);
+            color: var(--gold-bright);
+            border: 1px solid rgba(197,151,58,0.50);
+            border-radius: 50px;
+            padding: 14px 38px;
+            font-size: 14px; font-weight: 600;
+            font-family: 'Noto Sans SC', sans-serif;
+            letter-spacing: 1.5px; cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 0 20px rgba(197,151,58,0.15), inset 0 1px 0 rgba(245,208,122,0.12);
+            transition: all 0.25s ease;
+        }
+        .download-btn:hover {
+            border-color: rgba(197,151,58,0.80);
+            box-shadow: 0 0 32px rgba(197,151,58,0.28), inset 0 1px 0 rgba(245,208,122,0.20);
+        }
+        .download-btn:active { transform: scale(0.96); }
+        .download-btn:disabled { opacity: 0.40; cursor: not-allowed; }
+        .download-btn svg { width: 17px; height: 17px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <div class="poster-wrapper">
+        <div class="poster-container" id="poster">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+
+            <div class="content-layer">
+                <!-- ===== 用户数据区，修改这里的文字即可 ===== -->
+                <div class="crown-deco">♛</div>
+
+                <div class="header">
+                    <div class="gold-rule"><div class="gold-rule-diamond"></div></div>
+                    <h1 class="main-title">成功者的五项修炼</h1>
+                    <p class="sub-title">Five Disciplines of Excellence</p>
+                </div>
+
+                <div class="item-list">
+                    <div class="luxury-item">
+                        <div class="item-header">
+                            <span class="item-num">I</span>
+                            <span class="item-title">长期主义</span>
+                        </div>
+                        <p class="item-desc">放弃即时满足，投资于三年五年后才显现价值的事，时间是最好的复利机器</p>
+                    </div>
+                    <div class="luxury-item">
+                        <div class="item-header">
+                            <span class="item-num">II</span>
+                            <span class="item-title">深度专注</span>
+                        </div>
+                        <p class="item-desc">每天留出两小时的绝对专注时间，不被任何通知打断，这是普通人与卓越者的分水岭</p>
+                    </div>
+                    <div class="luxury-item">
+                        <div class="item-header">
+                            <span class="item-num">III</span>
+                            <span class="item-title">第一性原理</span>
+                        </div>
+                        <p class="item-desc">遇到问题先追问本质，剥开所有假设找到底层逻辑，再从零开始构建解决方案</p>
+                    </div>
+                    <div class="luxury-item">
+                        <div class="item-header">
+                            <span class="item-num">IV</span>
+                            <span class="item-title">能量管理</span>
+                        </div>
+                        <p class="item-desc">管理精力比管理时间更重要，在状态最佳的时间做最重要的事</p>
+                    </div>
+                    <div class="luxury-item">
+                        <div class="item-header">
+                            <span class="item-num">V</span>
+                            <span class="item-title">持续输出</span>
+                        </div>
+                        <p class="item-desc">思考产生认知，输出才能形成影响力，把每一次表达当作打磨自己的机会</p>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <div class="gold-rule"><div class="gold-rule-diamond"></div></div>
+                    <p class="footer-text">— 卓越之道 · 黑金典藏 —</p>
+                </div>
+                <!-- ===== 数据区结束 ===== -->
+            </div>
+        </div>
+    </div>
+
+    <div class="action-wrapper">
+        <button class="download-btn" id="downloadBtn">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <span id="btnText">保存为高清图片</span>
+        </button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('downloadBtn');
+        const btnTxt = document.getElementById('btnText');
+        const poster = document.getElementById('poster');
+        btn.addEventListener('click', () => {
+            const orig = btnTxt.innerText;
+            btnTxt.innerText = '正在生成超清原图...';
+            btn.disabled = true;
+            const blobs = poster.querySelectorAll('.blob');
+            blobs.forEach(b => b.style.animation = 'none');
+            htmlToImage.toPng(poster, { pixelRatio: 3, style: { transform: 'none' } })
+            .then(dataUrl => {
+                const a = document.createElement('a');
+                a.download = 'card-black-gold.png'; a.href = dataUrl; a.click();
+                btnTxt.innerText = '保存成功 ✅';
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; blobs.forEach(b => b.style.animation = ''); }, 2000);
+            })
+            .catch(err => {
+                console.error(err); btnTxt.innerText = '生成失败，请重试';
+                blobs.forEach(b => b.style.animation = '');
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

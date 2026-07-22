@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>粘土风模板 · Mobile 竖版</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Noto Sans SC', "PingFang SC", sans-serif; }
+
+        :root {
+            /* === 用户可修改区域 === */
+            --card-width: 420px;
+            --bg-page:    #f0e8f8;
+            --bg-card:    #f8f4ff;
+            --clay-purple: #c084fc;
+            --clay-pink:   #f472b6;
+            --clay-yellow: #fbbf24;
+            --clay-green:  #34d399;
+            --clay-blue:   #60a5fa;
+            --clay-orange: #fb923c;
+            --text-primary:   #3b1f5e;
+            --text-secondary: #6b4f8a;
+            --text-light:     #a78ec0;
+            --border-radius: 32px;
+        }
+
+        body {
+            background: var(--bg-page);
+            /* 背景小圆点 */
+            background-image: radial-gradient(circle, rgba(192,132,252,0.18) 1.5px, transparent 1.5px);
+            background-size: 28px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            gap: 32px;
+        }
+
+        .poster-wrapper {
+            width: 100%;
+            max-width: var(--card-width);
+            border-radius: var(--border-radius);
+            /* 粘土感：多层柔和阴影堆叠 */
+            box-shadow:
+                0 4px 0 rgba(192,132,252,0.35),
+                0 8px 0 rgba(192,132,252,0.18),
+                0 16px 40px rgba(139,92,246,0.18);
+        }
+
+        .poster-container {
+            position: relative;
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            padding: 40px 24px 36px;
+            min-height: 800px;
+            overflow: hidden;
+            /* 卡片顶部内发光增加立体感 */
+            box-shadow: inset 0 2px 0 rgba(255,255,255,0.90);
+        }
+
+        /* 气泡：柔和、大、低透明度 */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(55px);
+            opacity: 0.35;
+            animation: float 10s ease-in-out infinite;
+        }
+        .blob-1 { width: 260px; height: 260px; background: var(--clay-purple); top: -60px;   left: -60px;   animation-delay: 0s; }
+        .blob-2 { width: 240px; height: 240px; background: var(--clay-pink);   bottom: -50px; right: -50px;  animation-delay: 3.5s; }
+        .blob-3 { width: 180px; height: 180px; background: var(--clay-blue);   top: 43%;     left: 33%;     animation-delay: 7s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50%       { transform: translateY(-16px) rotate(5deg); }
+        }
+
+        .content-layer { position: relative; z-index: 10; }
+
+        /* 标题区 */
+        .header { text-align: center; margin-bottom: 28px; }
+
+        /* 顶部彩色点缀条 */
+        .dot-row {
+            display: flex;
+            justify-content: center;
+            gap: 7px;
+            margin-bottom: 16px;
+        }
+        .dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+        }
+        .dot:nth-child(1) { background: var(--clay-purple); box-shadow: 0 2px 0 rgba(192,132,252,0.40); }
+        .dot:nth-child(2) { background: var(--clay-pink);   box-shadow: 0 2px 0 rgba(244,114,182,0.40); }
+        .dot:nth-child(3) { background: var(--clay-yellow); box-shadow: 0 2px 0 rgba(251,191,36,0.40); }
+        .dot:nth-child(4) { background: var(--clay-green);  box-shadow: 0 2px 0 rgba(52,211,153,0.40); }
+        .dot:nth-child(5) { background: var(--clay-blue);   box-shadow: 0 2px 0 rgba(96,165,250,0.40); }
+
+        .main-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .sub-title { font-size: 12px; color: var(--text-light); letter-spacing: 1.5px; }
+
+        /* 条目外层：奶油白圆角大卡 */
+        .item-list { display: flex; flex-direction: column; gap: 14px; }
+
+        .clay-item {
+            position: relative;
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 18px 20px 16px;
+            /* 粘土多层阴影：底部实色 + 扩散柔影 */
+            box-shadow:
+                0 3px 0 rgba(192,132,252,0.25),
+                0 6px 18px rgba(139,92,246,0.10);
+            border: none;
+            /* 顶部内发光 */
+            box-shadow:
+                0 3px 0 rgba(192,132,252,0.22),
+                0 6px 18px rgba(139,92,246,0.10),
+                inset 0 1px 0 rgba(255,255,255,0.95);
+        }
+
+        .item-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        /* 彩色圆形序号徽章 */
+        .item-badge {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 900;
+            color: #fff;
+            flex-shrink: 0;
+            /* 徽章粘土感阴影 */
+        }
+        .clay-item:nth-child(5n+1) .item-badge { background: var(--clay-purple); box-shadow: 0 3px 0 rgba(147,51,234,0.35); }
+        .clay-item:nth-child(5n+2) .item-badge { background: var(--clay-pink);   box-shadow: 0 3px 0 rgba(219,39,119,0.35); }
+        .clay-item:nth-child(5n+3) .item-badge { background: var(--clay-yellow); box-shadow: 0 3px 0 rgba(217,119,6,0.35); }
+        .clay-item:nth-child(5n+4) .item-badge { background: var(--clay-green);  box-shadow: 0 3px 0 rgba(5,150,105,0.35); }
+        .clay-item:nth-child(5n+0) .item-badge { background: var(--clay-blue);   box-shadow: 0 3px 0 rgba(37,99,235,0.35); }
+
+        .item-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        /* 标签 emoji 装饰 */
+        .item-emoji {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .item-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.68;
+            padding-left: 42px; /* 与徽章宽度对齐 */
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+        }
+        .footer-dot-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .footer-dot {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--clay-purple);
+            opacity: 0.35;
+        }
+        .footer-text { font-size: 12px; color: var(--text-light); letter-spacing: 1.5px; }
+
+        /* 下载按钮 */
+        .action-wrapper { width: 100%; max-width: var(--card-width); display: flex; justify-content: center; }
+        .download-btn {
+            background: linear-gradient(135deg, var(--clay-purple), var(--clay-pink));
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 36px;
+            font-size: 15px; font-weight: 700;
+            font-family: 'Noto Sans SC', sans-serif;
+            cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
+            /* 粘土按钮阴影 */
+            box-shadow:
+                0 4px 0 rgba(147,51,234,0.40),
+                0 8px 20px rgba(192,132,252,0.30);
+            transition: all 0.15s ease;
+        }
+        .download-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 rgba(147,51,234,0.40), 0 12px 28px rgba(192,132,252,0.38); }
+        .download-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(147,51,234,0.40), 0 4px 10px rgba(192,132,252,0.20); }
+        .download-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+        .download-btn svg { width: 18px; height: 18px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <div class="poster-wrapper">
+        <div class="poster-container" id="poster">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+
+            <div class="content-layer">
+                <!-- ===== 用户数据区，修改这里的文字即可 ===== -->
+                <div class="header">
+                    <div class="dot-row">
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        <div class="dot"></div><div class="dot"></div>
+                    </div>
+                    <h1 class="main-title">学好英语的五个方法 🌟</h1>
+                    <p class="sub-title">Five Ways to Learn English</p>
+                </div>
+
+                <div class="item-list">
+                    <div class="clay-item">
+                        <div class="item-header">
+                            <div class="item-badge">1</div>
+                            <span class="item-title">每日大量输入</span>
+                            <span class="item-emoji">📖</span>
+                        </div>
+                        <p class="item-desc">每天保证 30 分钟沉浸式阅读或听力，让大脑习惯英语的语感和节奏</p>
+                    </div>
+                    <div class="clay-item">
+                        <div class="item-header">
+                            <div class="item-badge">2</div>
+                            <span class="item-title">用英语思考</span>
+                            <span class="item-emoji">💭</span>
+                        </div>
+                        <p class="item-desc">遇到事物先想英文词，逼自己不走翻译的弯路，直接建立概念与语言的连接</p>
+                    </div>
+                    <div class="clay-item">
+                        <div class="item-header">
+                            <div class="item-badge">3</div>
+                            <span class="item-title">开口不怕错</span>
+                            <span class="item-emoji">🎤</span>
+                        </div>
+                        <p class="item-desc">哪怕语法不对也要说出来，流利度比准确度更重要，会说才能越说越好</p>
+                    </div>
+                    <div class="clay-item">
+                        <div class="item-header">
+                            <div class="item-badge">4</div>
+                            <span class="item-title">词不离境记忆</span>
+                            <span class="item-emoji">🧩</span>
+                        </div>
+                        <p class="item-desc">不背孤立单词，在句子和故事里学词汇，上下文帮你记住也帮你会用</p>
+                    </div>
+                    <div class="clay-item">
+                        <div class="item-header">
+                            <div class="item-badge">5</div>
+                            <span class="item-title">找到兴趣入口</span>
+                            <span class="item-emoji">🎮</span>
+                        </div>
+                        <p class="item-desc">用英语追你喜欢的剧、游戏、播客，快乐才是最持久的学习动力</p>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <div class="footer-dot-row">
+                        <div class="footer-dot"></div><div class="footer-dot"></div><div class="footer-dot"></div>
+                    </div>
+                    <p class="footer-text">— 学习笔记 · 一起加油 💪 —</p>
+                </div>
+                <!-- ===== 数据区结束 ===== -->
+            </div>
+        </div>
+    </div>
+
+    <div class="action-wrapper">
+        <button class="download-btn" id="downloadBtn">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <span id="btnText">保存为高清图片</span>
+        </button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('downloadBtn');
+        const btnTxt = document.getElementById('btnText');
+        const poster = document.getElementById('poster');
+        btn.addEventListener('click', () => {
+            const orig = btnTxt.innerText;
+            btnTxt.innerText = '正在生成超清原图...';
+            btn.disabled = true;
+            const blobs = poster.querySelectorAll('.blob');
+            blobs.forEach(b => b.style.animation = 'none');
+            htmlToImage.toPng(poster, { pixelRatio: 3, style: { transform: 'none' } })
+            .then(dataUrl => {
+                const a = document.createElement('a');
+                a.download = 'card-clay.png'; a.href = dataUrl; a.click();
+                btnTxt.innerText = '保存成功 ✅';
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; blobs.forEach(b => b.style.animation = ''); }, 2000);
+            })
+            .catch(err => {
+                console.error(err); btnTxt.innerText = '生成失败，请重试';
+                blobs.forEach(b => b.style.animation = '');
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

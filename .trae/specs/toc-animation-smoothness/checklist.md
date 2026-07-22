@@ -1,0 +1,3 @@
+- [x] Liquid glass TOC indicator moves smoothly even over long distances (clicking distant items).
+- [x] Rapid scrolling does not cause jitter in the active indicator.
+- [x] 3-round review completed successfully.

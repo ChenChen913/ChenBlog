@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>复古像素模板 · Mobile 竖版</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            /* === 用户可修改区域 === */
+            --card-width: 420px;
+            --px-black:   #1a1a2e;   /* 深蓝黑底 */
+            --px-dark:    #16213e;   /* 卡片深底 */
+            --px-green:   #00ff41;   /* 像素绿（主色） */
+            --px-yellow:  #ffd700;   /* 像素黄 */
+            --px-red:     #ff3c3c;   /* 像素红 */
+            --px-blue:    #00bfff;   /* 像素蓝 */
+            --px-purple:  #bf5fff;   /* 像素紫 */
+            --px-white:   #e8e8e8;   /* 文字白 */
+            --px-gray:    #666688;   /* 次要文字 */
+            --border-radius: 4px;    /* 像素风：极小圆角 */
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--px-black);
+            /* 像素网格背景 */
+            background-image:
+                linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+            background-size: 16px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            gap: 32px;
+        }
+
+        .poster-wrapper {
+            width: 100%;
+            max-width: var(--card-width);
+            /* 像素风边框：实色多层偏移 */
+            border-radius: var(--border-radius);
+            box-shadow:
+                4px 4px 0 var(--px-green),
+                8px 8px 0 rgba(0,255,65,0.25);
+        }
+
+        .poster-container {
+            position: relative;
+            width: 100%;
+            background: var(--px-dark);
+            border-radius: var(--border-radius);
+            border: 2px solid var(--px-green);
+            padding: 36px 24px 32px;
+            min-height: 800px;
+            overflow: hidden;
+        }
+
+        /* 扫描线效果 */
+        .poster-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 3px,
+                rgba(0,0,0,0.08) 3px,
+                rgba(0,0,0,0.08) 4px
+            );
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        /* 气泡（像素风改为角落光晕） */
+        .blob {
+            position: absolute;
+            border-radius: 0;   /* 像素风：方形光晕 */
+            filter: blur(60px);
+            opacity: 0.12;
+            animation: float 12s ease-in-out infinite;
+        }
+        .blob-1 { width: 250px; height: 250px; background: var(--px-green);  top: -80px;   left: -80px;   animation-delay: 0s; }
+        .blob-2 { width: 200px; height: 200px; background: var(--px-purple); bottom: -60px; right: -60px;  animation-delay: 5s; }
+        .blob-3 { width: 160px; height: 160px; background: var(--px-blue);   top: 40%;     left: 40%;     animation-delay: 10s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-14px); }
+        }
+
+        .content-layer { position: relative; z-index: 10; }
+
+        /* 标题区 */
+        .header { text-align: center; margin-bottom: 28px; }
+
+        .pixel-badge {
+            display: inline-block;
+            background: var(--px-green);
+            color: var(--px-black);
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            padding: 5px 10px;
+            border-radius: 2px;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+            box-shadow: 2px 2px 0 rgba(0,255,65,0.40);
+        }
+
+        .main-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 14px;
+            color: var(--px-green);
+            letter-spacing: 1px;
+            line-height: 1.8;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0,255,65,0.50);
+        }
+        .sub-title {
+            font-size: 11px;
+            color: var(--px-gray);
+            letter-spacing: 2px;
+        }
+
+        /* 像素分割线 */
+        .px-divider {
+            width: 100%;
+            height: 2px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--px-green) 0px, var(--px-green) 8px,
+                transparent 8px, transparent 12px
+            );
+            margin: 20px 0;
+            opacity: 0.40;
+        }
+
+        /* 条目列表 */
+        .item-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .pixel-item {
+            position: relative;
+            background: rgba(0,255,65,0.04);
+            border: 1px solid rgba(0,255,65,0.18);
+            border-radius: 2px;
+            padding: 15px 18px 13px 56px;
+            /* 像素感偏移阴影 */
+            box-shadow: 2px 2px 0 rgba(0,255,65,0.12);
+        }
+
+        /* 左侧序号块 */
+        .item-num {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: 'Press Start 2P', monospace;
+            font-size: 13px;
+            line-height: 1;
+            width: 28px;
+            text-align: center;
+        }
+        .pixel-item:nth-child(5n+1) .item-num { color: var(--px-green); }
+        .pixel-item:nth-child(5n+2) .item-num { color: var(--px-yellow); }
+        .pixel-item:nth-child(5n+3) .item-num { color: var(--px-blue); }
+        .pixel-item:nth-child(5n+4) .item-num { color: var(--px-red); }
+        .pixel-item:nth-child(5n+0) .item-num { color: var(--px-purple); }
+
+        /* 左侧颜色竖条 */
+        .pixel-item::before {
+            content: '';
+            position: absolute;
+            left: 44px; top: 10px; bottom: 10px;
+            width: 2px;
+        }
+        .pixel-item:nth-child(5n+1)::before { background: var(--px-green); }
+        .pixel-item:nth-child(5n+2)::before { background: var(--px-yellow); }
+        .pixel-item:nth-child(5n+3)::before { background: var(--px-blue); }
+        .pixel-item:nth-child(5n+4)::before { background: var(--px-red); }
+        .pixel-item:nth-child(5n+0)::before { background: var(--px-purple); }
+
+        .item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+
+        .item-tag {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            padding: 3px 6px;
+            border-radius: 2px;
+            letter-spacing: 0.5px;
+            border: 1px solid;
+        }
+        .pixel-item:nth-child(5n+1) .item-tag { color: var(--px-green);  border-color: rgba(0,255,65,0.40);  background: rgba(0,255,65,0.08); }
+        .pixel-item:nth-child(5n+2) .item-tag { color: var(--px-yellow); border-color: rgba(255,215,0,0.40); background: rgba(255,215,0,0.08); }
+        .pixel-item:nth-child(5n+3) .item-tag { color: var(--px-blue);   border-color: rgba(0,191,255,0.40); background: rgba(0,191,255,0.08); }
+        .pixel-item:nth-child(5n+4) .item-tag { color: var(--px-red);    border-color: rgba(255,60,60,0.40);  background: rgba(255,60,60,0.08); }
+        .pixel-item:nth-child(5n+0) .item-tag { color: var(--px-purple); border-color: rgba(191,95,255,0.40); background: rgba(191,95,255,0.08); }
+
+        .item-title { font-size: 14px; font-weight: 700; color: var(--px-white); flex: 1; }
+        .item-desc  { font-size: 12.5px; color: var(--px-gray); line-height: 1.65; }
+
+        /* 底部 */
+        .footer { text-align: center; margin-top: 24px; }
+        .footer-text {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            color: var(--px-gray);
+            letter-spacing: 1px;
+            opacity: 0.60;
+        }
+
+        /* 下载按钮 */
+        .action-wrapper { width: 100%; max-width: var(--card-width); display: flex; justify-content: center; }
+        .download-btn {
+            background: var(--px-green);
+            color: var(--px-black);
+            border: none;
+            border-radius: 2px;
+            padding: 14px 32px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 4px 4px 0 rgba(0,255,65,0.40);
+            transition: all 0.1s ease;
+        }
+        .download-btn:hover  { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 rgba(0,255,65,0.50); }
+        .download-btn:active { transform: translate(2px, 2px);   box-shadow: 2px 2px 0 rgba(0,255,65,0.40); }
+        .download-btn:disabled { opacity: 0.50; cursor: not-allowed; transform: none; }
+        .download-btn svg { width: 16px; height: 16px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <div class="poster-wrapper">
+        <div class="poster-container" id="poster">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+
+            <div class="content-layer">
+                <!-- ===== 用户数据区，修改这里的文字即可 ===== -->
+                <div class="header">
+                    <div class="pixel-badge">▶ LOADING...</div>
+                    <h1 class="main-title">程序员的<br>五大戒律</h1>
+                    <p class="sub-title">Five Rules for Developers</p>
+                </div>
+
+                <div class="px-divider"></div>
+
+                <div class="item-list">
+                    <div class="pixel-item">
+                        <span class="item-num">01</span>
+                        <div class="item-header"><span class="item-tag">RULE</span><span class="item-title">先读文档，再写代码</span></div>
+                        <p class="item-desc">80% 的 Bug 来自没有仔细阅读文档，花在文档上的时间永远值得</p>
+                    </div>
+                    <div class="pixel-item">
+                        <span class="item-num">02</span>
+                        <div class="item-header"><span class="item-tag">RULE</span><span class="item-title">命名即注释</span></div>
+                        <p class="item-desc">变量名和函数名要能自解释，好的命名让注释变成多余的</p>
+                    </div>
+                    <div class="pixel-item">
+                        <span class="item-num">03</span>
+                        <div class="item-header"><span class="item-tag">RULE</span><span class="item-title">小步提交，常常提交</span></div>
+                        <p class="item-desc">每个 commit 只做一件事，便于回溯、便于 review、便于回滚</p>
+                    </div>
+                    <div class="pixel-item">
+                        <span class="item-num">04</span>
+                        <div class="item-header"><span class="item-tag">RULE</span><span class="item-title">写测试是为自己省事</span></div>
+                        <p class="item-desc">觉得写测试浪费时间的，一定没有深夜因为回归问题改 Bug</p>
+                    </div>
+                    <div class="pixel-item">
+                        <span class="item-num">05</span>
+                        <div class="item-header"><span class="item-tag">RULE</span><span class="item-title">不要过早优化</span></div>
+                        <p class="item-desc">先让它跑起来，再让它跑对，最后才让它跑快</p>
+                    </div>
+                </div>
+
+                <div class="px-divider"></div>
+
+                <div class="footer">
+                    <p class="footer-text">-- DEV NOTES v1.0 --</p>
+                </div>
+                <!-- ===== 数据区结束 ===== -->
+            </div>
+        </div>
+    </div>
+
+    <div class="action-wrapper">
+        <button class="download-btn" id="downloadBtn">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <span id="btnText">SAVE PNG</span>
+        </button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('downloadBtn');
+        const btnTxt = document.getElementById('btnText');
+        const poster = document.getElementById('poster');
+        btn.addEventListener('click', () => {
+            const orig = btnTxt.innerText;
+            btnTxt.innerText = 'SAVING...';
+            btn.disabled = true;
+            const blobs = poster.querySelectorAll('.blob');
+            blobs.forEach(b => b.style.animation = 'none');
+            htmlToImage.toPng(poster, { pixelRatio: 3, style: { transform: 'none' } })
+            .then(dataUrl => {
+                const a = document.createElement('a');
+                a.download = 'card-pixel.png'; a.href = dataUrl; a.click();
+                btnTxt.innerText = 'SAVED! ✅';
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; blobs.forEach(b => b.style.animation = ''); }, 2000);
+            })
+            .catch(err => {
+                console.error(err); btnTxt.innerText = 'ERROR!';
+                blobs.forEach(b => b.style.animation = '');
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

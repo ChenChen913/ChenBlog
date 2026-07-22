@@ -1,0 +1,36 @@
+# Windows reserved device name junk (cannot be deleted, must be ignored)
+/nul
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Vite cache & build info
+*.tsbuildinfo
+
+# Logs
+vite-dev*.log
+vite-dev*.err.log
+
+# Test artifacts
+playwright-report/
+test-results/
+
+# Local backups (refactor safety net, not for remote)
+backups/
+
+# WorkBuddy workspace data (local only)
+.workbuddy/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

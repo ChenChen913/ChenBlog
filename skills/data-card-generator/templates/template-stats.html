@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>数据统计模板 · 大数字风格</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Noto Sans SC', "PingFang SC", "Microsoft YaHei", sans-serif; }
+
+        :root {
+            /* === 用户可修改区域 === */
+            --card-width: 420px;
+            /* 深靛金朱配色 — 适合商业/数据类内容 */
+            --bg-page:   #141928;
+            --bg-card:   #1a2138;
+            --bg-stat:   #212840;
+            --accent:    #ecb365;    /* 琥珀金 */
+            --accent-2:  #c84b31;    /* 朱红 */
+            --accent-3:  #4a6fa5;    /* 深蓝 */
+            --text-pri:  #f0ece0;
+            --text-sec:  #a09880;
+            --text-dim:  #5a5545;
+            --border:    rgba(236,179,101,0.12);
+            --border-radius: 24px;
+        }
+
+        body {
+            background: var(--bg-page);
+            background-image: radial-gradient(ellipse 80% 40% at 50% 0%,
+                rgba(236,179,101,0.06) 0%, transparent 60%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            gap: 28px;
+        }
+
+        .poster-wrapper {
+            width: 100%;
+            max-width: var(--card-width);
+            border-radius: var(--border-radius);
+            box-shadow:
+                0 0 0 1px rgba(236,179,101,0.15),
+                0 24px 60px rgba(0,0,0,0.60);
+        }
+
+        .poster-container {
+            position: relative;
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            padding: 36px 24px 32px;
+            min-height: 800px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 顶部金色光晕 */
+        .poster-container::before {
+            content: '';
+            position: absolute;
+            top: -60px; left: 50%;
+            transform: translateX(-50%);
+            width: 300px; height: 180px;
+            background: radial-gradient(ellipse, rgba(236,179,101,0.12), transparent 70%);
+            z-index: 0;
+        }
+
+        /* 细腻斜纹暗纹 */
+        .poster-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(236,179,101,0.02) 0px, rgba(236,179,101,0.02) 1px,
+                transparent 1px, transparent 20px
+            );
+            z-index: 0;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: 0.12;
+            animation: float 13s ease-in-out infinite;
+        }
+        .blob-1 { width: 300px; height: 300px; background: var(--accent);   top: -80px;   left: -80px;   animation-delay: 0s; }
+        .blob-2 { width: 240px; height: 240px; background: var(--accent-2); bottom: -60px; right: -60px;  animation-delay: 5s; }
+        .blob-3 { width: 180px; height: 180px; background: var(--accent-3); top: 45%;     left: 38%;     animation-delay: 10s; }
+
+        @keyframes float {
+            0%,100% { transform: translateY(0); }
+            50%      { transform: translateY(-16px); }
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 10;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── 标题区 ── */
+        .header { margin-bottom: 28px; flex-shrink: 0; }
+        .kicker {
+            font-size: 10px; font-weight: 700;
+            letter-spacing: 3px; color: var(--accent);
+            margin-bottom: 8px;
+        }
+        .main-title {
+            font-size: 24px; font-weight: 900;
+            color: var(--text-pri);
+            line-height: 1.35; letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .sub-title { font-size: 12px; color: var(--text-sec); line-height: 1.5; }
+
+        /* ── 顶部核心大数字（主指标） ── */
+        .hero-stat {
+            background: var(--bg-stat);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 22px 24px;
+            margin-bottom: 16px;
+            flex-shrink: 0;
+            /* 顶部金色高光 */
+            box-shadow: inset 0 1px 0 rgba(236,179,101,0.15),
+                        0 4px 20px rgba(0,0,0,0.30);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-stat::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+        .hero-label {
+            font-size: 11px; font-weight: 500;
+            color: var(--text-dim); letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+        .hero-number {
+            font-size: 56px; font-weight: 900;
+            color: var(--accent);
+            line-height: 1; letter-spacing: -2px;
+            margin-bottom: 4px;
+        }
+        .hero-number .unit {
+            font-size: 22px; font-weight: 700;
+            letter-spacing: 0;
+            vertical-align: super;
+            margin-left: 2px;
+        }
+        .hero-desc { font-size: 12px; color: var(--text-sec); }
+
+        /* ── 次级统计网格 ── */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-shrink: 0;
+        }
+
+        .stat-cell {
+            background: var(--bg-stat);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 16px 14px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        /* 左上角彩色角标 */
+        .stat-cell::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 32px; height: 2px;
+        }
+        .stat-cell:nth-child(1)::before { background: var(--accent); }
+        .stat-cell:nth-child(2)::before { background: var(--accent-2); }
+        .stat-cell:nth-child(3)::before { background: var(--accent-3); }
+        .stat-cell:nth-child(4)::before { background: #7c9e8f; }
+
+        .stat-label {
+            font-size: 10px; color: var(--text-dim);
+            letter-spacing: 1.5px; margin-bottom: 6px;
+        }
+        .stat-number {
+            font-size: 28px; font-weight: 900;
+            line-height: 1; letter-spacing: -1px;
+            margin-bottom: 4px;
+        }
+        .stat-cell:nth-child(1) .stat-number { color: var(--accent); }
+        .stat-cell:nth-child(2) .stat-number { color: var(--accent-2); }
+        .stat-cell:nth-child(3) .stat-number { color: var(--accent-3); }
+        .stat-cell:nth-child(4) .stat-number { color: #7c9e8f; }
+
+        .stat-unit { font-size: 13px; font-weight: 600; opacity: 0.80; }
+        .stat-trend {
+            font-size: 10.5px; color: var(--text-sec);
+            display: flex; align-items: center; gap: 3px;
+        }
+        .trend-up   { color: #55efc4; }
+        .trend-down { color: #ff7675; }
+
+        /* ── 底部洞察文本 ── */
+        .insight-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            justify-content: flex-end;
+        }
+        .insight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 11px 13px;
+        }
+        .insight-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+        .insight-item:nth-child(1) .insight-dot { background: var(--accent); }
+        .insight-item:nth-child(2) .insight-dot { background: var(--accent-2); }
+        .insight-item:nth-child(3) .insight-dot { background: var(--accent-3); }
+        .insight-text { font-size: 12px; color: var(--text-sec); line-height: 1.62; }
+        .insight-text b { color: var(--text-pri); font-weight: 600; }
+
+        /* ── 底部署名 ── */
+        .footer {
+            flex-shrink: 0;
+            margin-top: 20px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-brand { font-size: 10px; color: var(--text-dim); letter-spacing: 1.5px; }
+        .footer-date  { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; }
+
+        /* ── 下载按钮 ── */
+        .action-wrapper {
+            width: 100%;
+            max-width: var(--card-width);
+            display: flex; justify-content: center;
+        }
+        .download-btn {
+            background: linear-gradient(135deg, var(--accent), #d4963a);
+            color: #1a1000;
+            border: none; border-radius: 50px;
+            padding: 14px 36px;
+            font-size: 14px; font-weight: 700;
+            font-family: 'Noto Sans SC', sans-serif;
+            cursor: pointer; display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 20px rgba(236,179,101,0.30);
+            transition: all 0.2s ease;
+        }
+        .download-btn:hover  { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(236,179,101,0.42); }
+        .download-btn:active { transform: scale(0.96); }
+        .download-btn:disabled { opacity: 0.50; cursor: not-allowed; transform: none; }
+        .download-btn svg { width: 17px; height: 17px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <div class="poster-wrapper">
+        <div class="poster-container" id="poster">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+
+            <div class="content-layer">
+                <!-- ===== 用户数据区，修改这里的文字即可 ===== -->
+
+                <div class="header">
+                    <p class="kicker">ANNUAL REPORT · 2025</p>
+                    <h1 class="main-title">中国 AI 产业<br>年度数据报告</h1>
+                    <p class="sub-title">核心指标一览 · 数据来源：中国信通院</p>
+                </div>
+
+                <!-- 主指标（大数字） -->
+                <div class="hero-stat">
+                    <p class="hero-label">全年市场规模</p>
+                    <div class="hero-number">4.2<span class="unit">万亿</span></div>
+                    <p class="hero-desc">同比增长 38.6%，连续三年超预期</p>
+                </div>
+
+                <!-- 次级统计网格（4 格，可改为 2 格或 6 格） -->
+                <div class="stat-grid">
+                    <div class="stat-cell">
+                        <p class="stat-label">企业数量</p>
+                        <div class="stat-number">4,300<span class="stat-unit">家</span></div>
+                        <p class="stat-trend"><span class="trend-up">↑</span> 较上年 +22%</p>
+                    </div>
+                    <div class="stat-cell">
+                        <p class="stat-label">专利申请</p>
+                        <div class="stat-number">89<span class="stat-unit">万件</span></div>
+                        <p class="stat-trend"><span class="trend-up">↑</span> 全球占比 41%</p>
+                    </div>
+                    <div class="stat-cell">
+                        <p class="stat-label">融资总额</p>
+                        <div class="stat-number">680<span class="stat-unit">亿</span></div>
+                        <p class="stat-trend"><span class="trend-down">↓</span> 较峰值回落 18%</p>
+                    </div>
+                    <div class="stat-cell">
+                        <p class="stat-label">从业人员</p>
+                        <div class="stat-number">320<span class="stat-unit">万</span></div>
+                        <p class="stat-trend"><span class="trend-up">↑</span> 新增 45 万人</p>
+                    </div>
+                </div>
+
+                <!-- 关键洞察 -->
+                <div class="insight-list">
+                    <div class="insight-item">
+                        <div class="insight-dot"></div>
+                        <p class="insight-text"><b>大模型赛道</b>占全部融资的 52%，成为吸金最多的细分领域</p>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-dot"></div>
+                        <p class="insight-text"><b>政策红利</b>加速落地，17 个省市出台专项 AI 产业扶持政策</p>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-dot"></div>
+                        <p class="insight-text"><b>出海势头</b>强劲，国内 AI 企业海外收入同比增长 67%</p>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <span class="footer-brand">AI 探索笔记 · 数据整理</span>
+                    <span class="footer-date">2025 全年</span>
+                </div>
+
+                <!-- ===== 数据区结束 ===== -->
+            </div>
+        </div>
+    </div>
+
+    <div class="action-wrapper">
+        <button class="download-btn" id="downloadBtn">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <span id="btnText">保存为高清图片</span>
+        </button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('downloadBtn');
+        const btnTxt = document.getElementById('btnText');
+        const poster = document.getElementById('poster');
+        btn.addEventListener('click', () => {
+            const orig = btnTxt.innerText;
+            btnTxt.innerText = '正在生成超清原图...';
+            btn.disabled = true;
+            const blobs = poster.querySelectorAll('.blob');
+            blobs.forEach(b => b.style.animation = 'none');
+            htmlToImage.toPng(poster, { pixelRatio: 3, style: { transform: 'none' } })
+            .then(dataUrl => {
+                const a = document.createElement('a');
+                a.download = 'card-stats.png'; a.href = dataUrl; a.click();
+                btnTxt.innerText = '保存成功 ✅';
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; blobs.forEach(b => b.style.animation = ''); }, 2000);
+            })
+            .catch(err => {
+                console.error(err); btnTxt.innerText = '生成失败，请重试';
+                blobs.forEach(b => b.style.animation = '');
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

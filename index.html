@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>MaoChen - Personal Blog</title>
+  
+  <!-- Security Meta Tags -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval';
+    style-src 'self' 'unsafe-inline';
+    font-src 'self' data:;
+    img-src 'self' https: data: blob:;
+    media-src 'self' https: data: blob:;
+    connect-src 'self' https: http: ws: wss:;
+    frame-src https://www.youtube.com https://player.bilibili.com;
+    object-src 'none';
+    base-uri 'self';
+  ">
+  
+  <!-- SEO Meta -->
+  <meta name="description" content="MaoChen's personal blog - A digital garden sharing thoughts on technology, life, and everything in between.">
+  <meta name="keywords" content="blog, technology, React, TypeScript, frontend, web development">
+  <meta name="author" content="MaoChen">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MaoChen - Personal Blog">
+  <meta property="og:description" content="MaoChen's personal blog - A digital garden sharing thoughts on technology, life, and everything in between.">
+  <meta property="og:url" content="https://your-domain.com/">
+  <meta property="og:site_name" content="MaoChen Blog">
+  <meta property="og:locale" content="zh_CN">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MaoChen - Personal Blog">
+  <meta name="twitter:description" content="MaoChen's personal blog - A digital garden sharing thoughts on technology, life, and everything in between.">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- Code Font: JetBrains Mono (loaded locally via @font-face in index.css) -->
+</head>
+<body class="bg-background text-on-background dark:bg-stone-900 dark:text-stone-200 transition-colors duration-300">
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

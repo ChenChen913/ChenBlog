@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+body {
+  background-color: #f9f9f7;
+  color: #2d3432;
+}
+
+.dark body {
+  background-color: #1c1c1a;
+  color: #e6e2d9;
+}
+
+/* Global transitions */
+*, *::before, *::after {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease;
+}
+
+.hljs-keyword, .hljs-string, .hljs-comment, .hljs-number { transition: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* Code block line numbers */
+.code-content {
+  counter-reset: line-number;
+}
+.code-line {
+  display: block;
+  position: relative;
+  padding-left: 54px;
+  padding-right: 20px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  min-height: 1.6em;
+  line-height: 1.6;
+  counter-increment: line-number;
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  font-size: 13px;
+}
+.code-line::before {
+  content: counter(line-number);
+  position: absolute;
+  left: 0;
+  width: 38px;
+  text-align: right;
+  color: #adb3b0;
+  font-size: 12px;
+  line-height: 1.6;
+  user-select: none;
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .code-line:hover {
+    background: rgba(98, 95, 75, 0.04);
+  }
+  .dark .code-line:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}

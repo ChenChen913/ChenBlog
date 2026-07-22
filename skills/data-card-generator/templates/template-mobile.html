@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>单卡片模板 · Mobile 竖版</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans SC', "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        :root {
+            /* === 用户可修改区域 === */
+            --card-width: 420px;
+            --card-bg: linear-gradient(135deg, #f0f4ff 0%, #ffffff 100%);
+            --accent-color-1: #a1c4fd;   /* 气泡色 1 */
+            --accent-color-2: #ffc3a0;   /* 气泡色 2 */
+            --accent-color-3: #ffafbd;   /* 气泡色 3 */
+            --title-gradient: linear-gradient(135deg, #4A00E0, #8E2DE2);
+            --text-primary: #333333;
+            --text-secondary: #555555;
+            --text-light: #777777;
+            --border-radius: 30px;
+        }
+
+        body {
+            background-color: #eef2f6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            gap: 32px;
+        }
+
+        /* 单卡片包裹器 */
+        .poster-wrapper {
+            width: 100%;
+            max-width: var(--card-width);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.10);
+            border-radius: var(--border-radius);
+        }
+
+        /* 被截图的卡片区域 */
+        .poster-container {
+            position: relative;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 40px 25px;
+            min-height: 800px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 液态气泡背景 */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(50px);
+            opacity: 0.9;
+            animation: float 9s ease-in-out infinite;
+        }
+        .blob-1 { top: -10%; left: -15%;  width: 280px; height: 280px; background: var(--accent-color-1); animation-delay: 0s; }
+        .blob-2 { bottom: -5%; right: -15%; width: 260px; height: 260px; background: var(--accent-color-2); animation-delay: 3s; }
+        .blob-3 { top: 40%; left: 30%;   width: 180px; height: 180px; background: var(--accent-color-3); animation-delay: 6s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50%       { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        .content-layer { position: relative; z-index: 10; }
+
+        /* 标题区 */
+        .header { text-align: center; margin-bottom: 30px; }
+        .main-title {
+            font-size: 28px;
+            font-weight: 900;
+            background: var(--title-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .sub-title {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        /* 毛玻璃主容器 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.80);
+            border-radius: 24px;
+            padding: 24px 18px;
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.70),
+                        0 10px 30px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* 每个阶段数据卡 */
+        .stage-item {
+            position: relative;
+            background: rgba(255, 255, 255, 0.90);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid #ffffff;
+            overflow: hidden;
+        }
+
+        /* 水印大数字 */
+        .stage-number-bg {
+            position: absolute;
+            top: -5px; right: 10px;
+            font-size: 55px;
+            font-weight: 900;
+            color: rgba(0, 0, 0, 0.035);
+            font-style: italic;
+            line-height: 1;
+            z-index: 0;
+        }
+
+        /* 阶段标题行 */
+        .stage-title {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        /* 渐变徽章 */
+        .badge {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .b-1 { background: linear-gradient(135deg, #e0c3fc, #8ec5fc); color: #4834d4; }
+        .b-2 { background: linear-gradient(135deg, #ffecd2, #fcb69f); color: #d35400; }
+        .b-3 { background: linear-gradient(135deg, #fbc2eb, #a6c1ee); color: #6c5ce7; }
+
+        /* 正文 */
+        .stage-content {
+            position: relative;
+            z-index: 1;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            text-align: justify;
+        }
+        .quote-icon {
+            font-family: serif;
+            font-size: 22px;
+            color: #c8d6e5;
+            line-height: 0;
+            vertical-align: bottom;
+            margin-right: 4px;
+        }
+
+        /* 底部署名 */
+        .footer-text {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 12px;
+            color: var(--text-light);
+            letter-spacing: 1px;
+        }
+
+        /* 下载按钮（在 poster-wrapper 外面） */
+        .action-wrapper {
+            width: 100%;
+            max-width: var(--card-width);
+            display: flex;
+            justify-content: center;
+        }
+        .download-btn {
+            background: #222;
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 16px 35px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Noto Sans SC', sans-serif;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+        .download-btn:hover  { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.20); }
+        .download-btn:active { transform: scale(0.95); }
+        .download-btn:disabled { background: #888; cursor: not-allowed; }
+        .download-btn svg { width: 20px; height: 20px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <!-- 卡片包裹器 -->
+    <div class="poster-wrapper">
+        <!-- 被截图的区域，id="poster" 不能改 -->
+        <div class="poster-container" id="poster">
+
+            <!-- 气泡背景 -->
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+
+            <div class="content-layer">
+                <!-- ===== 用户数据区，修改这里的文字即可 ===== -->
+                <div class="header">
+                    <h1 class="main-title">我用AI的三个阶段</h1>
+                    <p class="sub-title">My Evolution with AI</p>
+                </div>
+
+                <div class="glass-card">
+
+                    <div class="stage-item">
+                        <div class="stage-number-bg">01</div>
+                        <div class="stage-title">
+                            <span class="badge b-1">STAGE 1</span> 提示词阶段
+                        </div>
+                        <div class="stage-content">
+                            <span class="quote-icon">"</span>怎么才能更好的让AI明白我的意图呢？于是开始研究提示词，会用分割符、思维链、各种对话技巧和思维模型等等。
+                        </div>
+                    </div>
+
+                    <div class="stage-item">
+                        <div class="stage-number-bg">02</div>
+                        <div class="stage-title">
+                            <span class="badge b-2">STAGE 2</span> Skills阶段
+                        </div>
+                        <div class="stage-content">
+                            <span class="quote-icon">"</span>怎么才能让AI帮我做大量重复性的工作呢？把流程化的工作做成skill，于是就有了知识提取skill、翻译skill、PPT skill等等。
+                        </div>
+                    </div>
+
+                    <div class="stage-item">
+                        <div class="stage-number-bg">03</div>
+                        <div class="stage-title">
+                            <span class="badge b-3">STAGE 3</span> 龙虾阶段
+                        </div>
+                        <div class="stage-content">
+                            <span class="quote-icon">"</span>其实skill和提示词还是有局限性的，怎么样才能让AI成为真正懂我的"人"？那只能是慢慢养虾了，找准方向然后慢慢给它灌输知识，让它成为某一方面的专家。
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="footer-text">— AI探索笔记 —</div>
+                <!-- ===== 数据区结束 ===== -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 下载按钮独立放在 poster-wrapper 外面 -->
+    <div class="action-wrapper">
+        <button class="download-btn" id="downloadBtn">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <span id="btnText">保存为高清图片</span>
+        </button>
+    </div>
+
+    <script>
+        const btn    = document.getElementById('downloadBtn');
+        const btnTxt = document.getElementById('btnText');
+        const poster = document.getElementById('poster');
+
+        btn.addEventListener('click', () => {
+            const orig = btnTxt.innerText;
+            btnTxt.innerText = '正在生成超清原图...';
+            btn.disabled = true;
+
+            // 截图前暂停气泡动画，防止飘到一半被冻结
+            const blobs = poster.querySelectorAll('.blob');
+            blobs.forEach(b => b.style.animation = 'none');
+
+            htmlToImage.toPng(poster, {
+                pixelRatio: 3,
+                style: { transform: 'none' }
+            })
+            .then(dataUrl => {
+                const a = document.createElement('a');
+                a.download = 'card-mobile.png';
+                a.href = dataUrl;
+                a.click();
+                btnTxt.innerText = '保存成功 ✅';
+                setTimeout(() => {
+                    btnTxt.innerText = orig;
+                    btn.disabled = false;
+                    blobs.forEach(b => b.style.animation = ''); // 恢复动画
+                }, 2000);
+            })
+            .catch(err => {
+                console.error(err);
+                btnTxt.innerText = '生成失败，请重试';
+                blobs.forEach(b => b.style.animation = '');
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

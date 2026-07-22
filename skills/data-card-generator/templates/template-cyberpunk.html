@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>赛博朋克模板 · Mobile 竖版</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Noto Sans SC', "PingFang SC", sans-serif; }
+
+        :root {
+            /* === 用户可修改区域 === */
+            --card-width: 420px;
+            --neon-cyan:   #00f5ff;
+            --neon-pink:   #ff00aa;
+            --neon-purple: #bf00ff;
+            --neon-yellow: #f5ff00;
+            --text-primary:   #e8e8ff;
+            --text-secondary: #a0a0cc;
+            --text-dim:       #5a5a88;
+            --border-radius: 20px;
+        }
+
+        body {
+            background: #050510;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            gap: 32px;
+        }
+
+        .poster-wrapper {
+            width: 100%;
+            max-width: var(--card-width);
+            border-radius: var(--border-radius);
+            box-shadow:
+                0 0 0 1px rgba(0,245,255,0.15),
+                0 0 30px rgba(0,245,255,0.12),
+                0 0 80px rgba(191,0,255,0.10);
+        }
+
+        .poster-container {
+            position: relative;
+            width: 100%;
+            background: #0a0a14;
+            border-radius: var(--border-radius);
+            padding: 40px 24px;
+            min-height: 800px;
+            overflow: hidden;
+        }
+
+        /* 网格背景纹理 */
+        .poster-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
+            z-index: 0;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: 0.30;
+            animation: float 11s ease-in-out infinite;
+        }
+        .blob-1 { width: 300px; height: 300px; background: var(--neon-cyan);   top: -80px;   left: -80px;  animation-delay: 0s; }
+        .blob-2 { width: 260px; height: 260px; background: var(--neon-pink);   bottom: -60px; right: -60px; animation-delay: 4s; }
+        .blob-3 { width: 200px; height: 200px; background: var(--neon-purple); top: 45%; left: 35%;        animation-delay: 8s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50%       { transform: translateY(-22px) scale(1.05); }
+        }
+
+        .content-layer { position: relative; z-index: 10; }
+
+        .header { text-align: center; margin-bottom: 32px; }
+        .header::before {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            margin: 0 auto 18px;
+        }
+        .main-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--neon-cyan);
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(0,245,255,0.60), 0 0 50px rgba(0,245,255,0.25);
+            margin-bottom: 8px;
+        }
+        .sub-title { font-size: 11px; color: var(--text-dim); letter-spacing: 4px; }
+
+        .item-list { display: flex; flex-direction: column; gap: 14px; }
+
+        .cyber-item {
+            position: relative;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(0,245,255,0.12);
+            border-radius: 12px;
+            padding: 18px 20px 18px 58px;
+            overflow: hidden;
+        }
+        /* 左侧霓虹竖条 */
+        .cyber-item::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            border-radius: 12px 0 0 12px;
+        }
+        .cyber-item:nth-child(4n+1)::before { background: var(--neon-cyan);   box-shadow: 0 0 8px var(--neon-cyan); }
+        .cyber-item:nth-child(4n+2)::before { background: var(--neon-pink);   box-shadow: 0 0 8px var(--neon-pink); }
+        .cyber-item:nth-child(4n+3)::before { background: var(--neon-purple); box-shadow: 0 0 8px var(--neon-purple); }
+        .cyber-item:nth-child(4n+0)::before { background: var(--neon-yellow); box-shadow: 0 0 8px var(--neon-yellow); }
+
+        .item-num {
+            position: absolute;
+            left: 16px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 22px;
+            font-weight: 900;
+            font-style: italic;
+            opacity: 0.18;
+            line-height: 1;
+        }
+        .cyber-item:nth-child(4n+1) .item-num { color: var(--neon-cyan); }
+        .cyber-item:nth-child(4n+2) .item-num { color: var(--neon-pink); }
+        .cyber-item:nth-child(4n+3) .item-num { color: var(--neon-purple); }
+        .cyber-item:nth-child(4n+0) .item-num { color: var(--neon-yellow); }
+
+        .item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+        .item-tag {
+            font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+            padding: 2px 8px; border-radius: 4px; border: 1px solid; white-space: nowrap;
+        }
+        .cyber-item:nth-child(4n+1) .item-tag { color: var(--neon-cyan);   border-color: rgba(0,245,255,0.40);   background: rgba(0,245,255,0.08); }
+        .cyber-item:nth-child(4n+2) .item-tag { color: var(--neon-pink);   border-color: rgba(255,0,170,0.40);   background: rgba(255,0,170,0.08); }
+        .cyber-item:nth-child(4n+3) .item-tag { color: var(--neon-purple); border-color: rgba(191,0,255,0.40);   background: rgba(191,0,255,0.08); }
+        .cyber-item:nth-child(4n+0) .item-tag { color: var(--neon-yellow); border-color: rgba(245,255,0,0.40);   background: rgba(245,255,0,0.08); }
+
+        .item-title { font-size: 15px; font-weight: 700; color: var(--text-primary); flex: 1; }
+        .item-desc  { font-size: 12.5px; color: var(--text-secondary); line-height: 1.65; }
+
+        .footer { text-align: center; margin-top: 28px; padding-top: 16px; }
+        .footer::before {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,245,255,0.20), transparent);
+            margin-bottom: 14px;
+        }
+        .footer-text { font-size: 11px; color: var(--text-dim); letter-spacing: 3px; }
+
+        .action-wrapper { width: 100%; max-width: var(--card-width); display: flex; justify-content: center; }
+        .download-btn {
+            background: transparent;
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 6px;
+            padding: 14px 36px;
+            font-size: 14px; font-weight: 600;
+            font-family: 'Noto Sans SC', sans-serif;
+            letter-spacing: 2px; cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 0 16px rgba(0,245,255,0.20), inset 0 0 16px rgba(0,245,255,0.04);
+            transition: all 0.2s ease;
+        }
+        .download-btn:hover { background: rgba(0,245,255,0.08); box-shadow: 0 0 28px rgba(0,245,255,0.35), inset 0 0 20px rgba(0,245,255,0.08); }
+        .download-btn:active { transform: scale(0.96); }
+        .download-btn:disabled { opacity: 0.40; cursor: not-allowed; }
+        .download-btn svg { width: 18px; height: 18px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <div class="poster-wrapper">
+        <div class="poster-container" id="poster">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+
+            <div class="content-layer">
+                <!-- ===== 用户数据区，修改这里的文字即可 ===== -->
+                <div class="header">
+                    <h1 class="main-title">CLAUDE CODE</h1>
+                    <p class="sub-title">核心命令 · 速查手册</p>
+                </div>
+
+                <div class="item-list">
+                    <div class="cyber-item">
+                        <span class="item-num">01</span>
+                        <div class="item-header"><span class="item-tag">CMD</span><span class="item-title">/btw · 旁路提问</span></div>
+                        <p class="item-desc">执行任务时插入临时问题，不污染主上下文，回答后自动消除</p>
+                    </div>
+                    <div class="cyber-item">
+                        <span class="item-num">02</span>
+                        <div class="item-header"><span class="item-tag">CMD</span><span class="item-title">/rewind · 分层回退</span></div>
+                        <p class="item-desc">双 Esc 触发，支持回退代码、对话或两者，可压缩上下文释放空间</p>
+                    </div>
+                    <div class="cyber-item">
+                        <span class="item-num">03</span>
+                        <div class="item-header"><span class="item-tag">CMD</span><span class="item-title">/model · 智能切换</span></div>
+                        <p class="item-desc">规划用 Opus，执行用 Sonnet，在效果与额度之间动态平衡</p>
+                    </div>
+                    <div class="cyber-item">
+                        <span class="item-num">04</span>
+                        <div class="item-header"><span class="item-tag">CMD</span><span class="item-title">/branch · 会话分叉</span></div>
+                        <p class="item-desc">克隆当前对话探索不同方案，原会话保持不变，择优采用</p>
+                    </div>
+                    <div class="cyber-item">
+                        <span class="item-num">05</span>
+                        <div class="item-header"><span class="item-tag">CMD</span><span class="item-title">/rc · 远程控制</span></div>
+                        <p class="item-desc">生成 URL 供手机打开，双端实时同步，代码始终在本地运行</p>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <p class="footer-text">— SYSTEM · DATA CARD v1.0 —</p>
+                </div>
+                <!-- ===== 数据区结束 ===== -->
+            </div>
+        </div>
+    </div>
+
+    <div class="action-wrapper">
+        <button class="download-btn" id="downloadBtn">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <span id="btnText">EXPORT · 保存图片</span>
+        </button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('downloadBtn');
+        const btnTxt = document.getElementById('btnText');
+        const poster = document.getElementById('poster');
+        btn.addEventListener('click', () => {
+            const orig = btnTxt.innerText;
+            btnTxt.innerText = 'PROCESSING...';
+            btn.disabled = true;
+            const blobs = poster.querySelectorAll('.blob');
+            blobs.forEach(b => b.style.animation = 'none');
+            htmlToImage.toPng(poster, { pixelRatio: 3, style: { transform: 'none' } })
+            .then(dataUrl => {
+                const a = document.createElement('a');
+                a.download = 'card-cyberpunk.png'; a.href = dataUrl; a.click();
+                btnTxt.innerText = 'SAVED ✅';
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; blobs.forEach(b => b.style.animation = ''); }, 2000);
+            })
+            .catch(err => {
+                console.error(err); btnTxt.innerText = 'ERROR · 请重试';
+                blobs.forEach(b => b.style.animation = '');
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

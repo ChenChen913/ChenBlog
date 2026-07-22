@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desktop 对比模板 · 横版宽卡</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans SC', "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        :root {
+            /* === 用户可修改区域 === */
+            --card-width: 900px;
+            --card-bg: linear-gradient(145deg, #f0f5ff 0%, #ffffff 100%);
+            --accent-color-1: #5b8dee;   /* 气泡色 1（蓝） */
+            --accent-color-2: #a78bfa;   /* 气泡色 2（紫） */
+            --accent-color-3: #38bdf8;   /* 气泡色 3（天蓝） */
+            --col-left-accent:  #1d4ed8; /* 左列主色 */
+            --col-right-accent: #7c3aed; /* 右列主色 */
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-light: #94a3b8;
+            --border-radius: 28px;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5986 100%);
+            min-height: 100vh;
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+        }
+
+        /* 单张 Desktop 宽卡 */
+        .poster-wrapper {
+            width: 100%;
+            max-width: var(--card-width);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        .poster-container {
+            position: relative;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 44px 40px 36px;
+            min-height: 560px;
+            overflow: hidden;
+        }
+
+        /* 气泡（位置调整适合宽卡） */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.45;
+            animation: float 10s ease-in-out infinite;
+        }
+        .blob-1 { width: 320px; height: 320px; background: var(--accent-color-1); top: -100px; left: -80px;  animation-delay: 0s; }
+        .blob-2 { width: 280px; height: 280px; background: var(--accent-color-2); bottom: -80px; right: -60px; animation-delay: 4s; }
+        .blob-3 { width: 200px; height: 200px; background: var(--accent-color-3); top: 30%; left: 45%; animation-delay: 8s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50%       { transform: translateY(-16px) rotate(6deg); }
+        }
+
+        .content-layer { position: relative; z-index: 10; }
+
+        /* 顶部标题区（跨越两列） */
+        .header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+        .main-title {
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #1d4ed8, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        .sub-title {
+            font-size: 13px;
+            color: var(--text-light);
+            letter-spacing: 2px;
+        }
+
+        /* 对比网格：左列 + 分割线 + 右列 */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1px 1fr;
+            gap: 0 32px;
+        }
+
+        /* 分割线 */
+        .compare-divider {
+            background: linear-gradient(to bottom,
+                transparent 0%,
+                rgba(100, 116, 139, 0.25) 15%,
+                rgba(100, 116, 139, 0.25) 85%,
+                transparent 100%);
+            width: 1px;
+            align-self: stretch;
+        }
+
+        /* 每一列 */
+        .compare-col { display: flex; flex-direction: column; gap: 12px; }
+
+        /* 列标题栏 */
+        .col-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 18px;
+            border-radius: 14px;
+            margin-bottom: 4px;
+        }
+        .col-header-left  { background: linear-gradient(135deg, #dbeafe, #eff6ff); }
+        .col-header-right { background: linear-gradient(135deg, #ede9fe, #f5f3ff); }
+
+        .col-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .icon-left  { background: linear-gradient(135deg, #1d4ed8, #3b82f6); }
+        .icon-right { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+
+        .col-header-text {}
+        .col-label {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            margin-bottom: 2px;
+        }
+        .label-left  { color: #1d4ed8; }
+        .label-right { color: #7c3aed; }
+
+        .col-title {
+            font-size: 17px;
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+        }
+
+        /* 每个对比条目 */
+        .compare-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 13px 16px;
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        }
+
+        /* 条目左侧的彩色圆点 */
+        .item-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+        .dot-left  { background: var(--col-left-accent); }
+        .dot-right { background: var(--col-right-accent); }
+
+        .item-text-wrap {}
+        .item-keyword {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+        }
+        .item-detail {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* 底部署名 */
+        .footer-text {
+            text-align: center;
+            margin-top: 28px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(148,163,184,0.20);
+            font-size: 12px;
+            color: var(--text-light);
+            letter-spacing: 1px;
+        }
+
+        /* 下载按钮（在 poster-wrapper 外面） */
+        .action-wrapper {
+            width: 100%;
+            max-width: var(--card-width);
+            display: flex;
+            justify-content: center;
+        }
+        .download-btn {
+            background: linear-gradient(135deg, #1d4ed8, #7c3aed);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 16px 40px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Noto Sans SC', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 6px 20px rgba(29, 78, 216, 0.35);
+            transition: all 0.2s ease;
+        }
+        .download-btn:hover  { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(29,78,216,0.45); }
+        .download-btn:active { transform: scale(0.96); }
+        .download-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+        .download-btn svg { width: 18px; height: 18px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <!-- 卡片包裹器 -->
+    <div class="poster-wrapper">
+        <!-- 被截图的区域 -->
+        <div class="poster-container" id="poster">
+
+            <!-- 气泡 -->
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+
+            <div class="content-layer">
+                <!-- ===== 用户数据区，修改这里的文字即可 ===== -->
+                <div class="header">
+                    <h1 class="main-title">传统工作 vs AI 辅助工作</h1>
+                    <p class="sub-title">Traditional vs AI-Assisted Workflow</p>
+                </div>
+
+                <div class="compare-grid">
+
+                    <!-- 左列：传统方式 -->
+                    <div class="compare-col">
+                        <div class="col-header col-header-left">
+                            <div class="col-icon icon-left">⚙️</div>
+                            <div class="col-header-text">
+                                <p class="col-label label-left">BEFORE</p>
+                                <p class="col-title">传统工作方式</p>
+                            </div>
+                        </div>
+
+                        <div class="compare-item">
+                            <div class="item-dot dot-left"></div>
+                            <div class="item-text-wrap">
+                                <p class="item-keyword">信息搜集耗时</p>
+                                <p class="item-detail">需要多个标签页反复搜索，整理信息耗费大量精力</p>
+                            </div>
+                        </div>
+                        <div class="compare-item">
+                            <div class="item-dot dot-left"></div>
+                            <div class="item-text-wrap">
+                                <p class="item-keyword">重复性工作多</p>
+                                <p class="item-detail">格式整理、数据汇总、报告撰写全靠手动完成</p>
+                            </div>
+                        </div>
+                        <div class="compare-item">
+                            <div class="item-dot dot-left"></div>
+                            <div class="item-text-wrap">
+                                <p class="item-keyword">创意输出慢</p>
+                                <p class="item-detail">从灵感到成品需要多轮头脑风暴，周期长</p>
+                            </div>
+                        </div>
+                        <div class="compare-item">
+                            <div class="item-dot dot-left"></div>
+                            <div class="item-text-wrap">
+                                <p class="item-keyword">知识检索低效</p>
+                                <p class="item-detail">依赖记忆或笔记，跨领域知识难以快速调用</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 分割线 -->
+                    <div class="compare-divider"></div>
+
+                    <!-- 右列：AI 辅助 -->
+                    <div class="compare-col">
+                        <div class="col-header col-header-right">
+                            <div class="col-icon icon-right">✨</div>
+                            <div class="col-header-text">
+                                <p class="col-label label-right">AFTER</p>
+                                <p class="col-title">AI 辅助工作方式</p>
+                            </div>
+                        </div>
+
+                        <div class="compare-item">
+                            <div class="item-dot dot-right"></div>
+                            <div class="item-text-wrap">
+                                <p class="item-keyword">即时信息整合</p>
+                                <p class="item-detail">一句话获取结构化摘要，资料整理效率提升 10 倍</p>
+                            </div>
+                        </div>
+                        <div class="compare-item">
+                            <div class="item-dot dot-right"></div>
+                            <div class="item-text-wrap">
+                                <p class="item-keyword">自动化批量处理</p>
+                                <p class="item-detail">模板生成、格式转换、数据分析交给 AI 批量完成</p>
+                            </div>
+                        </div>
+                        <div class="compare-item">
+                            <div class="item-dot dot-right"></div>
+                            <div class="item-text-wrap">
+                                <p class="item-keyword">创意快速落地</p>
+                                <p class="item-detail">AI 提供初稿框架，人类专注打磨核心创意</p>
+                            </div>
+                        </div>
+                        <div class="compare-item">
+                            <div class="item-dot dot-right"></div>
+                            <div class="item-text-wrap">
+                                <p class="item-keyword">知识随时可用</p>
+                                <p class="item-detail">跨领域问题即时解答，相当于随时有专家在旁</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="footer-text">— AI 效率对比 · Desktop 宽卡模板 —</div>
+                <!-- ===== 数据区结束 ===== -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 下载按钮（在 poster-wrapper 外面） -->
+    <div class="action-wrapper">
+        <button class="download-btn" id="downloadBtn">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <span id="btnText">保存为高清图片</span>
+        </button>
+    </div>
+
+    <script>
+        const btn    = document.getElementById('downloadBtn');
+        const btnTxt = document.getElementById('btnText');
+        const poster = document.getElementById('poster');
+
+        btn.addEventListener('click', () => {
+            const orig = btnTxt.innerText;
+            btnTxt.innerText = '正在生成超清原图...';
+            btn.disabled = true;
+
+            // 截图前暂停气泡动画
+            const blobs = poster.querySelectorAll('.blob');
+            blobs.forEach(b => b.style.animation = 'none');
+
+            htmlToImage.toPng(poster, {
+                pixelRatio: 3,
+                style: { transform: 'none' }
+            })
+            .then(dataUrl => {
+                const a = document.createElement('a');
+                a.download = 'card-desktop-compare.png';
+                a.href = dataUrl;
+                a.click();
+                btnTxt.innerText = '保存成功 ✅';
+                setTimeout(() => {
+                    btnTxt.innerText = orig;
+                    btn.disabled = false;
+                    blobs.forEach(b => b.style.animation = ''); // 恢复动画
+                }, 2000);
+            })
+            .catch(err => {
+                console.error(err);
+                btnTxt.innerText = '生成失败，请重试';
+                blobs.forEach(b => b.style.animation = '');
+                setTimeout(() => { btnTxt.innerText = orig; btn.disabled = false; }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

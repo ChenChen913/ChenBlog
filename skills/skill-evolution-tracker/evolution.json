@@ -1,0 +1,10 @@
+[
+  {
+    "timestamp": "2026-01-26T00:31:21.031761",
+    "date": "2026-01-26",
+    "target_skill": "wechat-cover-architect",
+    "trigger": "User feedback on HTML/CSS Isometric style",
+    "issue": "Missing specific template for code-based isometric layouts",
+    "fix_applied": "Added new Isometric HTML template and updated design matrix"
+  }
+]

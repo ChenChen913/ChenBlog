@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { font-family: sans-serif; line-height: 1.6; color: #333; }
+.container { max-width: 600px; margin: 0 auto; padding: 20px; }
+.card { border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+.title { font-size: 18px; font-weight: bold; color: #0366d6; text-decoration: none; }
+.meta { font-size: 12px; color: #666; margin-top: 5px; }
+.desc { margin-top: 10px; }
+.summary { background: #f6f8fa; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>GitHub Trending - {{ date }}</h1>
+    {% for repo in repos %}
+    <div class="card">
+        <a href="{{ repo.url }}" class="title">{{ repo.name }}</a>
+        <div class="meta">{{ repo.language }} • ⭐ {{ repo.stars_today }} stars today</div>
+        <div class="desc">{{ repo.description }}</div>
+        {% if repo.summary_what %}
+        <div class="summary">
+            <strong>What:</strong> {{ repo.summary_what }}<br>
+            <strong>Problem:</strong> {{ repo.summary_problem }}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+</body>
+</html>
