@@ -1,4 +1,0 @@
-- [x] CDN link is present in `index.html`.
-- [x] Font stack defined in `index.css` includes fallback mechanism and local hook.
-- [x] Article content uses the WenKai font.
-- [x] UI elements (sidebar, nav, dates) use sans-serif font.
