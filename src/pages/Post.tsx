@@ -31,6 +31,15 @@ import {
 } from '../utils/article-font-size';
 import { getSafeLinkAttributes, isSafeResourceUrl, toTrustedEmbedUrl } from '../utils/security';
 import { hasMathDelimiters } from '../utils/math-detect';
+import { rehypeBionic } from '../utils/bionic';
+import { useReadingMode } from '../hooks/useReadingMode';
+import ReadingFocusButton from '../components/reading/ReadingFocusButton';
+import ReadingToolbar from '../components/reading/ReadingToolbar';
+import ReadingTocOverlay from '../components/reading/ReadingTocOverlay';
+import ReadingRuler from '../components/reading/ReadingRuler';
+import ReadingParagraphFocus from '../components/reading/ReadingParagraphFocus';
+import ReadingReminder from '../components/reading/ReadingReminder';
+import ReadingResume from '../components/reading/ReadingResume';
 
 /**
  * KaTeX 懒加载：公式渲染管线（remark-math + rehype-katex + katex CSS）
@@ -464,10 +473,19 @@ export default function Post() {
     };
   }, [needsMath, mathExtensions, mathLoadFailed]);
 
+  // 专注阅读模式：文章可读且非草稿时才可用（须在 rehypePlugins 之前，bionic 开关依赖它）
+  const reading = useReadingMode({
+    enabled: Boolean(slug && postMeta && !postMeta.frontmatter.draft),
+  });
+
   const remarkPlugins = useMemo<PluggableList>(
     () => (mathExtensions ? [remarkGfm, mathExtensions.remarkMath] : [remarkGfm]),
     [mathExtensions]
   );
+
+  // Bionic 英文锚定：仅在专注模式下勾选开关时进入管道；
+  // 从数组移除即恢复原貌，零 DOM 手术、无调和冲突
+  const bionicActive = reading.mode !== 'standard' && reading.prefs.bionic;
   const rehypePlugins = useMemo<PluggableList>(() => {
     const base: PluggableList = [
       rehypeRaw,
@@ -475,10 +493,11 @@ export default function Post() {
       rehypeSanitizeMarkdown,
       rehypeSequentialIds,
     ];
+    const withBionic: PluggableList = bionicActive ? [...base, rehypeBionic] : base;
     return mathExtensions
-      ? [...base, [mathExtensions.rehypeKatex, { throwOnError: false, strict: false }]]
-      : base;
-  }, [mathExtensions]);
+      ? [...withBionic, [mathExtensions.rehypeKatex, { throwOnError: false, strict: false }]]
+      : withBionic;
+  }, [mathExtensions, bionicActive]);
 
   // 解析 Markdown 标题，构建 TOC 树形结构
   // ID 由 rehypeSequentialIds 插件在 unified 管道内统一分配，与此处编号严格对应
@@ -685,35 +704,43 @@ export default function Post() {
               {displayTitle}
             </h1>
 
-            <ArticleFontSizeControl
-              mode={articleFontSize}
-              language={lang === 'en' ? 'en' : 'zh'}
-              onChange={handleArticleFontSizeChange}
-            />
+            {reading.mode === 'standard' && (
+              <ArticleFontSizeControl
+                mode={articleFontSize}
+                language={lang === 'en' ? 'en' : 'zh'}
+                onChange={handleArticleFontSizeChange}
+              />
+            )}
 
-            <div
-              id="post-meta-bottom"
-              className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-6"
-            >
+            {reading.mode === 'standard' && (
               <div
-                id="post-stats"
-                className="flex flex-wrap items-center gap-3 text-sm text-stone-500 dark:text-stone-400"
+                id="post-meta-bottom"
+                className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-6"
               >
-                <span id="post-views" className="flex items-center gap-1.5">
-                  <Eye size={16} />
-                  {views} {t('views')}
-                </span>
-              </div>
+                <div
+                  id="post-stats"
+                  className="flex flex-wrap items-center gap-3 text-sm text-stone-500 dark:text-stone-400"
+                >
+                  <span id="post-views" className="flex items-center gap-1.5">
+                    <Eye size={16} />
+                    {views} {t('views')}
+                  </span>
+                </div>
 
-              <button
-                id="copy-link-button"
-                onClick={handleCopyLink}
-                className="flex items-center gap-2 text-sm font-medium text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
-              >
-                {copied ? <Check size={16} className="text-green-500" /> : <Share2 size={16} />}
-                <span className="hidden sm:inline">{copied ? t('copied') : t('copy')}</span>
-              </button>
-            </div>
+                <div className="flex items-center gap-3">
+                  <ReadingFocusButton onEnter={() => reading.enter()} label={t('focus_reading')} />
+
+                  <button
+                    id="copy-link-button"
+                    onClick={handleCopyLink}
+                    className="flex items-center gap-2 text-sm font-medium text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
+                  >
+                    {copied ? <Check size={16} className="text-green-500" /> : <Share2 size={16} />}
+                    <span className="hidden sm:inline">{copied ? t('copied') : t('copy')}</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </header>
 
           {safeCoverImage && (
@@ -867,43 +894,78 @@ export default function Post() {
             )}
           </div>
 
-          <footer
-            id="post-footer"
-            className="mt-16 pt-8 border-t border-stone-200 dark:border-stone-800"
-          >
-            <div id="post-tags" className="flex flex-wrap gap-2">
-              {tags?.map(tag => (
-                <span
-                  key={tag}
-                  id={`tag-${tag}`}
-                  className="px-3 py-1.5 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 rounded-lg text-sm font-medium"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-
-            {/* 周刊文章：周上下文互链（上一周 / 下一周，空周自然跳过） */}
-            {post.frontmatter.weekly === true && (
-              <div className="mt-8">
-                <WeeklyNavigation currentSlug={post.slug} />
+          {reading.mode === 'standard' && (
+            <footer
+              id="post-footer"
+              className="mt-16 pt-8 border-t border-stone-200 dark:border-stone-800"
+            >
+              <div id="post-tags" className="flex flex-wrap gap-2">
+                {tags?.map(tag => (
+                  <span
+                    key={tag}
+                    id={`tag-${tag}`}
+                    className="px-3 py-1.5 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 rounded-lg text-sm font-medium"
+                  >
+                    #{tag}
+                  </span>
+                ))}
               </div>
-            )}
 
-            {/* 上一篇 / 下一篇导航 */}
-            <div className="mt-8">
-              <PostNavigation newerPost={newerPost} olderPost={olderPost} />
-            </div>
-          </footer>
+              {/* 周刊文章：周上下文互链（上一周 / 下一周，空周自然跳过） */}
+              {post.frontmatter.weekly === true && (
+                <div className="mt-8">
+                  <WeeklyNavigation currentSlug={post.slug} />
+                </div>
+              )}
 
-          {/* 相关文章推荐（按标签交集，回退同分类） */}
-          <RelatedPosts currentSlug={post.slug} tags={tags} category={category} />
+              {/* 上一篇 / 下一篇导航 */}
+              <div className="mt-8">
+                <PostNavigation newerPost={newerPost} olderPost={olderPost} />
+              </div>
+            </footer>
+          )}
+
+          {/* 相关文章推荐（按标签交集，回退同分类）—— 专注模式下隐藏，读完全文退出后再看 */}
+          {reading.mode === 'standard' && (
+            <RelatedPosts currentSlug={post.slug} tags={tags} category={category} />
+          )}
         </motion.article>
-        <TableOfContents parsedHeadings={headings} />
+        {reading.mode === 'standard' && <TableOfContents parsedHeadings={headings} />}
       </div>
 
-      {/* giscus 评论（未配置环境变量时渲染 null，零开销） */}
-      <Comments />
+      {/* 专注阅读：工具胶囊 + 分节浮层 + 行标尺 + 节奏提醒 */}
+      {reading.mode !== 'standard' && (
+        <>
+          <ReadingToolbar api={reading} hasToc={headings.length > 0} content={post.content} t={t} />
+          <ReadingTocOverlay
+            headings={headings}
+            open={reading.tocOpen}
+            onClose={() => reading.setTocOpen(false)}
+            title={t('toc_title')}
+          />
+          <ReadingRuler active={reading.mode === 'guide' && reading.prefs.focusStyle === 'line'} />
+          <ReadingParagraphFocus
+            active={reading.mode === 'guide' && reading.prefs.focusStyle === 'paragraph'}
+            contentKey={`${post.slug}:${post.content ? 'loaded' : 'pending'}:${mathExtensions ? 'math' : 'plain'}:${bionicActive ? 'bio' : 'raw'}`}
+          />
+          <ReadingReminder
+            active={reading.prefs.reminder}
+            slug={post.slug}
+            message={minutes => t('reading_reminder_toast').replace('{n}', String(minutes))}
+          />
+        </>
+      )}
+
+      {/* 阅读位置记忆：回来时温和提示“继续上次阅读” */}
+      <ReadingResume
+        slug={post.slug}
+        ready={post.content !== undefined}
+        label={t('reading_resume')}
+        buttonLabel={t('reading_resume_btn')}
+      />
+
+      {/* giscus 评论（未配置环境变量时渲染 null，零开销）—— 专注模式下隐藏 */}
+      {reading.mode === 'standard' && <Comments />}
     </>
   );
 }

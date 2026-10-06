@@ -3205,3 +3205,1065 @@ html {
 .dark .wk-context-hint {
   color: rgba(168, 162, 158, 0.85);
 }
+
+/* ============================================================
+ * 专注阅读模式（Focus / Guide Reading）
+ *
+ * 设计原则：
+ * - 液态玻璃只用在"工具层"（胶囊/面板/浮层），内容区保持纯净
+ * - 夜间背景用暖深灰（stone 系偏暖），不用纯黑，避免光晕效应
+ * - 代码块与 KaTeX 公式自带底色，不参与变暗/改色
+ * - 尊重 prefers-reduced-motion：所有过渡可关
+ * ============================================================ */
+
+/* ---------- 1. 模式激活：隐藏站点 chrome ---------- */
+html.reading-focus #desktop-sidebar,
+html.reading-focus .mobile-topnav,
+html.reading-focus .mobile-bottomnav,
+html.reading-focus #footer-container,
+html.reading-focus #floating-actions,
+html.reading-focus .scroll-to-top-btn,
+html.reading-focus .post-back-btn,
+html.reading-focus .toc-shell {
+  display: none !important;
+}
+
+/* 底部留出工具胶囊的空间（覆盖 md:pb-12） */
+html.reading-focus #main-content {
+  padding-bottom: 6.5rem;
+}
+
+/* ---------- 2. 正文收窄居中 + 排版变量接管 ---------- */
+html.reading-focus .article-page {
+  gap: 0;
+}
+html.reading-focus .article-page > article {
+  width: 100%;
+  max-width: min(var(--reading-page-width, 44rem), calc(100vw - 2rem));
+  margin-inline: auto;
+}
+html.reading-focus .article-body {
+  --article-body-size: var(--reading-body-size, 1.25rem);
+  --article-h1-size: var(--reading-h2-size, 1.5rem);
+  --article-h2-size: var(--reading-h2-size, 1.5rem);
+  --article-h3-size: var(--reading-h3-size, 1.3rem);
+  --article-code-size: var(--reading-code-size, 0.92rem);
+  --article-body-line-height: var(--reading-body-lh, 2.05);
+  --article-list-line-height: var(--reading-list-lh, 1.95);
+  --article-blockquote-line-height: var(--reading-quote-lh, 2);
+}
+
+/* ---------- 3. 阅读背景：纸白 / 暖米 / 暖黑（跟随=完全不动） ---------- */
+html.reading-focus[data-reading-theme='paper'] {
+  --reading-bg: #faf9f5;
+  --reading-fg: #292524;
+  --reading-muted: #6f6862;
+  --reading-link: #1d4ed8;
+  --reading-border: rgba(41, 37, 36, 0.16);
+  --reading-mark-bg: #fde68a;
+}
+html.reading-focus[data-reading-theme='sepia'] {
+  --reading-bg: #f4ecda;
+  --reading-fg: #433d35;
+  --reading-muted: #7a6f60;
+  --reading-link: #1e40af;
+  --reading-border: rgba(67, 61, 53, 0.2);
+  --reading-mark-bg: #e9d48a;
+}
+html.reading-focus[data-reading-theme='night'] {
+  --reading-bg: #201d1a;
+  --reading-fg: #e6dfd5;
+  --reading-muted: #a39c92;
+  --reading-link: #8ab4f8;
+  --reading-border: rgba(230, 223, 213, 0.16);
+  --reading-mark-bg: #5f5426;
+}
+
+/* 背景应用（未分层的作者样式优先于 Tailwind 工具类所在层） */
+html.reading-focus[data-reading-theme='paper'] body,
+html.reading-focus[data-reading-theme='sepia'] body,
+html.reading-focus[data-reading-theme='night'] body,
+html.reading-focus[data-reading-theme='paper'] #app-layout,
+html.reading-focus[data-reading-theme='sepia'] #app-layout,
+html.reading-focus[data-reading-theme='night'] #app-layout {
+  background: var(--reading-bg);
+}
+
+/* 强制主题下的文字颜色（覆盖 h1-h3 渲染器的内联 rgb(15 23 42)） */
+html.reading-focus[data-reading-theme='paper']
+  .article-body
+  :is(h1, h2, h3, h4, h5, h6, p, li, blockquote, strong, b, em, i, td, th, figcaption, dt, dd),
+html.reading-focus[data-reading-theme='sepia']
+  .article-body
+  :is(h1, h2, h3, h4, h5, h6, p, li, blockquote, strong, b, em, i, td, th, figcaption, dt, dd),
+html.reading-focus[data-reading-theme='night']
+  .article-body
+  :is(h1, h2, h3, h4, h5, h6, p, li, blockquote, strong, b, em, i, td, th, figcaption, dt, dd) {
+  color: var(--reading-fg) !important;
+}
+html.reading-focus[data-reading-theme='paper'] #post-title,
+html.reading-focus[data-reading-theme='sepia'] #post-title,
+html.reading-focus[data-reading-theme='night'] #post-title {
+  color: var(--reading-fg);
+}
+html.reading-focus[data-reading-theme='paper'] #post-meta-top,
+html.reading-focus[data-reading-theme='sepia'] #post-meta-top,
+html.reading-focus[data-reading-theme='night'] #post-meta-top {
+  color: var(--reading-muted);
+}
+html.reading-focus[data-reading-theme='paper'] #post-meta-top a,
+html.reading-focus[data-reading-theme='sepia'] #post-meta-top a,
+html.reading-focus[data-reading-theme='night'] #post-meta-top a,
+html.reading-focus[data-reading-theme='paper'] .article-body a,
+html.reading-focus[data-reading-theme='sepia'] .article-body a,
+html.reading-focus[data-reading-theme='night'] .article-body a {
+  color: var(--reading-link);
+}
+html.reading-focus[data-reading-theme='paper'] .article-body .katex,
+html.reading-focus[data-reading-theme='sepia'] .article-body .katex,
+html.reading-focus[data-reading-theme='night'] .article-body .katex {
+  color: var(--reading-fg) !important;
+}
+html.reading-focus[data-reading-theme='paper'] .article-body :is(td, th, hr),
+html.reading-focus[data-reading-theme='sepia'] .article-body :is(td, th, hr),
+html.reading-focus[data-reading-theme='night'] .article-body :is(td, th, hr),
+html.reading-focus[data-reading-theme='paper'] .article-body h2,
+html.reading-focus[data-reading-theme='sepia'] .article-body h2,
+html.reading-focus[data-reading-theme='night'] .article-body h2 {
+  border-color: var(--reading-border) !important;
+}
+html.reading-focus[data-reading-theme='paper'] .article-body blockquote,
+html.reading-focus[data-reading-theme='sepia'] .article-body blockquote,
+html.reading-focus[data-reading-theme='night'] .article-body blockquote {
+  border-left-color: var(--reading-border);
+}
+html.reading-focus[data-reading-theme='paper'] .article-body :is(mark, ins),
+html.reading-focus[data-reading-theme='sepia'] .article-body :is(mark, ins),
+html.reading-focus[data-reading-theme='night'] .article-body :is(mark, ins) {
+  background: var(--reading-mark-bg);
+  color: var(--reading-fg);
+}
+
+/* ---------- 4. 引导模式：段落聚焦 ---------- */
+html.reading-guide .article-body > p:not(:has(> .katex-display)),
+html.reading-guide .article-body > blockquote:not(:has(.katex-display)),
+html.reading-guide .article-body > ul > li,
+html.reading-guide .article-body > ol > li {
+  opacity: 0.38;
+  transition: opacity 0.45s ease;
+}
+html.reading-guide .article-body :is(p, blockquote, li).reading-active {
+  opacity: 1;
+}
+
+/* ---------- 5. Bionic 英文锚定 ---------- */
+.article-body .bionic-word {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- 6. 入口按钮（文章页头部） ---------- */
+.focus-reading-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 15px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #44403c;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(210, 205, 200, 0.6);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 4px 14px rgba(0, 0, 0, 0.08),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+  transition: all 0.18s ease;
+  cursor: pointer;
+  position: relative;
+}
+.focus-reading-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  pointer-events: none;
+}
+.focus-reading-btn > * {
+  position: relative;
+  z-index: 1;
+}
+.focus-reading-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 2px rgba(255, 255, 255, 0.95),
+    0 6px 18px rgba(0, 0, 0, 0.12),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+}
+.dark .focus-reading-btn {
+  color: #d6d3d1;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.22);
+}
+.dark .focus-reading-btn::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.02) 40%,
+    rgba(255, 255, 255, 0.07) 100%
+  );
+}
+.dark .focus-reading-btn:hover {
+  color: #f5f5f4;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* ---------- 7. 工具胶囊（底部） ---------- */
+.reading-toolbar {
+  position: fixed;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.reading-capsule {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(210, 205, 200, 0.55);
+  border-bottom: 1px solid rgba(210, 205, 200, 0.55);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 10px 34px rgba(0, 0, 0, 0.14),
+    0 2px 8px rgba(0, 0, 0, 0.07),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+}
+.reading-capsule::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0.05) 45%,
+    rgba(255, 255, 255, 0.16) 100%
+  );
+  pointer-events: none;
+}
+.reading-capsule > * {
+  position: relative;
+  z-index: 1;
+}
+.dark .reading-capsule {
+  background: rgba(28, 25, 23, 0.88);
+  border-top: 1px solid rgba(255, 255, 255, 0.24);
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 10px 34px rgba(0, 0, 0, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.22);
+}
+.dark .reading-capsule::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.01) 45%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+}
+
+.reading-capsule-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #57534e;
+  transition:
+    background-color 0.16s ease,
+    color 0.16s ease;
+  cursor: pointer;
+}
+.reading-capsule-btn:hover {
+  background: rgba(120, 113, 108, 0.1);
+  color: #1c1917;
+}
+.reading-capsule-btn--active {
+  background: rgba(120, 113, 108, 0.12);
+  color: #1c1917;
+}
+.reading-capsule-btn--exit:hover {
+  color: #b91c1c;
+}
+.reading-capsule-btn-text {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.dark .reading-capsule-btn {
+  color: #a8a29e;
+}
+.dark .reading-capsule-btn:hover,
+.dark .reading-capsule-btn--active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f5f5f4;
+}
+.dark .reading-capsule-btn--exit:hover {
+  color: #f87171;
+}
+@media (max-width: 479px) {
+  .reading-capsule-btn-text {
+    display: none;
+  }
+}
+
+.reading-mode-seg {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 999px;
+  background: rgba(120, 113, 108, 0.12);
+}
+.reading-mode-btn {
+  padding: 5px 13px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #78716c;
+  transition: all 0.16s ease;
+  cursor: pointer;
+}
+.reading-mode-btn--active {
+  color: #1c1917;
+  background: #ffffff;
+  box-shadow:
+    0 1px 4px rgba(28, 25, 23, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+.dark .reading-mode-btn {
+  color: #a8a29e;
+}
+.dark .reading-mode-btn--active {
+  color: #f5f5f4;
+  background: rgba(255, 255, 255, 0.17);
+  box-shadow: none;
+}
+
+.reading-time-chip {
+  font-family: var(--font-kai);
+  font-size: 12.5px;
+  color: #78716c;
+  padding: 0 7px;
+  white-space: nowrap;
+}
+.dark .reading-time-chip {
+  color: #a8a29e;
+}
+@media (max-width: 369px) {
+  .reading-time-chip {
+    display: none;
+  }
+}
+
+/* ---------- 8. 设置面板（桌面 popover / 移动抽屉） ---------- */
+.reading-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: rgba(28, 25, 23, 0.32);
+}
+.reading-panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  max-height: 76vh;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  border-radius: 22px 22px 0 0;
+  background: rgba(250, 249, 246, 0.96);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 -12px 44px rgba(0, 0, 0, 0.18),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+}
+@media (min-width: 640px) {
+  .reading-panel-backdrop {
+    display: none;
+  }
+  .reading-panel {
+    position: absolute;
+    left: 50%;
+    right: auto;
+    bottom: calc(100% + 12px);
+    transform: translateX(-50%);
+    width: 344px;
+    max-height: min(560px, calc(100vh - 180px));
+    border-radius: 16px;
+    padding-bottom: 0;
+    box-shadow:
+      0 16px 48px rgba(0, 0, 0, 0.16),
+      0 2px 8px rgba(0, 0, 0, 0.07),
+      inset 0 1.5px 0 rgba(255, 255, 255, 1);
+  }
+}
+.dark .reading-panel {
+  background: rgba(28, 25, 23, 0.96);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 -12px 44px rgba(0, 0, 0, 0.55),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.16);
+}
+
+.reading-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 6px;
+}
+.reading-panel-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #44403c;
+}
+.dark .reading-panel-title {
+  color: #e7e5e4;
+}
+.reading-panel-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  color: #78716c;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+.reading-panel-close:hover {
+  background: rgba(120, 113, 108, 0.12);
+  color: #1c1917;
+}
+.dark .reading-panel-close {
+  color: #a8a29e;
+}
+.dark .reading-panel-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f5f5f4;
+}
+.reading-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 8px 16px 16px;
+  overflow-y: auto;
+}
+.reading-panel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 34px;
+}
+.reading-panel-row--toggle {
+  align-items: flex-start;
+}
+.reading-panel-label {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #44403c;
+}
+.dark .reading-panel-label {
+  color: #e7e5e4;
+}
+.reading-toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.reading-toggle-hint {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: #a8a29e;
+}
+.dark .reading-toggle-hint {
+  color: #8a8580;
+}
+.reading-panel-divider {
+  height: 1px;
+  margin: 3px 0;
+  background: rgba(120, 113, 108, 0.16);
+}
+.dark .reading-panel-divider {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.reading-seg {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2.5px;
+  border-radius: 9px;
+  background: rgba(120, 113, 108, 0.12);
+}
+.reading-seg-btn {
+  padding: 4px 9px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #78716c;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.reading-seg-btn:hover {
+  color: #1c1917;
+}
+.reading-seg-btn--active {
+  color: #1c1917;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.12);
+}
+.dark .reading-seg {
+  background: rgba(255, 255, 255, 0.08);
+}
+.dark .reading-seg-btn {
+  color: #a8a29e;
+}
+.dark .reading-seg-btn:hover,
+.dark .reading-seg-btn--active {
+  color: #f5f5f4;
+}
+.dark .reading-seg-btn--active {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: none;
+}
+
+.reading-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 5px;
+}
+.reading-swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px 4px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 113, 108, 0.22);
+  font-size: 12px;
+  color: #57534e;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+.reading-swatch-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.55);
+  flex-shrink: 0;
+}
+.reading-swatch:hover {
+  background: rgba(120, 113, 108, 0.08);
+}
+.reading-swatch--active {
+  color: #1c1917;
+  font-weight: 700;
+  border-color: rgba(41, 37, 36, 0.5);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.1);
+}
+.dark .reading-swatch {
+  color: #a8a29e;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+.dark .reading-swatch:hover,
+.dark .reading-swatch--active {
+  color: #f5f5f4;
+}
+.dark .reading-swatch--active {
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+}
+
+.reading-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 40px;
+  height: 23px;
+  border-radius: 999px;
+  background: rgba(120, 113, 108, 0.28);
+  transition: background-color 0.18s ease;
+  cursor: pointer;
+}
+.reading-switch-knob {
+  position: absolute;
+  top: 2.5px;
+  left: 2.5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  transition: transform 0.18s ease;
+}
+.reading-switch--on {
+  background: #57534e;
+}
+.reading-switch--on .reading-switch-knob {
+  transform: translateX(17px);
+}
+.dark .reading-switch--on {
+  background: #a8a29e;
+}
+
+/* ---------- 9. 分节导航浮层 ---------- */
+.reading-toc-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 65;
+  background: rgba(28, 25, 23, 0.32);
+}
+.reading-toc-panel {
+  position: fixed;
+  top: 10vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  width: min(400px, calc(100vw - 32px));
+  max-height: 66vh;
+  border-radius: 18px;
+  background: rgba(250, 249, 246, 0.96);
+  backdrop-filter: blur(26px) saturate(180%);
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(210, 205, 200, 0.55);
+  border-bottom: 1px solid rgba(210, 205, 200, 0.55);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 18px 54px rgba(0, 0, 0, 0.18),
+    0 2px 8px rgba(0, 0, 0, 0.07),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+}
+.dark .reading-toc-panel {
+  background: rgba(28, 25, 23, 0.96);
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  border-left: 1px solid rgba(255, 255, 255, 0.16);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 18px 54px rgba(0, 0, 0, 0.55),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.2);
+}
+.reading-toc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 6px;
+}
+.reading-toc-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #44403c;
+}
+.dark .reading-toc-title {
+  color: #e7e5e4;
+}
+.reading-toc-count {
+  font-family: var(--font-kai);
+  font-size: 11px;
+  color: #78716c;
+  background: rgba(120, 113, 108, 0.14);
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+.dark .reading-toc-count {
+  color: #a8a29e;
+  background: rgba(255, 255, 255, 0.09);
+}
+.reading-toc-list {
+  overflow-y: auto;
+  padding: 4px 10px 14px;
+}
+.reading-toc-list ul {
+  list-style: none;
+}
+.reading-toc-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  color: #57534e;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+  cursor: pointer;
+}
+.reading-toc-item:hover {
+  background: rgba(120, 113, 108, 0.1);
+  color: #1c1917;
+}
+.reading-toc-item--sub {
+  padding-left: 28px;
+  font-size: 12.5px;
+}
+.reading-toc-item--active {
+  background: rgba(120, 113, 108, 0.13);
+  color: #1c1917;
+  font-weight: 600;
+}
+.reading-toc-sub {
+  margin-left: 14px;
+  border-left: 1px solid rgba(120, 113, 108, 0.16);
+}
+.dark .reading-toc-item {
+  color: #a8a29e;
+}
+.dark .reading-toc-item:hover,
+.dark .reading-toc-item--active {
+  background: rgba(255, 255, 255, 0.09);
+  color: #f5f5f4;
+}
+.dark .reading-toc-sub {
+  border-left-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- 10. 行标尺（引导模式进阶） ---------- */
+.reading-ruler {
+  position: fixed;
+  z-index: 30;
+  pointer-events: none;
+  border-radius: 9px;
+  background: linear-gradient(
+    to bottom,
+    rgba(120, 113, 108, 0.03),
+    rgba(120, 113, 108, 0.085) 20%,
+    rgba(120, 113, 108, 0.085) 80%,
+    rgba(120, 113, 108, 0.03)
+  );
+  border-top: 1px solid rgba(120, 113, 108, 0.3);
+  border-bottom: 1px solid rgba(120, 113, 108, 0.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+}
+.dark .reading-ruler,
+html[data-reading-theme='night'] .reading-ruler {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.015),
+    rgba(255, 255, 255, 0.05) 20%,
+    rgba(255, 255, 255, 0.05) 80%,
+    rgba(255, 255, 255, 0.015)
+  );
+  border-top: 1px solid rgba(255, 255, 255, 0.17);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.17);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* ---------- 11. 节奏提醒 + 续读提示 ---------- */
+.reading-reminder {
+  position: fixed;
+  top: calc(1rem + env(safe-area-inset-top, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 62;
+  pointer-events: none;
+}
+.reading-reminder-toast {
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-family: var(--font-kai);
+  font-size: 13.5px;
+  color: #44403c;
+  background: rgba(250, 249, 246, 0.92);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(210, 205, 200, 0.55);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 10px 30px rgba(0, 0, 0, 0.12);
+}
+.dark .reading-reminder-toast {
+  color: #e7e5e4;
+  background: rgba(28, 25, 23, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.reading-resume {
+  position: fixed;
+  right: 1rem;
+  bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+  z-index: 45;
+}
+@media (min-width: 640px) {
+  .reading-resume {
+    right: 1.5rem;
+    bottom: 1.5rem;
+  }
+}
+.reading-resume-toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: #44403c;
+  background: rgba(250, 249, 246, 0.94);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(210, 205, 200, 0.6);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 8px 26px rgba(0, 0, 0, 0.12);
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
+  cursor: pointer;
+}
+.reading-resume-toast:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 2px rgba(255, 255, 255, 0.95),
+    0 10px 30px rgba(0, 0, 0, 0.16);
+}
+.reading-resume-go {
+  font-weight: 700;
+  color: #2563eb;
+}
+.dark .reading-resume-toast {
+  color: #e7e5e4;
+  background: rgba(28, 25, 23, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
+}
+.dark .reading-resume-go {
+  color: #93c5fd;
+}
+
+/* ---------- 12. 强制主题下的工具层玻璃修正 ---------- */
+/* 站点亮色 + 暖黑阅读：工具层用暗玻璃 */
+html[data-reading-theme='night'] .reading-capsule {
+  background: rgba(28, 25, 23, 0.88);
+  border-top: 1px solid rgba(255, 255, 255, 0.24);
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 10px 34px rgba(0, 0, 0, 0.5),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.22);
+}
+html[data-reading-theme='night'] .reading-capsule::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.01) 45%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+}
+html[data-reading-theme='night'] .reading-capsule-btn {
+  color: #a8a29e;
+}
+html[data-reading-theme='night'] .reading-capsule-btn:hover,
+html[data-reading-theme='night'] .reading-capsule-btn--active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f5f5f4;
+}
+html[data-reading-theme='night'] .reading-mode-seg {
+  background: rgba(255, 255, 255, 0.1);
+}
+html[data-reading-theme='night'] .reading-mode-btn {
+  color: #a8a29e;
+}
+html[data-reading-theme='night'] .reading-mode-btn--active {
+  color: #f5f5f4;
+  background: rgba(255, 255, 255, 0.17);
+  box-shadow: none;
+}
+html[data-reading-theme='night'] .reading-time-chip {
+  color: #a8a29e;
+}
+html[data-reading-theme='night'] .reading-panel,
+html[data-reading-theme='night'] .reading-toc-panel,
+html[data-reading-theme='night'] .reading-reminder-toast,
+html[data-reading-theme='night'] .reading-resume-toast {
+  background: rgba(28, 25, 23, 0.96);
+  color: #e7e5e4;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+html[data-reading-theme='night'] .reading-panel .reading-panel-title,
+html[data-reading-theme='night'] .reading-toc-panel .reading-toc-title,
+html[data-reading-theme='night'] .reading-reminder-toast,
+html[data-reading-theme='night'] .reading-resume-toast {
+  color: #e7e5e4;
+}
+html[data-reading-theme='night'] .reading-panel .reading-panel-label,
+html[data-reading-theme='night'] .reading-toc-panel .reading-toc-title {
+  color: #e7e5e4;
+}
+html[data-reading-theme='night'] .reading-seg {
+  background: rgba(255, 255, 255, 0.08);
+}
+html[data-reading-theme='night'] .reading-seg-btn {
+  color: #a8a29e;
+}
+html[data-reading-theme='night'] .reading-seg-btn--active {
+  color: #f5f5f4;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: none;
+}
+html[data-reading-theme='night'] .reading-swatch {
+  color: #a8a29e;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+html[data-reading-theme='night'] .reading-swatch--active {
+  color: #f5f5f4;
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.1);
+}
+html[data-reading-theme='night'] .reading-toc-item {
+  color: #a8a29e;
+}
+html[data-reading-theme='night'] .reading-toc-item:hover,
+html[data-reading-theme='night'] .reading-toc-item--active {
+  background: rgba(255, 255, 255, 0.09);
+  color: #f5f5f4;
+}
+html[data-reading-theme='night'] .reading-toggle-hint {
+  color: #8a8580;
+}
+html[data-reading-theme='night'] .reading-panel-divider {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 站点暗色 + 纸白/暖米阅读：工具层用亮玻璃 */
+html[data-reading-theme='paper'] .reading-capsule,
+html[data-reading-theme='sepia'] .reading-capsule {
+  background: rgba(255, 255, 255, 0.82);
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(210, 205, 200, 0.55);
+  border-bottom: 1px solid rgba(210, 205, 200, 0.55);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 10px 34px rgba(0, 0, 0, 0.14),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+}
+html[data-reading-theme='paper'] .reading-capsule-btn,
+html[data-reading-theme='sepia'] .reading-capsule-btn,
+html[data-reading-theme='paper'] .reading-mode-btn,
+html[data-reading-theme='sepia'] .reading-mode-btn,
+html[data-reading-theme='paper'] .reading-time-chip,
+html[data-reading-theme='sepia'] .reading-time-chip {
+  color: #57534e;
+}
+html[data-reading-theme='paper'] .reading-mode-seg,
+html[data-reading-theme='sepia'] .reading-mode-seg {
+  background: rgba(120, 113, 108, 0.12);
+}
+html[data-reading-theme='paper'] .reading-mode-btn--active,
+html[data-reading-theme='sepia'] .reading-mode-btn--active {
+  color: #1c1917;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.14);
+}
+html[data-reading-theme='paper'] .reading-panel,
+html[data-reading-theme='sepia'] .reading-panel,
+html[data-reading-theme='paper'] .reading-toc-panel,
+html[data-reading-theme='sepia'] .reading-toc-panel,
+html[data-reading-theme='paper'] .reading-reminder-toast,
+html[data-reading-theme='sepia'] .reading-reminder-toast,
+html[data-reading-theme='paper'] .reading-resume-toast,
+html[data-reading-theme='sepia'] .reading-resume-toast {
+  background: rgba(250, 249, 246, 0.96);
+  color: #44403c;
+}
+
+/* ---------- 13. 键盘可达性 + reduced-motion ---------- */
+.reading-capsule-btn:focus-visible,
+.reading-mode-btn:focus-visible,
+.reading-seg-btn:focus-visible,
+.reading-swatch:focus-visible,
+.reading-switch:focus-visible,
+.reading-toc-item:focus-visible,
+.reading-panel-close:focus-visible,
+.focus-reading-btn:focus-visible {
+  outline: 2px solid rgba(87, 83, 78, 0.75);
+  outline-offset: 2px;
+}
+.dark .reading-capsule-btn:focus-visible,
+.dark .reading-mode-btn:focus-visible,
+.dark .reading-seg-btn:focus-visible,
+.dark .reading-swatch:focus-visible,
+.dark .reading-switch:focus-visible,
+.dark .reading-toc-item:focus-visible,
+.dark .reading-panel-close:focus-visible {
+  outline-color: rgba(214, 211, 209, 0.85);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.reading-guide .article-body > p:not(:has(> .katex-display)),
+  html.reading-guide .article-body > blockquote:not(:has(.katex-display)),
+  html.reading-guide .article-body > ul > li,
+  html.reading-guide .article-body > ol > li {
+    transition: none;
+  }
+  .reading-capsule-btn,
+  .reading-mode-btn,
+  .reading-seg-btn,
+  .reading-swatch,
+  .reading-switch,
+  .reading-switch-knob,
+  .reading-toc-item,
+  .focus-reading-btn,
+  .reading-resume-toast {
+    transition: none;
+  }
+}
