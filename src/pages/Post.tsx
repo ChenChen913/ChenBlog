@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { getPostMetaBySlug, loadPostContent, type Post } from '../utils/markdown';
+import { getPostMetaBySlug, loadPostContent, getAllPosts, type Post } from '../utils/markdown';
 import { incrementViews, getViews } from '../utils/storage';
 import { useAppContext } from '../context/AppContext';
 import { usePostContext } from '../context/PostContext';
@@ -11,8 +11,10 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 import TableOfContents from '../components/TableOfContents';
+import PostNavigation from '../components/PostNavigation';
+import RelatedPosts from '../components/RelatedPosts';
 import { Lightbox } from '../components/Lightbox';
-import { ArrowLeft, Clock, Eye, Share2, Check, Calendar } from 'lucide-react';
+import { ArrowLeft, Eye, Share2, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import CodeBlock from '../components/CodeBlock';
 import { getCategoryLabel } from '../config/categories';
@@ -412,6 +414,17 @@ export default function Post() {
 
   const formattedDate = formatDate(post?.frontmatter.date ?? '', lang === 'en' ? 'en' : 'zh');
 
+  // 上一篇 / 下一篇：getAllPosts 已按日期倒序，时间线上 newer 在前、older 在后
+  const { newerPost, olderPost } = useMemo(() => {
+    if (!postMeta) return { newerPost: undefined, olderPost: undefined };
+    const posts = getAllPosts();
+    const index = posts.findIndex(item => item.slug === postMeta.slug);
+    return {
+      newerPost: index > 0 ? posts[index - 1] : undefined,
+      olderPost: index >= 0 && index < posts.length - 1 ? posts[index + 1] : undefined,
+    };
+  }, [postMeta]);
+
   // 🔧 SEO：文章页动态元数据（标题/描述/og:article 随文章内容更新）
   usePageMeta({
     title: post && !post.frontmatter.draft
@@ -557,12 +570,6 @@ export default function Post() {
 
         <div id="post-meta-bottom" className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-6">
           <div id="post-stats" className="flex flex-wrap items-center gap-3 text-sm text-stone-500 dark:text-stone-400">
-            <span id="post-publish-date" className="flex items-center gap-1.5">
-              <Calendar size={16} />
-              <time dateTime={date}>
-                {formattedDate}
-              </time>
-            </span>
             <span id="post-views" className="flex items-center gap-1.5">
               <Eye size={16} />
               {views} {t('views')}
@@ -733,7 +740,15 @@ export default function Post() {
             </span>
           ))}
         </div>
+
+        {/* 上一篇 / 下一篇导航 */}
+        <div className="mt-8">
+          <PostNavigation newerPost={newerPost} olderPost={olderPost} />
+        </div>
       </footer>
+
+      {/* 相关文章推荐（按标签交集，回退同分类） */}
+      <RelatedPosts currentSlug={post.slug} tags={tags} category={category} />
       </motion.article>
       <TableOfContents parsedHeadings={headings} />
       </div>
