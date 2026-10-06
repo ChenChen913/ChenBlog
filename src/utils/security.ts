@@ -11,14 +11,13 @@ const BILIBILI_HOSTS = new Set([
   'player.bilibili.com',
 ]);
 
+// 正则有意匹配控制字符（\u0000-\u001f）：用于剥离协议字符串中的
+// 换行/制表符等注入载体（如 "java\nscript:"），并非缺陷
+// eslint-disable-next-line no-control-regex
+const CONTROL_AND_WHITESPACE = /[\u0000-\u001f\u007f\s]+/g;
+
 function hasUnsafeProtocol(value: string): boolean {
-  // 正则有意匹配控制字符（\u0000-\u001f）：用于剥离协议字符串中的
-  // 换行/制表符等注入载体（如 "java\nscript:"），并非缺陷
-  // eslint-disable-next-line no-control-regex
-  const compact = value
-    .trim()
-    .replace(/[\u0000-\u001f\u007f\s]+/g, '')
-    .toLowerCase();
+  const compact = value.trim().replace(CONTROL_AND_WHITESPACE, '').toLowerCase();
   return Array.from(BLOCKED_PROTOCOLS).some(protocol => compact.startsWith(protocol));
 }
 
