@@ -158,7 +158,17 @@ function CodeBlockContainer({
   }
 
   return (
-    <div className="code-block not-prose my-8">
+    <div
+      className="code-block not-prose my-8"
+      style={
+        highlighted
+          ? ({
+              '--code-block-bg': highlighted.bg,
+              '--code-block-fg': highlighted.fg,
+            } as React.CSSProperties)
+          : undefined
+      }
+    >
       <div aria-live="polite" className="sr-only" role="status">
         {ariaLiveMessage}
       </div>
@@ -221,17 +231,7 @@ function CodeBlockContainer({
             ))}
           </div>
         ) : (
-          <div
-            className="code-block__rows"
-            style={
-              highlighted
-                ? ({
-                    '--code-block-bg': highlighted.bg,
-                    '--code-block-fg': highlighted.fg,
-                  } as React.CSSProperties)
-                : undefined
-            }
-          >
+          <div className="code-block__rows">
             {(highlighted?.lines ?? []).map((line, index) => {
               const isEmptyLine =
                 line.tokens.length === 0 || line.tokens.every(token => token.content === '');

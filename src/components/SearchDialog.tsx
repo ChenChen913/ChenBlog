@@ -35,7 +35,9 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
     [open, query, contents]
   );
 
-  // 打开时：预加载全文索引、聚焦输入框、记录焦点恢复点、锁定背景滚动
+  // 打开时：预加载全文索引、聚焦输入框、记录焦点恢复点、锁定背景滚动。
+  // 锁滚动时补偿滚动条宽度：否则经典滚动条（Windows/Linux）消失
+  // 会让整个页面横向跳动十几个像素，视觉上“错位”
   useEffect(() => {
     if (!open) return;
     restoreFocusRef.current = document.activeElement as HTMLElement | null;
@@ -51,11 +53,18 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
     }
 
     const prevOverflow = document.body.style.overflow;
+    const prevPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
     document.body.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
 
     return () => {
       cancelled = true;
       document.body.style.overflow = prevOverflow;
+      document.body.style.paddingRight = prevPaddingRight;
       restoreFocusRef.current?.focus?.();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -143,7 +152,11 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
           >
             {/* 输入行 */}
             <div className="flex items-center gap-3 px-4 py-3.5 border-b border-stone-200/60 dark:border-white/10">
-              <Search size={18} className="shrink-0 text-stone-400" aria-hidden />
+              <Search
+                size={18}
+                className="shrink-0 text-stone-400 dark:text-stone-500"
+                aria-hidden
+              />
               <input
                 ref={inputRef}
                 id="search-dialog-input"
@@ -159,14 +172,21 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
                 autoComplete="off"
                 spellCheck={false}
               />
-              {!contents && (
-                <Loader2
-                  size={16}
-                  className="shrink-0 animate-spin text-stone-400"
+              {/* 右侧状态位：固定 22px 占位，索引就绪前后无宽度跳变；
+                  加载中显示转圈，就绪后显示 Esc 键帽（与底部快捷键提示同风格） */}
+              {contents ? (
+                <kbd className="search-kbd shrink-0" aria-hidden>
+                  Esc
+                </kbd>
+              ) : (
+                <span
+                  className="search-loading-chip shrink-0"
+                  role="status"
                   aria-label={t('search_loading')}
-                />
+                >
+                  <Loader2 size={14} className="animate-spin" aria-hidden />
+                </span>
               )}
-              <kbd className="search-kbd shrink-0">Esc</kbd>
             </div>
 
             {/* 结果区 */}
@@ -180,8 +200,8 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
               {query.trim() === '' ? (
                 <div className="px-4 py-10 text-center text-sm text-stone-400 dark:text-stone-500">
                   {lang === 'en'
-                    ? 'Enter keywords to search posts. Title, tags and full text are indexed.'
-                    : '输入关键词搜索文章，支持标题、标签与全文检索'}
+                    ? 'Enter keywords to search posts. Title, tags and full text are indexed, with fuzzy matching.'
+                    : '输入关键词搜索文章，支持标题、标签与全文检索，英文关键词支持模糊匹配'}
                 </div>
               ) : results.length === 0 ? (
                 <div className="px-4 py-10 text-center text-sm text-stone-400 dark:text-stone-500">

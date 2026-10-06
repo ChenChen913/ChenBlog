@@ -78,9 +78,8 @@ html {
     border-width: 0;
   }
 
-  鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺?*/
-    .article-body
-    h2 {
+  /* 文章正文标题层级(与站内标题体系一致) */
+  .article-body h2 {
     font-size: var(--article-h2-size, 1.5rem) !important;
     line-height: 1.4 !important;
     font-weight: 700 !important;
@@ -141,7 +140,9 @@ html {
   --code-block-font:
     'Cascadia Code', 'Cascadia Mono', 'JetBrains Mono', 'Fira Code', Consolas, monospace;
   --code-row-line-height: 1.68;
-  --code-line-number-width: 3.8rem;
+  /* 行号与代码同字号（见 .code-block__line-number），4 位行号（1000+ 行）
+     需要更宽的列：0.92rem 字号下 4 位 tabular 数字约 35.3px + 左右 padding 29.6px */
+  --code-line-number-width: 4.15rem;
   border: 1px solid rgba(120, 113, 108, 0.18);
   border-radius: 8px;
   overflow: hidden;
@@ -351,10 +352,14 @@ html {
 .code-block__line-number {
   padding-left: 1rem;
   padding-right: 0.85rem;
-  color: #78716c;
+  color: #57534e;
   font-family: var(--code-block-font);
-  font-size: 0.82rem;
+  /* 与 .code-block__code 完全同字号同行高：不同字号（原 0.82rem vs 0.92rem）
+     会导致半行距差异，行号文字比代码文字偏高约 1.3px，千行代码块中肉眼可见。
+     同字号 + 同字体 + 同行高 = 行框像素级一致，基线严格对齐 */
+  font-size: var(--article-code-size, 0.92rem);
   line-height: var(--code-row-line-height);
+  font-variant-numeric: tabular-nums;
   text-align: right;
   user-select: none;
 }
@@ -460,7 +465,7 @@ html {
   }
 
   .code-block__viewport {
-    --code-line-number-width: 3.45rem;
+    --code-line-number-width: 3.7rem;
     background:
       linear-gradient(
         90deg,
@@ -487,15 +492,11 @@ html {
   .code-block__line-number {
     padding-left: 0.65rem;
     padding-right: 0.75rem;
-    font-size: 0.75rem;
   }
 
-  .code-block__line-content {
-    padding-left: 0.8rem;
-    padding-right: 0.85rem;
-  }
-
-  .article-body:not([data-article-font-size='large']) .code-block__code {
+  /* 移动端代码字号下调时，行号必须同步下调（保持像素级对齐） */
+  .article-body:not([data-article-font-size='large']) .code-block__code,
+  .article-body:not([data-article-font-size='large']) .code-block__line-number {
     font-size: 0.84rem;
   }
 }
@@ -2071,6 +2072,10 @@ html {
 
 /* ============================================================
  * 站内搜索弹窗（沿用站内液态玻璃设计语言）
+ * ⚠ 不可在此声明 position：面板由 Tailwind 的 .fixed 定位到视口，
+ *   若这里写 position: relative 会因同特异性+后加载而覆盖 .fixed，
+ *   弹窗会掉回常规流把 flex 布局挤变形（已修复过的回归点）。
+ *   ::before 的绝对定位会自动锚到 fixed 的面板自身。
  * ============================================================ */
 .search-glass-panel {
   background: rgba(255, 255, 255, 0.88);
@@ -2087,7 +2092,6 @@ html {
     0 4px 12px rgba(0, 0, 0, 0.07),
     inset 0 1.5px 0 rgba(255, 255, 255, 1),
     inset 0 -1px 0 rgba(0, 0, 0, 0.04);
-  position: relative;
   overflow: hidden;
 }
 .search-glass-panel::before {
@@ -2129,27 +2133,70 @@ html {
   );
 }
 
-/* 快捷键小徽章 */
+/* 快捷键小徽章：仿真实键帽（顶部高光 + 底部厚度 + 轻投影），
+   白天/黑夜两套质感；⌘K 提示与 Esc 徽章共用 */
 .search-kbd {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 2px;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
   border-radius: 6px;
-  background: rgba(120, 113, 108, 0.1);
-  border: 1px solid rgba(120, 113, 108, 0.18);
+  background: linear-gradient(180deg, #ffffff 0%, #f3f1ee 100%);
+  border: 1px solid rgba(120, 113, 108, 0.24);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 1px 2px rgba(28, 25, 23, 0.1),
+    0 2px 0 rgba(120, 113, 108, 0.14);
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 11px;
+  font-weight: 500;
   line-height: 1;
-  color: rgba(87, 83, 78, 0.9);
+  color: #57534e;
+  letter-spacing: 0.02em;
+  text-indent: 0.02em;
+  transition:
+    box-shadow 0.12s ease,
+    transform 0.12s ease;
 }
 .dark .search-kbd {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.14);
-  color: rgba(231, 229, 228, 0.85);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 2px 0 rgba(0, 0, 0, 0.3);
+  color: rgba(231, 229, 228, 0.9);
+}
+
+/* 悬停/按压反馈：模拟真实键帽按下（下沉 1px，厚度阴影收起） */
+.search-kbd:hover {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 1px 2px rgba(28, 25, 23, 0.1);
+}
+.dark .search-kbd:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* 输入行右侧加载态：与键帽同尺寸占位，
+   避免索引就绪前后宽度跳变 */
+.search-loading-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: #a8a29e;
+}
+.dark .search-loading-chip {
+  color: #78716c;
 }
 
 /* 结果条目 */

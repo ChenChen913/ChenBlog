@@ -169,6 +169,18 @@ function parseHexColor(color?: string): [number, number, number] | null {
   }
 
   const normalized = color.trim();
+
+  // Shiki 主题可能给出 3 位缩写（如 github-light 的背景 #fff）
+  const shortMatch = normalized.match(/^#([0-9a-f]{3})$/i);
+  if (shortMatch) {
+    const [red, green, blue] = shortMatch[1];
+    return [
+      Number.parseInt(red + red, 16),
+      Number.parseInt(green + green, 16),
+      Number.parseInt(blue + blue, 16),
+    ];
+  }
+
   const match = normalized.match(/^#([0-9a-f]{6})$/i);
   if (!match) {
     return null;
@@ -207,9 +219,15 @@ function toHexColor([red, green, blue]: [number, number, number]): string {
   return `#${[red, green, blue].map(value => value.toString(16).padStart(2, '0')).join('')}`;
 }
 
+/**
+ * 白天模式可读性保障：小字号代码文本的 WCAG AA(4.5) 对比度下限
+ * 在浅色背景下仍会显得发灰发虚，这里提高到 5.6（介于 AA 与 AAA 之间），
+ * 让注释/标点/属性名等灰调 token 明显更实；色相通过向墨色插值保留。
+ */
 export function ensureReadableLightColor(
   color?: string,
-  backgroundColor = '#fbfaf8'
+  backgroundColor = '#fbfaf8',
+  minContrast = 5.6
 ): string | undefined {
   const parsedColor = parseHexColor(color);
   const parsedBackground = parseHexColor(backgroundColor);
@@ -218,7 +236,7 @@ export function ensureReadableLightColor(
     return color;
   }
 
-  if (contrastRatio(parsedColor, parsedBackground) >= 4.5) {
+  if (contrastRatio(parsedColor, parsedBackground) >= minContrast) {
     return color;
   }
 
@@ -232,7 +250,7 @@ export function ensureReadableLightColor(
       Math.round(parsedColor[2] * (1 - weight) + ink[2] * weight),
     ];
 
-    if (contrastRatio(candidate, parsedBackground) >= 4.5) {
+    if (contrastRatio(candidate, parsedBackground) >= minContrast) {
       return toHexColor(candidate);
     }
   }
@@ -307,12 +325,16 @@ export async function getHighlightedTokens(
       theme: themeName,
     });
 
+    // 主题真实背景（viewport 实际使用的 --code-block-bg）
+    const themeBg = tokens.bg ?? defaultThemeConfig[themeMode].backgroundColor;
+
     const result: HighlightResult = {
-      bg: tokens.bg ?? defaultThemeConfig[themeMode].backgroundColor,
+      bg: themeBg,
       fg: tokens.fg ?? defaultThemeConfig[themeMode].textColor,
       lines: tokens.tokens.map(line => ({
         tokens: line.map(token => ({
-          color: themeMode === 'light' ? ensureReadableLightColor(token.color) : token.color,
+          color:
+            themeMode === 'light' ? ensureReadableLightColor(token.color, themeBg) : token.color,
           content: token.content,
           fontStyle: token.fontStyle ?? 0,
         })),
