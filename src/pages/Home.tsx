@@ -73,7 +73,7 @@ export default function Home() {
       <header id="home-header" className="space-y-4">
         <h1
           id="home-title"
-          className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100"
+          className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100 font-kai"
         >
           {lang === 'en' ? (
             <>
@@ -94,10 +94,7 @@ export default function Home() {
       </header>
 
       <section id="home-posts-section" aria-label={t('nav_posts')}>
-        <span className="sec-label" id="home-posts-label">
-          {t('nav_posts')}
-        </span>
-        <div id="home-posts-list" className="mt-3">
+        <div id="home-posts-list">
           <PostTimeline posts={currentPosts} ariaLabel={t('nav_posts')} />
         </div>
 

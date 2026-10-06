@@ -2291,30 +2291,32 @@ html {
   background: linear-gradient(to bottom, rgba(214, 211, 209, 0.34), rgba(214, 211, 209, 0.1));
 }
 
-/* 月份分组：组头日期一律楷体（用户定稿：日期数字用秀气字体） */
+/* 月份分组：组头日期一律楷体（用户定稿：日期数字用秀气字体）。
+   字号层级（本轮反馈）：年份 20px 主视觉、月份 15.5px 稍小，
+   整体与文章标题（17px）相当——时间不再是可以一眼忽略的小字 */
 .pt-group {
   position: relative;
-  padding-bottom: 22px;
+  padding-bottom: 24px;
 }
 .pt-group:last-child {
   padding-bottom: 4px;
 }
 .pt-group-label {
   font-family: var(--font-kai);
-  font-size: 13px;
-  letter-spacing: 2px;
-  line-height: 22px;
+  font-size: 15.5px;
+  letter-spacing: 1.5px;
+  line-height: 30px;
   color: rgba(87, 83, 78, 0.92);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .pt-group-label b {
   font-weight: 700;
-  font-size: 14.5px;
-  color: rgba(63, 60, 57, 1);
-  margin-right: 8px;
+  font-size: 20px;
+  color: rgba(41, 37, 34, 1);
+  margin-right: 10px;
 }
 .dark .pt-group-label {
   color: rgba(168, 162, 158, 0.95);
@@ -2328,7 +2330,7 @@ html {
   content: '';
   position: absolute;
   left: calc(var(--pt-axis) - var(--pt-pad));
-  top: 11px;
+  top: 15px;
   transform: translate(-50%, -50%);
   width: 9px;
   height: 9px;
@@ -2469,30 +2471,22 @@ html {
     padding: 10px var(--pt-bleed);
     gap: 10px;
   }
+  .pt-group-label {
+    font-size: 14px;
+    line-height: 26px;
+  }
+  .pt-group-label b {
+    font-size: 18px;
+  }
+  .pt-group::before {
+    top: 13px;
+  }
   .pt-title {
     font-size: 15.5px;
   }
   .pt-date {
     font-size: 13px;
   }
-}
-
-/* 「文 章」区段小标签（首页） */
-.sec-label {
-  display: inline-block;
-  font-family: var(--font-kai);
-  font-size: 12px;
-  letter-spacing: 4px;
-  color: rgba(87, 83, 78, 1);
-  background: rgba(245, 242, 238, 0.85);
-  border: 1px solid rgba(210, 205, 200, 0.65);
-  padding: 4px 12px;
-  border-radius: 8px;
-}
-.dark .sec-label {
-  color: rgba(214, 211, 209, 0.95);
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.14);
 }
 
 /* 分类页 ◆ 精选 chip 的金色玻璃激活态（过滤不是栏目，保住「只看精选」能力） */
@@ -2592,7 +2586,14 @@ html {
   color: rgba(168, 162, 158, 0.95);
 }
 
-/* 周历条：玻璃容器，格子是刻度不是动画（零动效定稿） */
+/* 周历条：玻璃容器，格子是刻度也是按钮（可点击跳周）。
+   吸顶升级：向下滚动时刻度尺固定在视口顶部（图与列表分离），
+   统计行收起、玻璃加实，保持轻量 */
+.wk-sticky-wrap {
+  position: sticky;
+  top: 10px;
+  z-index: 30;
+}
 .wk-strip {
   margin: 20px 0 6px;
   padding: 12px 14px 10px;
@@ -2608,6 +2609,17 @@ html {
     0 1px 1px rgba(255, 255, 255, 0.9),
     0 4px 16px rgba(0, 0, 0, 0.07),
     inset 0 1.5px 0 rgba(255, 255, 255, 1);
+  transition:
+    background 0.28s ease,
+    box-shadow 0.28s ease;
+}
+/* 吸顶态：玻璃加实（内容从下面滚过时可读），投影下沉一点 */
+.wk-sticky-wrap.is-stuck .wk-strip {
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.95),
+    0 8px 28px rgba(0, 0, 0, 0.12),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
 }
 .dark .wk-strip {
   background: rgba(255, 255, 255, 0.07);
@@ -2618,6 +2630,66 @@ html {
   box-shadow:
     0 4px 20px rgba(0, 0, 0, 0.3),
     inset 0 1.5px 0 rgba(255, 255, 255, 0.22);
+}
+.dark .wk-sticky-wrap.is-stuck .wk-strip {
+  background: rgba(22, 20, 18, 0.92);
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.45),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.16);
+}
+
+/* 年份切换：发满两年后出现的小玻璃胶囊（单年不渲染） */
+.wk-years {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.wk-year-tab {
+  font-family: var(--font-kai);
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 2.5px 12px;
+  border-radius: 999px;
+  color: rgba(87, 83, 78, 0.95);
+  background: rgba(245, 242, 238, 0.7);
+  border: 1px solid rgba(210, 205, 200, 0.6);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.wk-year-tab:hover {
+  color: rgba(28, 25, 23, 1);
+  transform: translateY(-1px);
+}
+.wk-year-tab.is-active {
+  color: #fff;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-color: rgba(37, 99, 235, 0.6);
+  box-shadow:
+    0 2px 10px rgba(37, 99, 235, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.dark .wk-year-tab {
+  color: rgba(214, 211, 209, 0.95);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+.dark .wk-year-tab.is-active {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #eff6ff;
+}
+
+/* 横向刻度尺：桌格格子撑满；移动端整条可滑（月份刻度同轨滚动） */
+.wk-strip-scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.wk-strip-scroll::-webkit-scrollbar {
+  display: none;
+}
+.wk-strip-ruler {
+  width: max-content;
+  min-width: 100%;
 }
 .wk-strip-cells {
   display: flex;
@@ -2635,6 +2707,39 @@ html {
 .dark .wk-cell {
   background: rgba(255, 255, 255, 0.09);
   border-color: rgba(255, 255, 255, 0.12);
+}
+/* 可点击（有文章）的周格：悬停微浮起，键盘可达 */
+.wk-cell--btn {
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease;
+}
+.wk-cell--btn:hover {
+  transform: translateY(-1.5px) scale(1.08);
+  filter: brightness(1.07);
+}
+.wk-cell--btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #2563eb;
+}
+.dark .wk-cell--btn:focus-visible {
+  box-shadow: 0 0 0 2px #60a5fa;
+}
+/* 滚动联动：当前读到的那一周 → 光环 + 提亮（「突出显示」） */
+.wk-cell--active {
+  box-shadow:
+    0 0 0 2px rgba(37, 99, 235, 0.4),
+    0 0 12px rgba(37, 99, 235, 0.4);
+  filter: brightness(1.1);
+}
+.dark .wk-cell--active {
+  box-shadow:
+    0 0 0 2px rgba(96, 165, 250, 0.5),
+    0 0 14px rgba(96, 165, 250, 0.45);
 }
 /* 篇数着色：1 篇浅、2 篇中、3+ 篇深（蓝阶） */
 .wk-cell--p1 {
@@ -2697,9 +2802,21 @@ html {
   gap: 16px;
   flex-wrap: wrap;
   margin-top: 10px;
+  max-height: 64px;
+  overflow: hidden;
   font-family: var(--font-kai);
   font-size: 12.5px;
   color: rgba(87, 83, 78, 0.95);
+  transition:
+    max-height 0.28s ease,
+    opacity 0.2s ease,
+    margin-top 0.28s ease;
+}
+/* 吸顶后统计行收起：一行信息让位给刻度尺（动态收缩，非硬删除） */
+.wk-sticky-wrap.is-stuck .wk-stats {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
 }
 .dark .wk-stats {
   color: rgba(168, 162, 158, 0.95);
@@ -2754,12 +2871,17 @@ html {
   border-color: #60a5fa;
 }
 
-/* 周分组时间线（主体） */
+/* 周分组时间线（主体）
+   跳转落点预留吸顶条高度：scrollIntoView 后周头不被玻璃条压住 */
 .wk-groups {
   position: relative;
   max-width: 720px;
   padding-left: var(--wk-pad);
   margin-top: 26px;
+}
+.wk-year,
+.wk-week-block {
+  scroll-margin-top: 104px;
 }
 .wk-groups::before {
   content: '';
@@ -2773,6 +2895,7 @@ html {
 .dark .wk-groups::before {
   background: linear-gradient(to bottom, rgba(96, 165, 250, 0.5), rgba(214, 211, 209, 0.14));
 }
+/* 年份头：与首页组头同款层级（年份 20px 主视觉，时间字体定稿） */
 .wk-year {
   font-family: var(--font-kai);
   font-size: 13px;
@@ -2781,10 +2904,10 @@ html {
   margin: 6px 0 14px;
 }
 .wk-year b {
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 700;
   color: rgba(41, 37, 34, 1);
-  margin-right: 8px;
+  margin-right: 10px;
 }
 .dark .wk-year,
 .dark .wk-year b {
@@ -2827,9 +2950,10 @@ html {
   border-color: #60a5fa;
   box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.16);
 }
+/* 周头行：日期区间为主标注（16px，与首页月份层级一致），周序降为行尾小字 */
 .wk-range {
   font-family: var(--font-kai);
-  font-size: 14.5px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 1px;
   color: rgba(41, 37, 34, 1);
@@ -2951,13 +3075,19 @@ html {
   color: rgba(168, 162, 158, 0.9);
 }
 
-/* 周刊页移动端 */
+/* 周刊页移动端
+   吸顶条躲在移动端顶栏（~57px）之下；格子固定 12px 宽保证可点，
+   整条刻度尺横向滑动，月份刻度同轨滚动 */
 @media (max-width: 639px) {
   .wk-page {
     --wk-pad: 20px;
     --wk-bleed: 10px;
   }
+  .wk-sticky-wrap {
+    top: 62px;
+  }
   .wk-cell {
+    flex: 0 0 12px;
     height: 20px;
   }
   .wk-strip {
@@ -2974,7 +3104,14 @@ html {
     font-size: 15.5px;
   }
   .wk-range {
-    font-size: 13.5px;
+    font-size: 14.5px;
+  }
+  .wk-year b {
+    font-size: 18px;
+  }
+  .wk-year,
+  .wk-week-block {
+    scroll-margin-top: 148px;
   }
   .wk-stats {
     gap: 12px;

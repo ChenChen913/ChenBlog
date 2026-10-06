@@ -24,13 +24,13 @@ export default function About() {
       <header id="about-header" className="space-y-4">
         <h1
           id="about-title"
-          className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100"
+          className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100 font-kai"
         >
           {t('nav_about')}
         </h1>
       </header>
 
-      <div id="about-content" className="prose dark:prose-invert prose-stone max-w-none">
+      <div id="about-content" className="prose dark:prose-invert prose-stone max-w-none font-kai">
         <p className="text-lg leading-relaxed text-stone-700 dark:text-stone-300">
           {t('about_intro')}
         </p>

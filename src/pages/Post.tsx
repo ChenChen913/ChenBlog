@@ -673,7 +673,7 @@ export default function Post() {
                 {categoryLabel}
               </Link>
               <span>•</span>
-              <time id="post-date" dateTime={date}>
+              <time id="post-date" dateTime={date} className="font-kai">
                 {formattedDate}
               </time>
             </div>

@@ -12,6 +12,7 @@ import { AppProvider } from './context/AppContext';
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import NotFound from './pages/NotFound';
+import { scheduleIdleRoutePrefetch } from './utils/route-prefetch';
 
 /**
  * ⚡ 路由级代码分割：非首屏页面按需加载。
@@ -94,6 +95,13 @@ function ScrollRestoration() {
 }
 
 function App() {
+  // 首次点击文章「没反应」的根因修复：首屏交互完成后、浏览器空闲时
+  // 后台预热懒加载路由 chunk（Post 携带 ~519KB 渲染链），点击前资源已就位。
+  // 省流/慢网自动跳过；失败静默（进入页面时仍有懒加载兜底）。
+  useEffect(() => {
+    scheduleIdleRoutePrefetch(['post', 'weekly', 'categories', 'about']);
+  }, []);
+
   return (
     <AppProvider>
       <BrowserRouter>

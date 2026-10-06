@@ -26,7 +26,7 @@ const ITEM_HEIGHT = 44;
 const ITEM_GAP = 8;
 
 export default function SideBar({ onOpenSearch }: { onOpenSearch: () => void }) {
-  const { t, lang } = useAppContext();
+  const { t } = useAppContext();
   const location = useLocation();
   const [showQrCode, setShowQrCode] = useState(false);
   const qrCodeRef = useRef<HTMLDivElement>(null);
@@ -67,7 +67,7 @@ export default function SideBar({ onOpenSearch }: { onOpenSearch: () => void }) 
       id="desktop-sidebar"
       className="hidden md:flex flex-col w-64 h-screen sticky top-0 border-r border-stone-200/70 dark:border-stone-800 p-6"
     >
-      <div id="sidebar-logo-container" className="flex items-center justify-center gap-3 mb-10">
+      <div id="sidebar-logo-container" className="flex items-center justify-start gap-3 mb-10">
         <div
           id="sidebar-logo-icon"
           className="w-10 h-10 rounded-xl bg-stone-900 dark:bg-stone-100 flex items-center justify-center text-white dark:text-stone-900 font-bold text-xl flex-shrink-0"
@@ -119,6 +119,7 @@ export default function SideBar({ onOpenSearch }: { onOpenSearch: () => void }) 
           }}
         />
 
+        {/* 定稿样式：图标基准线对齐（靠左排布），图标槽定宽保证文字左缘一致 */}
         {navItems.map(item => {
           const isActive =
             location.pathname === item.path ||
@@ -130,21 +131,19 @@ export default function SideBar({ onOpenSearch }: { onOpenSearch: () => void }) 
               to={item.path}
               aria-current={isActive ? 'page' : undefined}
               style={{ position: 'relative', zIndex: 1, height: `${ITEM_HEIGHT}px`, flexShrink: 0 }}
-              className={`flex items-center ${lang === 'en' ? 'w-full gap-1' : 'justify-center gap-6'} px-4 rounded-xl transition-colors duration-200 ${
+              className={`flex items-center w-full gap-3 px-4 rounded-[14px] transition-colors duration-200 ${
                 isActive
                   ? 'text-stone-900 dark:text-stone-100 font-semibold'
                   : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-100'
               }`}
             >
-              <div className={`${lang === 'en' ? 'w-5' : ''} flex-shrink-0 flex justify-center`}>
-                <item.icon size={20} />
+              <div className="w-5 flex-shrink-0 flex justify-center">
+                <item.icon size={18} />
               </div>
-              <span className={`text-sm ${lang === 'en' ? 'flex-1 text-center' : ''}`}>
-                {item.label}
-              </span>
+              <span className="text-[14.5px] text-left whitespace-nowrap">{item.label}</span>
               {item.path === '/weekly' && weeklyCount === 0 && (
                 <span
-                  className="ml-1 text-[10.5px] tracking-wider text-amber-600 dark:text-amber-400 shrink-0"
+                  className="ml-auto text-[10.5px] tracking-wider text-amber-600 dark:text-amber-400 shrink-0"
                   title={t('weekly_coming_soon')}
                 >
                   {t('weekly_coming_soon')}
@@ -157,7 +156,7 @@ export default function SideBar({ onOpenSearch }: { onOpenSearch: () => void }) 
 
       <div
         id="sidebar-footer-social"
-        className="flex items-center justify-center gap-4 pt-6 border-t border-stone-200 dark:border-stone-800"
+        className="flex items-center justify-start gap-4 pt-6 border-t border-stone-200 dark:border-stone-800"
       >
         <a
           id="sidebar-social-x"

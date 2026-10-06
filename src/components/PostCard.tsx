@@ -6,6 +6,7 @@ import { useAppContext } from '../context/AppContext';
 import { getViews } from '../utils/storage';
 import { getCategoryLabel } from '../config/categories';
 import { formatDate } from '../utils/dateFormat';
+import { prefetchRoute } from '../utils/route-prefetch';
 
 interface PostCardProps {
   post: Post;
@@ -18,8 +19,10 @@ export default function PostCard({ post, showCover = false }: PostCardProps) {
   const views = getViews(post.slug);
 
   // 预取正文 chunk：hover / 键盘聚焦时提前拉取，点开即达
-  // （loadPostContent 自带缓存；省流模式或低速网络下跳过，避免浪费流量）
+  // （loadPostContent 自带缓存；省流模式或低速网络下跳过，避免浪费流量；
+  //   同时预热文章页组件 chunk，修复首次点击文章的懒加载延迟）
   const prefetchContent = useCallback(() => {
+    prefetchRoute('post');
     const connection = (
       navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }
     ).connection;

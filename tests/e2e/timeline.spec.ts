@@ -87,6 +87,8 @@ test.describe('首页时间轴列表', () => {
 
   test('首页是纯文章列表：无精选/推荐栏目模块，weekly 文章混排无标识', async ({ page }) => {
     await expect(page.locator('#featured-posts-section, #featured-posts-title')).toHaveCount(0);
+    // 列表顶部不再有「文 章」胶囊标签（减法定稿）
+    await expect(page.locator('.sec-label, #home-posts-label')).toHaveCount(0);
     // 4 篇 weekly 文章按普通文章渲染（无任何专属类名/角标）
     const weeklyRows = await page.evaluate(() => {
       const rows = Array.from(document.querySelectorAll('.pt-row'));
@@ -95,6 +97,24 @@ test.describe('首页时间轴列表', () => {
     expect(weeklyRows).toBe(0);
     // gem 行有标记类
     await expect(page.locator('.pt-row--gem').first()).toBeAttached();
+  });
+
+  test('组头时间字号：年份 > 月份，整体与标题同量级（时间放大定稿）', async ({ page }) => {
+    const sizes = await page.evaluate(() => {
+      const label = document.querySelector<HTMLElement>('.pt-group-label');
+      const title = document.querySelector<HTMLElement>('.pt-title');
+      if (!label || !title) return null;
+      return {
+        year: getComputedStyle(label.querySelector('b')!).fontSize,
+        month: getComputedStyle(label).fontSize,
+        title: getComputedStyle(title).fontSize,
+      };
+    });
+    expect(sizes).not.toBeNull();
+    const px = (s: string) => parseFloat(s);
+    expect(px(sizes!.year)).toBeGreaterThanOrEqual(19);
+    expect(px(sizes!.month)).toBeGreaterThanOrEqual(14.5);
+    expect(px(sizes!.year)).toBeGreaterThan(px(sizes!.month));
   });
 
   test('移动端 375px 无横向溢出', async ({ page }) => {
@@ -179,6 +199,21 @@ test.describe('周刊页', () => {
     await expect(page.locator('#post-content')).toBeVisible();
   });
 
+  test('周历条交互升级：着色周格是按钮、点击后高亮对应周', async ({ page }) => {
+    // 有文章的周（W39/W40/W41）渲染为可点击按钮，空周是纯刻度
+    await expect(page.locator('.wk-cell--btn')).toHaveCount(3);
+    const emptyCells = await page.evaluate(
+      () => document.querySelectorAll('.wk-cell:not(.wk-cell--btn)').length
+    );
+    expect(emptyCells).toBeGreaterThan(40);
+    // 单年数据不渲染年份切换（界面零噪声，多年才出现）
+    await expect(page.locator('.wk-year-tab')).toHaveCount(0);
+    // 点击 W39 格子：即时高亮反馈（跳转滚动受页面高度钳制，不锁具体位置）
+    await page.locator('.wk-cell--btn[data-week="39"]').click();
+    await page.waitForTimeout(800);
+    await expect(page.locator('.wk-cell--active')).toHaveAttribute('data-week', '39');
+  });
+
   test('移动端 375px 周刊页无横向溢出', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.waitForLoadState('networkidle');
@@ -203,6 +238,29 @@ test.describe('导航收敛与精选迁移', () => {
     await page.setViewportSize({ width: 375, height: 667 });
     await expect(page.locator('#mobile-nav-weekly')).toBeVisible();
     await expect(page.locator('#mobile-nav-highlights')).toHaveCount(0);
+  });
+
+  test('侧边栏靠左排布：图标基准线与文字左缘各成一条竖线（定稿回归锁）', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    const metrics = await page.evaluate(() => {
+      const links = Array.from(document.querySelectorAll<HTMLElement>('#sidebar-nav a'));
+      return links.map(link => ({
+        iconLeft: (link.querySelector('svg') as HTMLElement).getBoundingClientRect().left,
+        labelLeft: (link.querySelector('span') as HTMLElement).getBoundingClientRect().left,
+        linkLeft: link.getBoundingClientRect().left,
+      }));
+    });
+    expect(metrics.length).toBe(4);
+    // 图标全部起于同一条竖线，文字全部起于同一条竖线
+    const spread = (arr: number[]) => Math.max(...arr) - Math.min(...arr);
+    expect(spread(metrics.map(m => m.iconLeft))).toBeLessThanOrEqual(0.5);
+    expect(spread(metrics.map(m => m.labelLeft))).toBeLessThanOrEqual(0.5);
+    // 靠左排布：图标紧贴行首（居中布局时偏移会 > 30px）
+    for (const m of metrics) {
+      expect(m.iconLeft - m.linkLeft).toBeLessThan(20);
+    }
   });
 
   test('旧精选链接重定向到分类页 ◆ 过滤', async ({ page }) => {

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { type Post, loadPostContent } from '../utils/markdown';
 import { useAppContext } from '../context/AppContext';
 import { formatListDate, formatMonthRange } from '../utils/weekly';
+import { prefetchRoute } from '../utils/route-prefetch';
 
 interface PostTimelineProps {
   posts: Post[];
@@ -59,8 +60,10 @@ export default function PostTimeline({ posts, ariaLabel }: PostTimelineProps) {
   const groups = useMemo(() => groupByMonth(posts), [posts]);
 
   // 预取正文 chunk：hover / 键盘聚焦时提前拉取，点开即达
-  // （省流模式或低速网络下跳过，避免浪费流量）
+  // （省流模式或低速网络下跳过，避免浪费流量；同时预热文章页组件 chunk，
+  //   修复首次点击文章「没反应」的懒加载延迟）
   const makePrefetch = (slug: string) => () => {
+    prefetchRoute('post');
     const connection = (
       navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }
     ).connection;

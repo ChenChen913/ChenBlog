@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { type Post, loadPostContent } from '../utils/markdown';
 import { useAppContext } from '../context/AppContext';
+import { prefetchRoute } from '../utils/route-prefetch';
 
 interface PostNavigationProps {
   /** 时间线上更早的一篇（“下一篇”） */
@@ -27,7 +28,9 @@ export default function PostNavigation({ olderPost, newerPost }: PostNavigationP
     lang === 'en' && post.frontmatter.title_en ? post.frontmatter.title_en : post.frontmatter.title;
 
   // 与 PostCard 同款预取：hover / 聚焦时拉取目标文章正文 chunk，点开即达
+  // （同时预热文章页组件 chunk，首次点击不再有懒加载延迟）
   const makePrefetch = (slug: string) => () => {
+    prefetchRoute('post');
     loadPostContent(slug).catch(() => {});
   };
 

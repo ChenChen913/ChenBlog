@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { getAllPosts, loadPostContent, type Post } from '../utils/markdown';
 import { useAppContext } from '../context/AppContext';
 import { formatWeekLabel, groupPostsByWeek } from '../utils/weekly';
+import { prefetchRoute } from '../utils/route-prefetch';
 
 interface WeeklyNavigationProps {
   /** 当前周刊文章的 slug */
@@ -46,6 +47,7 @@ export default function WeeklyNavigation({ currentSlug }: WeeklyNavigationProps)
     lang === 'en' && post.frontmatter.title_en ? post.frontmatter.title_en : post.frontmatter.title;
 
   const makePrefetch = (slug: string) => () => {
+    prefetchRoute('post');
     loadPostContent(slug).catch(() => {});
   };
 

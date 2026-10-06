@@ -57,7 +57,7 @@ export default function Categories() {
       <header id="categories-header" className="space-y-4">
         <h1
           id="categories-title"
-          className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100"
+          className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100 font-kai"
         >
           {t('nav_categories')}
         </h1>
