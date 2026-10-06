@@ -7,6 +7,7 @@ import { motion } from 'motion/react';
 import Pagination from '../components/Pagination';
 import { formatDate } from '../utils/dateFormat';
 import { usePageMeta } from '../hooks/usePageMeta';
+import JsonLd from '../components/JsonLd';
 
 export default function Home() {
   const { t, lang } = useAppContext();
@@ -23,6 +24,20 @@ export default function Home() {
     description: t('home_subtitle'),
     ogType: 'website',
   });
+
+  // 🔧 SEO：站点级 JSON-LD（WebSite + 作者信息）
+  const websiteJsonLd = useMemo(() => ({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'MaoChen Blog',
+    description: t('home_subtitle'),
+    inLanguage: lang === 'en' ? 'en' : 'zh-CN',
+    author: {
+      '@type': 'Person',
+      name: 'MaoChen',
+      url: 'https://github.com/ChenChen913',
+    },
+  }), [t, lang]);
 
   // 🔧 修复重复内容：近期列表排除已在推荐位展示的文章
   const featuredSlugs = new Set(featuredPosts.map(p => p.slug));
@@ -50,6 +65,7 @@ export default function Home() {
       transition={{ duration: 0.18 }}
       className="space-y-16"
     >
+      <JsonLd data={websiteJsonLd} />
       <header id="home-header" className="space-y-4">
         <h1 id="home-title" className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
           {lang === 'en' ? (

@@ -20,6 +20,8 @@ import { formatDate } from '../utils/dateFormat';
 import { parseMarkdownHeadings } from '../utils/headingParser';
 import StatusView from '../components/StatusView';
 import ArticleFontSizeControl from '../components/ArticleFontSizeControl';
+import JsonLd from '../components/JsonLd';
+import Comments from '../components/Comments';
 import { usePageMeta } from '../hooks/usePageMeta';
 import {
   readArticleFontSizeMode,
@@ -488,6 +490,25 @@ export default function Post() {
 
   return (
     <>
+      {/* 🔧 SEO：文章页 JSON-LD 结构化数据（BlogPosting） */}
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: post.frontmatter.title,
+          description: post.excerpt?.replace(/\.\.\.$/, '') || undefined,
+          datePublished: post.frontmatter.date,
+          dateModified: post.frontmatter.date,
+          keywords: post.frontmatter.tags?.join(', ') || undefined,
+          author: { '@type': 'Person', name: 'MaoChen' },
+          inLanguage: 'zh-CN',
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': typeof window !== 'undefined' ? window.location.origin + window.location.pathname : undefined,
+          },
+          image: safeCoverImage || undefined,
+        }}
+      />
       <div className="article-page">
         {/* 左侧主要内容 */}
         <motion.article
@@ -512,7 +533,7 @@ export default function Post() {
             className="post-back-btn back-btn-glass"
           >
             <ArrowLeft size={20} />
-            Back
+            {t('nav_back')}
           </button>
 
           <header id="post-header" className="mb-10">
@@ -713,9 +734,12 @@ export default function Post() {
           ))}
         </div>
       </footer>
-    </motion.article>
+      </motion.article>
       <TableOfContents parsedHeadings={headings} />
       </div>
+
+      {/* giscus 评论（未配置环境变量时渲染 null，零开销） */}
+      <Comments />
     </>
   );
 }

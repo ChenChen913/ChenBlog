@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { X, ArrowLeft, List } from 'lucide-react';
 import type { HeadingNode } from '../utils/headingParser';
 
-/* 鈹€鈹€ 鏂囩珷椤靛簳閮ㄦ爮锛堣繑鍥?+ 鐩綍锛?鈹€鈹€ */
+/* ── 文章页底部栏（返回 + 目录）── */
 function PostBottomBar() {
   const navigate = useNavigate();
   const { t } = useAppContext();
@@ -80,7 +80,7 @@ function PostBottomBar() {
       <AnimatePresence>
         {showTOC && (
           <>
-            {/* 閬僵 */}
+          {/* 遮罩 */}
             <motion.div
               className="fixed inset-0 z-[60] bg-black/30 md:hidden"
               initial={{ opacity: 0 }}
@@ -88,7 +88,7 @@ function PostBottomBar() {
               exit={{ opacity: 0 }}
               onClick={() => setShowTOC(false)}
             />
-            {/* 鐩綍闈㈡澘 */}
+            {/* 目录面板 */}
             <motion.div
               className="mobile-toc-panel fixed bottom-0 left-0 right-0 z-[61] md:hidden"
               initial={{ y: '100%' }}
@@ -116,7 +116,7 @@ function PostBottomBar() {
   );
 }
 
-/* 鈹€鈹€ 姝ｅ父瀵艰埅搴曢儴鏍?鈹€鈹€ */
+/* ── 正常导航底部栏 ── */
 function NavBottomBar() {
   const { t, lang } = useAppContext();
   const location = useLocation();
@@ -267,7 +267,7 @@ function NavBottomBar() {
     >
       <div
         ref={containerRef}
-        className="relative flex justify-center items-center gap-6 px-6 py-4"
+        className={`relative flex justify-center items-center px-6 py-4 ${lang === 'en' ? 'gap-3' : 'gap-6'}`}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -290,7 +290,7 @@ function NavBottomBar() {
               onClick={() => { if (!isDragging) setActiveIndex(index); }}
               className={`
                 relative z-10 flex items-center justify-center
-                px-5 py-2 rounded-full font-medium whitespace-nowrap
+                ${lang === 'en' ? 'px-3' : 'px-5'} py-2 rounded-full font-medium whitespace-nowrap
                 ${lang === 'en' ? 'text-xs' : 'text-sm'}
                 transition-all duration-150 ease-out
                 ${isActive ? 'text-stone-900 dark:text-stone-100' : 'text-stone-500 dark:text-stone-400'}
@@ -310,7 +310,7 @@ function NavBottomBar() {
   );
 }
 
-/* 鈹€鈹€ 涓荤粍浠讹細鏍规嵁璺敱鍒囨崲 鈹€鈹€ */
+/* ── 主组件：根据路由切换 ── */
 export default function MobileBottomBar() {
   const location = useLocation();
   const isPost = /^\/posts\/[^/]+$/.test(location.pathname);

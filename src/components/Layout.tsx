@@ -8,6 +8,7 @@ import ScrollToTop from './ScrollToTop';
 import { SkipLink } from './SkipLink';
 import NetworkStatusBanner from './NetworkStatusBanner';
 import SearchDialog from './SearchDialog';
+import ReadingProgress from './ReadingProgress';
 
 export default function Layout({ children }: { children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -46,6 +47,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <MobileBottomBar />
       <FloatingActions />
       <ScrollToTop />
+      <ReadingProgress />
       <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
     </div>
   );

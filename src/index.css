@@ -2089,3 +2089,18 @@ html {
   background: rgba(120, 113, 108, 0.35);
   border-radius: 3px;
 }
+
+/* ============================================================
+ * 阅读进度条（文章页顶部，2.5px 渐变细条）
+ * ============================================================ */
+.reading-progress-bar {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.55), rgba(59, 130, 246, 0.95));
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.30);
+  border-radius: 0 2px 2px 0;
+  transition: width 0.06s linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-progress-bar {
+    transition: none;
+  }
+}

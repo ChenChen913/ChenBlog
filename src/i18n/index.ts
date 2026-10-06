@@ -32,8 +32,8 @@ export const i18n = {
     about_contact_desc: '欢迎通过以下方式与我交流：',
   },
   en: {
-    nav_home: 'HM', nav_posts: 'ART', nav_categories: 'CAT',
-    nav_highlights: 'TOP', nav_about: 'ME', nav_back: 'Back',
+    nav_home: 'Home', nav_posts: 'Posts', nav_categories: 'Categories',
+    nav_highlights: 'Highlights', nav_about: 'About', nav_back: 'Back',
     site_name: 'My Blog',
     toc_title: 'Contents',
     tab_latest: 'Latest', tab_recommend: 'Featured',

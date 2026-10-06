@@ -14,7 +14,7 @@ export default function TopNav({ onOpenSearch }: { onOpenSearch: () => void }) {
       <div className="flex items-center justify-between px-4 py-3 w-full">
         <Link id="mobile-topnav-logo-link" to="/" className="flex items-center gap-2 flex-shrink-0">
           <div id="mobile-topnav-logo-icon" className="w-8 h-8 rounded-lg bg-stone-900 dark:bg-stone-100 flex items-center justify-center text-white dark:text-stone-900 font-bold text-lg">
-            W
+            M
           </div>
           <span id="mobile-topnav-logo-text" className="font-bold text-lg tracking-tight">{t('site_name')}</span>
         </Link>

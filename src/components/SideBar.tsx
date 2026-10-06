@@ -59,7 +59,7 @@ export default function SideBar({ onOpenSearch }: { onOpenSearch: () => void }) 
           id="sidebar-logo-icon"
           className="w-10 h-10 rounded-xl bg-stone-900 dark:bg-stone-100 flex items-center justify-center text-white dark:text-stone-900 font-bold text-xl flex-shrink-0"
         >
-          W
+          M
         </div>
         <span id="sidebar-logo-text" className="font-bold text-xl tracking-tight">
           {t('site_name')}
