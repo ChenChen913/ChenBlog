@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Search } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
-export default function TopNav() {
+export default function TopNav({ onOpenSearch }: { onOpenSearch: () => void }) {
   const { theme, toggleTheme, lang, toggleLang, t } = useAppContext();
 
   return (
@@ -20,6 +20,14 @@ export default function TopNav() {
         </Link>
         
         <div id="mobile-topnav-actions" className="flex items-center gap-2 flex-shrink-0">
+          <button
+            id="mobile-topnav-search-btn"
+            onClick={onOpenSearch}
+            className="mobile-topnav-btn"
+            aria-label={t('search_placeholder')}
+          >
+            <Search size={20} />
+          </button>
           <button 
             id="mobile-topnav-theme-toggle"
             onClick={toggleTheme}

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Hash, Star, User, Github } from 'lucide-react';
+import { Home, Hash, Star, User, Github, Search } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
 const XIcon = ({ size = 20 }: { size?: number }) => (
@@ -18,7 +18,7 @@ const WechatIcon = ({ size = 20 }: { size?: number }) => (
 const ITEM_HEIGHT = 44;
 const ITEM_GAP = 8;
 
-export default function SideBar() {
+export default function SideBar({ onOpenSearch }: { onOpenSearch: () => void }) {
   const { t, lang } = useAppContext();
   const location = useLocation();
   const [showQrCode, setShowQrCode] = useState(false);
@@ -65,6 +65,18 @@ export default function SideBar() {
           {t('site_name')}
         </span>
       </div>
+
+      {/* 搜索入口：⌘K 快捷键同步提示，与站内玻璃质感一致 */}
+      <button
+        id="sidebar-search-btn"
+        onClick={onOpenSearch}
+        className="btn-glass-pill flex items-center gap-2 w-full px-4 py-2.5 mb-6 text-sm text-stone-500 dark:text-stone-400"
+        aria-label={t('search_placeholder')}
+      >
+        <Search size={16} className="shrink-0" aria-hidden />
+        <span className="flex-1 text-left truncate">{t('search_placeholder')}</span>
+        <kbd className="search-kbd">⌘K</kbd>
+      </button>
 
       <nav
         id="sidebar-nav"
