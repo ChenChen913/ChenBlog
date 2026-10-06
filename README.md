@@ -113,16 +113,25 @@ npm run preview    # 本地预览 dist
 ## 性能设计
 
 - **文章数据双通道**：列表页只读构建期生成的轻量元数据索引（`virtual:posts-index`，几 KB）；正文按需加载独立 chunk，首页零正文流量
+- **hover 预取**：文章卡片与上/下篇链接在 hover / 键盘聚焦时提前拉取正文 chunk，点开即达；省流模式与 slow-2g 自动跳过
 - **字体 unicode-range 分片**：LXGW 楷体拆为 latin(60KB) / 常用字(881KB) / 次常用字(4.4MB) 三片，文章页典型流量 5.1MB → 941KB；新增文章引入新字后运行 `python3 scripts/font-split.py` 重建（需 fontTools + brotli，源字体在 `scripts/font-src/`）
 - **路由级代码分割**：非首屏页面与 Shiki 语法包均按需加载
+- **高亮零 wasm**：Shiki 使用 JavaScript 正则引擎（forgiving 模式），彻底移除 oniguruma wasm（155KB gzip）依赖，CSP 同步收紧
 - **frontmatter 解析**：构建期 gray-matter（js-yaml）解析，正确支持引号/多行数组/YAML 标量；单篇失败降级不阻塞构建
 - **暗色首帧引导**：index.html 内联脚本首帧前同步主题，消除暗色用户白闪
+
+## 代码规范
+
+- **ESLint 10**（`eslint.config.js`）：flat config 三环境分区 + react-hooks 依赖检查；error 级拦截，存量 warn 项渐进治理
+- **Prettier 3**（`.prettierrc.json`）：单引号 / 分号 / printWidth 100；文章内容目录已豁免
+- **husky + lint-staged**：提交暂存文件自动 eslint --fix + prettier，违规的提交会被拦截
+- 常用命令：`npm run lint`（tsc）/ `npm run lint:eslint` / `npm run lint:fix` / `npm run format` / `npm run format:check`
 
 ## CI
 
 推送到 main 或发起 PR 时自动运行（`.github/workflows/ci.yml`）：
 
-1. **Lint & Unit**：tsc 类型检查 + vitest 94 项单测
+1. **Lint & Unit**：tsc 类型检查 + ESLint 门禁 + vitest 94 项单测
 2. **Build & Prerender**：完整构建 + 产物存在性断言，dist 快照上传为 artifact
 3. **E2E**：Playwright 桌面 + 移动双视口 27 项用例，失败时上传报告
 
