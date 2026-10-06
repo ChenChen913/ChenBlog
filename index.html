@@ -4,6 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>MaoChen - Personal Blog</title>
+  <script>
+    /* 主题引导：首帧前同步暗色类，消除暗色用户的首屏白闪
+       （与 useTheme 同逻辑：theme-preference > 北京时间自动） */
+    (function () {
+      try {
+        var stored = localStorage.getItem('theme-preference');
+        var dark = stored === 'dark';
+        if (!stored) {
+          var hour = new Date(Date.now() + 8 * 3600 * 1000).getUTCHours();
+          dark = hour >= 20 || hour < 6;
+        }
+        document.documentElement.classList.toggle('dark', dark);
+      } catch (e) {}
+    })();
+  </script>
   
   <!-- Security Meta Tags -->
   <meta name="referrer" content="strict-origin-when-cross-origin">
