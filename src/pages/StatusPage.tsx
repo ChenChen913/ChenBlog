@@ -2,7 +2,18 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import StatusView from '../components/StatusView';
 
-const statusMap: Record<string, { code: string; title: string; description: string; hint: string; primaryActionLabel?: string; primaryActionTo?: string; retry?: boolean; }> = {
+const statusMap: Record<
+  string,
+  {
+    code: string;
+    title: string;
+    description: string;
+    hint: string;
+    primaryActionLabel?: string;
+    primaryActionTo?: string;
+    retry?: boolean;
+  }
+> = {
   '200': {
     code: '200',
     title: '请求已成功完成',

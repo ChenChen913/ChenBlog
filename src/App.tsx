@@ -22,7 +22,11 @@ const LIST_PATHS = new Set(['/', '/categories', '/highlights']);
 /** 懒加载路由的加载态：极简骨架，避免布局抖动 */
 function RouteFallback() {
   return (
-    <div className="flex items-center justify-center min-h-[60vh]" role="status" aria-label="加载中">
+    <div
+      className="flex items-center justify-center min-h-[60vh]"
+      role="status"
+      aria-label="加载中"
+    >
       <div className="w-8 h-8 border-2 border-stone-300 dark:border-stone-600 border-t-stone-800 dark:border-t-stone-200 rounded-full animate-spin" />
     </div>
   );
@@ -50,7 +54,7 @@ function ScrollRestoration() {
     const isArticlePath = currentPath.startsWith('/posts/');
     const shouldRestoreListPosition = LIST_PATHS.has(currentPath) && navigationType === 'POP';
     const restoredTop = shouldRestoreListPosition
-      ? scrollPositionsRef.current.get(currentPath) ?? 0
+      ? (scrollPositionsRef.current.get(currentPath) ?? 0)
       : 0;
 
     const restoreScroll = () => {

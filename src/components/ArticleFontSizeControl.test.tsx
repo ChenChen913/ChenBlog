@@ -4,13 +4,7 @@ import ArticleFontSizeControl from './ArticleFontSizeControl';
 
 describe('ArticleFontSizeControl', () => {
   test('renders exactly three Chinese font size options', () => {
-    render(
-      <ArticleFontSizeControl
-        mode="standard"
-        language="zh"
-        onChange={() => {}}
-      />
-    );
+    render(<ArticleFontSizeControl mode="standard" language="zh" onChange={() => {}} />);
 
     expect(screen.getByText('字体大小')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '小' })).toBeInTheDocument();
@@ -19,13 +13,7 @@ describe('ArticleFontSizeControl', () => {
   });
 
   test('marks the current option as pressed', () => {
-    render(
-      <ArticleFontSizeControl
-        mode="large"
-        language="zh"
-        onChange={() => {}}
-      />
-    );
+    render(<ArticleFontSizeControl mode="large" language="zh" onChange={() => {}} />);
 
     expect(screen.getByRole('button', { name: '大' })).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByRole('button', { name: '标准' })).toHaveAttribute('aria-pressed', 'false');
@@ -34,13 +22,7 @@ describe('ArticleFontSizeControl', () => {
   test('calls onChange with the selected mode', () => {
     const onChange = vi.fn();
 
-    render(
-      <ArticleFontSizeControl
-        mode="standard"
-        language="en"
-        onChange={onChange}
-      />
-    );
+    render(<ArticleFontSizeControl mode="standard" language="en" onChange={onChange} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Large' }));
 

@@ -35,9 +35,7 @@ export default function StatusView({
         <h1 className="mb-3 text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
           {title}
         </h1>
-        <p className="mb-4 text-lg leading-8 text-stone-600 dark:text-stone-300">
-          {description}
-        </p>
+        <p className="mb-4 text-lg leading-8 text-stone-600 dark:text-stone-300">{description}</p>
         {hint ? (
           <p className="mb-8 rounded-2xl bg-stone-50 px-4 py-3 text-sm leading-7 text-stone-500 dark:bg-stone-800/80 dark:text-stone-400">
             {hint}

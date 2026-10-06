@@ -5,11 +5,13 @@
 ## 快速开始
 
 ### 安装依赖
+
 ```bash
 npm install
 ```
 
 ### 启动开发服务器
+
 ```bash
 npm run dev
 ```
@@ -24,14 +26,14 @@ npm run dev
 
 ```markdown
 ---
-title: "文章标题"
-title_en: "Article Title"  # 可选，英文标题
-date: "2025-01-15"
-category: "tech"           # tech | life | reading
-tags: ["React", "TypeScript"]
-featured: false            # 可选，是否精选
-draft: false               # 可选，是否草稿
-coverImage: "https://..."  # 可选，封面图片
+title: '文章标题'
+title_en: 'Article Title' # 可选，英文标题
+date: '2025-01-15'
+category: 'tech' # tech | life | reading
+tags: ['React', 'TypeScript']
+featured: false # 可选，是否精选
+draft: false # 可选，是否草稿
+coverImage: 'https://...' # 可选，封面图片
 ---
 
 文章正文...
@@ -39,20 +41,21 @@ coverImage: "https://..."  # 可选，封面图片
 
 ### Frontmatter 字段说明
 
-| 字段 | 必填 | 类型 | 说明 |
-|------|------|------|------|
-| `title` | ✅ | string | 文章标题（中文） |
-| `title_en` | ❌ | string | 文章标题（英文） |
-| `date` | ✅ | string | 发布日期，格式 `YYYY-MM-DD` |
-| `category` | ✅ | string | 分类：`tech` / `life` / `reading` |
-| `tags` | ✅ | string[] | 标签数组 |
-| `featured` | ❌ | boolean | 是否精选文章 |
-| `draft` | ❌ | boolean | 是否草稿（草稿不会在列表显示） |
-| `coverImage` | ❌ | string | 封面图片 URL |
+| 字段         | 必填 | 类型     | 说明                              |
+| ------------ | ---- | -------- | --------------------------------- |
+| `title`      | ✅   | string   | 文章标题（中文）                  |
+| `title_en`   | ❌   | string   | 文章标题（英文）                  |
+| `date`       | ✅   | string   | 发布日期，格式 `YYYY-MM-DD`       |
+| `category`   | ✅   | string   | 分类：`tech` / `life` / `reading` |
+| `tags`       | ✅   | string[] | 标签数组                          |
+| `featured`   | ❌   | boolean  | 是否精选文章                      |
+| `draft`      | ❌   | boolean  | 是否草稿（草稿不会在列表显示）    |
+| `coverImage` | ❌   | string   | 封面图片 URL                      |
 
 ### 草稿功能
 
 设置 `draft: true` 的文章：
+
 - 不会出现在首页、分类页、精选页
 - 可以通过直接访问 URL 查看
 - 访问草稿时会显示提示信息
@@ -99,13 +102,13 @@ npm run preview    # 本地预览 dist
 
 ### 环境变量（均可选，见 `.env.example`）
 
-| 变量 | 作用 |
-|------|------|
-| `VITE_SITE_URL` | RSS/sitemap/robots 中的绝对链接域名；Vercel 会自动读取 `VERCEL_PROJECT_PRODUCTION_DOMAIN`，通常无需设置 |
-| `VITE_GISCUS_REPO` | giscus 评论仓（如 `ChenChen913/ChenBlog`），四项全配才渲染评论区 |
-| `VITE_GISCUS_REPO_ID` | giscus.app 配置工具获取 |
-| `VITE_GISCUS_CATEGORY` | Discussions 分类名 |
-| `VITE_GISCUS_CATEGORY_ID` | giscus.app 配置工具获取 |
+| 变量                      | 作用                                                                                                    |
+| ------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `VITE_SITE_URL`           | RSS/sitemap/robots 中的绝对链接域名；Vercel 会自动读取 `VERCEL_PROJECT_PRODUCTION_DOMAIN`，通常无需设置 |
+| `VITE_GISCUS_REPO`        | giscus 评论仓（如 `ChenChen913/ChenBlog`），四项全配才渲染评论区                                        |
+| `VITE_GISCUS_REPO_ID`     | giscus.app 配置工具获取                                                                                 |
+| `VITE_GISCUS_CATEGORY`    | Discussions 分类名                                                                                      |
+| `VITE_GISCUS_CATEGORY_ID` | giscus.app 配置工具获取                                                                                 |
 
 ## 性能设计
 

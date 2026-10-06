@@ -1,28 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh" class="light">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <title>MaoChen - Personal Blog</title>
-  <script>
-    /* 主题引导：首帧前同步暗色类，消除暗色用户的首屏白闪
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+    />
+    <title>MaoChen - Personal Blog</title>
+    <script>
+      /* 主题引导：首帧前同步暗色类，消除暗色用户的首屏白闪
        （与 useTheme 同逻辑：theme-preference > 北京时间自动） */
-    (function () {
-      try {
-        var stored = localStorage.getItem('theme-preference');
-        var dark = stored === 'dark';
-        if (!stored) {
-          var hour = new Date(Date.now() + 8 * 3600 * 1000).getUTCHours();
-          dark = hour >= 20 || hour < 6;
-        }
-        document.documentElement.classList.toggle('dark', dark);
-      } catch (e) {}
-    })();
-  </script>
-  
-  <!-- Security Meta Tags -->
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Content-Security-Policy" content="
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme-preference');
+          var dark = stored === 'dark';
+          if (!stored) {
+            var hour = new Date(Date.now() + 8 * 3600 * 1000).getUTCHours();
+            dark = hour >= 20 || hour < 6;
+          }
+          document.documentElement.classList.toggle('dark', dark);
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- Security Meta Tags -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
     default-src 'self';
     script-src 'self' 'unsafe-inline' https://giscus.app;
     style-src 'self' 'unsafe-inline';
@@ -33,45 +38,60 @@
     frame-src https://www.youtube.com https://player.bilibili.com https://giscus.app;
     object-src 'none';
     base-uri 'self';
-  ">
-  
-  <!-- SEO Meta -->
-  <meta name="description" content="MaoChen's personal blog - A digital garden sharing thoughts on technology, life, and everything in between.">
-  <meta name="keywords" content="blog, technology, React, TypeScript, frontend, web development">
-  <meta name="author" content="MaoChen">
-  <meta name="robots" content="index, follow">
-  
-  <!-- Open Graph
+  "
+    />
+
+    <!-- SEO Meta -->
+    <meta
+      name="description"
+      content="MaoChen's personal blog - A digital garden sharing thoughts on technology, life, and everything in between."
+    />
+    <meta
+      name="keywords"
+      content="blog, technology, React, TypeScript, frontend, web development"
+    />
+    <meta name="author" content="MaoChen" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph
        注：og:title / og:description / og:url / og:type 由 usePageMeta 随路由动态更新，
        这里的静态值仅作为爬虫不支持 JS 时的兑底。部署后建议替换为真实域名。 -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="MaoChen - Personal Blog">
-  <meta property="og:description" content="MaoChen's personal blog - A digital garden sharing thoughts on technology, life, and everything in between.">
-  <meta property="og:url" content="/">
-  <meta property="og:site_name" content="MaoChen Blog">
-  <meta property="og:locale" content="zh_CN">
-  <!-- 默认分享卡片（1200×630，液态玻璃风格；文章页由 usePageMeta 替换为文章封面） -->
-  <meta property="og:image" content="/og-image.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="MaoChen Blog —— 数字花园">
-  
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MaoChen - Personal Blog">
-  <meta name="twitter:description" content="MaoChen's personal blog - A digital garden sharing thoughts on technology, life, and everything in between.">
-  <meta name="twitter:image" content="/og-image.png">
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MaoChen - Personal Blog" />
+    <meta
+      property="og:description"
+      content="MaoChen's personal blog - A digital garden sharing thoughts on technology, life, and everything in between."
+    />
+    <meta property="og:url" content="/" />
+    <meta property="og:site_name" content="MaoChen Blog" />
+    <meta property="og:locale" content="zh_CN" />
+    <!-- 默认分享卡片（1200×630，液态玻璃风格；文章页由 usePageMeta 替换为文章封面） -->
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="MaoChen Blog —— 数字花园" />
 
-  <!-- RSS 订阅（构建期由 scripts/feeds-plugin.ts 生成 /rss.xml） -->
-  <link rel="alternate" type="application/rss+xml" title="MaoChen Blog" href="/rss.xml">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MaoChen - Personal Blog" />
+    <meta
+      name="twitter:description"
+      content="MaoChen's personal blog - A digital garden sharing thoughts on technology, life, and everything in between."
+    />
+    <meta name="twitter:image" content="/og-image.png" />
 
-  <!-- Code Font: JetBrains Mono + LXGW WenKai (本地 woff2 子集, 见 index.css @font-face) -->
-</head>
-<body class="bg-background text-on-background dark:bg-stone-900 dark:text-stone-200 transition-colors duration-300">
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
-</body>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- RSS 订阅（构建期由 scripts/feeds-plugin.ts 生成 /rss.xml） -->
+    <link rel="alternate" type="application/rss+xml" title="MaoChen Blog" href="/rss.xml" />
+
+    <!-- Code Font: JetBrains Mono + LXGW WenKai (本地 woff2 子集, 见 index.css @font-face) -->
+  </head>
+  <body
+    class="bg-background text-on-background dark:bg-stone-900 dark:text-stone-200 transition-colors duration-300"
+  >
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

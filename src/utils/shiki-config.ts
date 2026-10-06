@@ -1,6 +1,6 @@
 /**
  * Shiki Theme Configuration
- * 
+ *
  * This module provides theme configuration for Shiki syntax highlighting
  * with support for light/dark mode dual-theme switching.
  */

@@ -107,7 +107,9 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
   const highlight = (text: string) =>
     highlightParts(text, tokens).map((part, i) =>
       part.hit ? (
-        <mark key={i} className="search-mark">{part.text}</mark>
+        <mark key={i} className="search-mark">
+          {part.text}
+        </mark>
       ) : (
         <React.Fragment key={i}>{part.text}</React.Fragment>
       )
@@ -158,7 +160,11 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
                 spellCheck={false}
               />
               {!contents && (
-                <Loader2 size={16} className="shrink-0 animate-spin text-stone-400" aria-label={t('search_loading')} />
+                <Loader2
+                  size={16}
+                  className="shrink-0 animate-spin text-stone-400"
+                  aria-label={t('search_loading')}
+                />
               )}
               <kbd className="search-kbd shrink-0">Esc</kbd>
             </div>
@@ -205,9 +211,7 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
                       </time>
                     </div>
                     <div className="mt-1 text-[15px] font-semibold leading-snug text-stone-900 dark:text-stone-100">
-                      {highlight(
-                        lang === 'en' && result.titleEn ? result.titleEn : result.title
-                      )}
+                      {highlight(lang === 'en' && result.titleEn ? result.titleEn : result.title)}
                     </div>
                     {(result.snippet || result.excerpt) && (
                       <div className="mt-1 text-[13px] leading-relaxed text-stone-500 dark:text-stone-400 line-clamp-2">
@@ -222,12 +226,18 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
             {/* 底部快捷键提示 */}
             <div className="flex items-center gap-4 px-4 py-2.5 border-t border-stone-200/60 dark:border-white/10 text-[11px] text-stone-400 dark:text-stone-500">
               <span className="flex items-center gap-1">
-                <kbd className="search-kbd"><CornerDownLeft size={10} /></kbd>
+                <kbd className="search-kbd">
+                  <CornerDownLeft size={10} />
+                </kbd>
                 {lang === 'en' ? 'Open' : '打开'}
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="search-kbd"><ArrowUp size={10} /></kbd>
-                <kbd className="search-kbd"><ArrowDown size={10} /></kbd>
+                <kbd className="search-kbd">
+                  <ArrowUp size={10} />
+                </kbd>
+                <kbd className="search-kbd">
+                  <ArrowDown size={10} />
+                </kbd>
                 {lang === 'en' ? 'Navigate' : '选择'}
               </span>
               <span className="flex items-center gap-1">
@@ -236,8 +246,12 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
               </span>
               <span className="ml-auto hidden sm:inline">
                 {contents
-                  ? (lang === 'en' ? 'full text ready' : '全文索引已就绪')
-                  : (lang === 'en' ? 'indexing…' : '索引加载中…')}
+                  ? lang === 'en'
+                    ? 'full text ready'
+                    : '全文索引已就绪'
+                  : lang === 'en'
+                    ? 'indexing…'
+                    : '索引加载中…'}
               </span>
             </div>
           </motion.div>

@@ -1,9 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 
 async function getArticleFontSize(page: Page) {
-  return page.locator('#post-content').evaluate(element =>
-    Number.parseFloat(window.getComputedStyle(element).fontSize)
-  );
+  return page
+    .locator('#post-content')
+    .evaluate(element => Number.parseFloat(window.getComputedStyle(element).fontSize));
 }
 
 test.describe('博客基础功能', () => {
@@ -43,10 +43,18 @@ test.describe('文章代码框', () => {
     await page.goto('/posts/typescript-advanced');
     await page.waitForLoadState('networkidle');
 
-    const copyButton = page.locator('.code-block').first().getByRole('button', { name: /copy code/i });
+    const copyButton = page
+      .locator('.code-block')
+      .first()
+      .getByRole('button', { name: /copy code/i });
     await copyButton.click();
 
-    await expect(page.locator('.code-block').first().getByRole('button', { name: /code copied/i })).toBeVisible();
+    await expect(
+      page
+        .locator('.code-block')
+        .first()
+        .getByRole('button', { name: /code copied/i })
+    ).toBeVisible();
   });
 
   test('移动端代码框不会造成页面横向溢出', async ({ page }) => {
@@ -91,38 +99,43 @@ test.describe('文章代码框', () => {
     await page.goto('/posts/typescript-advanced');
     await page.waitForLoadState('networkidle');
 
-    const minimumContrast = await page.locator('.code-block').first().evaluate(block => {
-      const background = getComputedStyle(block.querySelector('.code-block__viewport') as HTMLElement).backgroundColor;
-      const tokens = Array.from(block.querySelectorAll('.code-block__token')).slice(0, 80);
+    const minimumContrast = await page
+      .locator('.code-block')
+      .first()
+      .evaluate(block => {
+        const background = getComputedStyle(
+          block.querySelector('.code-block__viewport') as HTMLElement
+        ).backgroundColor;
+        const tokens = Array.from(block.querySelectorAll('.code-block__token')).slice(0, 80);
 
-      const parseRgb = (value: string) => {
-        const match = value.match(/\d+/g);
-        if (!match) return [0, 0, 0];
-        return match.slice(0, 3).map(Number);
-      };
-
-      const luminance = ([red, green, blue]: number[]) => {
-        const channel = (raw: number) => {
-          const normalized = raw / 255;
-          return normalized <= 0.03928
-            ? normalized / 12.92
-            : ((normalized + 0.055) / 1.055) ** 2.4;
+        const parseRgb = (value: string) => {
+          const match = value.match(/\d+/g);
+          if (!match) return [0, 0, 0];
+          return match.slice(0, 3).map(Number);
         };
 
-        return (0.2126 * channel(red)) + (0.7152 * channel(green)) + (0.0722 * channel(blue));
-      };
+        const luminance = ([red, green, blue]: number[]) => {
+          const channel = (raw: number) => {
+            const normalized = raw / 255;
+            return normalized <= 0.03928
+              ? normalized / 12.92
+              : ((normalized + 0.055) / 1.055) ** 2.4;
+          };
 
-      const backgroundLuminance = luminance(parseRgb(background));
+          return 0.2126 * channel(red) + 0.7152 * channel(green) + 0.0722 * channel(blue);
+        };
 
-      return tokens.reduce((minimum, token) => {
-        const color = getComputedStyle(token as HTMLElement).color;
-        const tokenLuminance = luminance(parseRgb(color));
-        const lighter = Math.max(backgroundLuminance, tokenLuminance);
-        const darker = Math.min(backgroundLuminance, tokenLuminance);
-        const contrast = (lighter + 0.05) / (darker + 0.05);
-        return Math.min(minimum, contrast);
-      }, Number.POSITIVE_INFINITY);
-    });
+        const backgroundLuminance = luminance(parseRgb(background));
+
+        return tokens.reduce((minimum, token) => {
+          const color = getComputedStyle(token as HTMLElement).color;
+          const tokenLuminance = luminance(parseRgb(color));
+          const lighter = Math.max(backgroundLuminance, tokenLuminance);
+          const darker = Math.min(backgroundLuminance, tokenLuminance);
+          const contrast = (lighter + 0.05) / (darker + 0.05);
+          return Math.min(minimum, contrast);
+        }, Number.POSITIVE_INFINITY);
+      });
 
     expect(minimumContrast).toBeGreaterThanOrEqual(4.2);
   });
@@ -163,7 +176,10 @@ test.describe('文章字号控制', () => {
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('#post-content')).toHaveAttribute('data-article-font-size', 'large');
-    await expect(page.getByRole('button', { name: /^大$|^Large$/ })).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.getByRole('button', { name: /^大$|^Large$/ })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
   });
 
   test('移动端大字号不会造成文章页横向溢出', async ({ page }) => {

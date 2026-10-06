@@ -7,11 +7,7 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-export default function Pagination({
-  currentPage,
-  totalPages,
-  onPageChange,
-}: PaginationProps) {
+export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
     const showPages = 5; // 显示的页码数量
@@ -39,10 +35,7 @@ export default function Pagination({
   };
 
   return (
-    <nav
-      className="flex justify-center items-center gap-2 my-8"
-      aria-label="文章分页"
-    >
+    <nav className="flex justify-center items-center gap-2 my-8" aria-label="文章分页">
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
@@ -52,7 +45,7 @@ export default function Pagination({
         <ChevronLeft size={20} />
       </button>
 
-      {getPageNumbers().map((page, index) => (
+      {getPageNumbers().map((page, index) =>
         typeof page === 'number' ? (
           <button
             key={index}
@@ -72,7 +65,7 @@ export default function Pagination({
             {page}
           </span>
         )
-      ))}
+      )}
 
       <button
         onClick={() => handlePageChange(currentPage + 1)}

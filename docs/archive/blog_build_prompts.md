@@ -1,4 +1,5 @@
 # 个人博客建站完整需求文档 v2.0
+
 > 本文档面向 Lovable / Cursor 等 AI 开发工具，描述博客的**功能逻辑与工程规范**。
 > 前端视觉设计（颜色、字体、组件样式、布局）已单独整理在《前端界面设计文档 v2.0》中，
 > 两份文档配合使用，本文档不重复描述任何 UI 样式细节。
@@ -76,20 +77,21 @@ src/
 
 ```yaml
 ---
-title: "文章标题"
-title_en: "Article Title"
-date: "2024-03-01"
-category: "tech"       # tech | life | reading
-tags: ["React", "TypeScript"]
-featured: false        # true 表示加入精选页及首页精选横幅
-gem: false             # true 表示在列表中显示 💎 标记
-coverImage: ""         # 文章封面图 URL，用于文章头部大图
+title: '文章标题'
+title_en: 'Article Title'
+date: '2024-03-01'
+category: 'tech' # tech | life | reading
+tags: ['React', 'TypeScript']
+featured: false # true 表示加入精选页及首页精选横幅
+gem: false # true 表示在列表中显示 💎 标记
+coverImage: '' # 文章封面图 URL，用于文章头部大图
 ---
 ```
 
 ### 示例文章要求
 
 在 `src/posts/` 中预置至少 6 篇示例文章（技术、生活、读书各 2 篇），其中至少 2 篇正文包含：
+
 - 代码块示例（用于展示语法高亮与行号效果）
 - 数学公式示例（用于展示 KaTeX 渲染效果，含行内 `$...$` 和行间 `$$...$$`）
 - 高亮文字示例（`==高亮文字==` 语法）
@@ -101,8 +103,11 @@ coverImage: ""         # 文章封面图 URL，用于文章头部大图
 // 中文按 300 字/分钟，英文按 200 词/分钟，混合取平均
 function calcReadTime(content: string): number {
   const cnChars = (content.match(/[\u4e00-\u9fa5]/g) || []).length;
-  const enWords = content.replace(/[\u4e00-\u9fa5]/g, '').trim()
-                         .split(/\s+/).filter(Boolean).length;
+  const enWords = content
+    .replace(/[\u4e00-\u9fa5]/g, '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
   const minutes = cnChars / 300 + enWords / 200;
   return Math.max(1, Math.round(minutes));
 }
@@ -152,7 +157,7 @@ function getBeijingHour(): number {
 
 function getAutoTheme(): 'dark' | 'light' {
   const hour = getBeijingHour();
-  return (hour >= 20 || hour < 6) ? 'dark' : 'light';
+  return hour >= 20 || hour < 6 ? 'dark' : 'light';
 }
 
 export function useTheme() {
@@ -211,33 +216,55 @@ export function useTheme() {
 // src/i18n/index.ts
 export const i18n = {
   zh: {
-    nav_home: '首页', nav_posts: '文章', nav_categories: '分类',
-    nav_highlights: '精选', nav_about: '关于',
+    nav_home: '首页',
+    nav_posts: '文章',
+    nav_categories: '分类',
+    nav_highlights: '精选',
+    nav_about: '关于',
     toc_title: '目录',
-    tab_latest: '最新', tab_recommend: '推荐',
-    tab_tech: '技术', tab_reading: '读书',
-    read_min: '分钟', views: '次阅读',
-    copy: '复制', copied: '已复制 ✓',
+    tab_latest: '最新',
+    tab_recommend: '推荐',
+    tab_tech: '技术',
+    tab_reading: '读书',
+    read_min: '分钟',
+    views: '次阅读',
+    copy: '复制',
+    copied: '已复制 ✓',
     permalink: '原始链接',
     subscribe: '订阅更新',
-    related: '相关文章', view_all: '查看全部',
-    category_tech: '技术', category_life: '生活', category_reading: '读书',
-    theme_auto: '自动', theme_manual: '手动',
+    related: '相关文章',
+    view_all: '查看全部',
+    category_tech: '技术',
+    category_life: '生活',
+    category_reading: '读书',
+    theme_auto: '自动',
+    theme_manual: '手动',
   },
   en: {
-    nav_home: 'Home', nav_posts: 'Posts', nav_categories: 'Categories',
-    nav_highlights: 'Highlights', nav_about: 'About',
+    nav_home: 'Home',
+    nav_posts: 'Posts',
+    nav_categories: 'Categories',
+    nav_highlights: 'Highlights',
+    nav_about: 'About',
     toc_title: 'Contents',
-    tab_latest: 'Latest', tab_recommend: 'Featured',
-    tab_tech: 'Tech', tab_reading: 'Books',
-    read_min: 'min read', views: 'views',
-    copy: 'Copy', copied: 'Copied ✓',
+    tab_latest: 'Latest',
+    tab_recommend: 'Featured',
+    tab_tech: 'Tech',
+    tab_reading: 'Books',
+    read_min: 'min read',
+    views: 'views',
+    copy: 'Copy',
+    copied: 'Copied ✓',
     permalink: 'Permalink',
     subscribe: 'Subscribe',
-    related: 'Related', view_all: 'View All',
-    category_tech: 'Tech', category_life: 'Life', category_reading: 'Reading',
-    theme_auto: 'Auto', theme_manual: 'Manual',
-  }
+    related: 'Related',
+    view_all: 'View All',
+    category_tech: 'Tech',
+    category_life: 'Life',
+    category_reading: 'Reading',
+    theme_auto: 'Auto',
+    theme_manual: 'Manual',
+  },
 } as const;
 
 export type LangKey = keyof typeof i18n.zh;
@@ -251,10 +278,12 @@ export type Lang = 'zh' | 'en';
 ### 公共布局结构
 
 **桌面端（≥ 1024px）：**
+
 - 左侧固定侧边栏（宽 288px）：含头像、博客简介、导航链接、订阅 CTA 按钮，`position: sticky`
 - 右侧为主内容区（`flex: 1`）
 
 **移动端（< 768px）：**
+
 - 侧边栏隐藏
 - 顶部精简导航栏（Logo + 右侧功能按钮）
 - 底部固定浮动操作栏（5 个图标按钮），替代汉堡菜单
@@ -368,8 +397,8 @@ export type Lang = 'zh' | 'en';
   position: relative;
   padding-left: 54px;
   padding-right: 20px;
-  white-space: pre-wrap;   /* 长行自动换行，禁止横向滚动 */
-  word-break: break-all;   /* 超长单词也强制换行 */
+  white-space: pre-wrap; /* 长行自动换行，禁止横向滚动 */
+  word-break: break-all; /* 超长单词也强制换行 */
   min-height: 1.6em;
   line-height: 1.6;
   counter-increment: line-number;
@@ -385,7 +414,7 @@ export type Lang = 'zh' | 'en';
   text-align: right;
   font-size: 12px;
   line-height: 1.6;
-  user-select: none;       /* 复制时不带行号 */
+  user-select: none; /* 复制时不带行号 */
   pointer-events: none;
   opacity: 0.4;
 }
@@ -450,9 +479,7 @@ function switchHljsTheme(isDark: boolean) {
   const link = document.getElementById('hljs-theme') as HTMLLinkElement;
   if (!link) return;
   const base = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/';
-  link.href = isDark
-    ? `${base}atom-one-dark.min.css`
-    : `${base}atom-one-light.min.css`;
+  link.href = isDark ? `${base}atom-one-dark.min.css` : `${base}atom-one-light.min.css`;
 }
 // 在 useTheme 的 useEffect 中调用 switchHljsTheme(theme === 'dark')
 ```
@@ -483,9 +510,9 @@ document.addEventListener('DOMContentLoaded', () => {
   renderMathInElement(document.querySelector('.article-body'), {
     delimiters: [
       { left: '$$', right: '$$', display: true },
-      { left: '$',  right: '$',  display: false },
+      { left: '$', right: '$', display: false },
     ],
-    throwOnError: false,  // 公式语法错误时降级为原始文本，不崩溃
+    throwOnError: false, // 公式语法错误时降级为原始文本，不崩溃
   });
 });
 ```
@@ -509,13 +536,16 @@ function initLightbox() {
         'backdrop-filter:blur(8px);display:flex;align-items:center;' +
         'justify-content:center;cursor:zoom-out;';
       const clone = (img as HTMLImageElement).cloneNode() as HTMLImageElement;
-      clone.style.cssText =
-        'max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;';
+      clone.style.cssText = 'max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;';
       overlay.appendChild(clone);
       overlay.addEventListener('click', () => overlay.remove());
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') overlay.remove();
-      }, { once: true });
+      document.addEventListener(
+        'keydown',
+        e => {
+          if (e.key === 'Escape') overlay.remove();
+        },
+        { once: true }
+      );
       document.body.appendChild(overlay);
     });
   });
@@ -525,6 +555,7 @@ function initLightbox() {
 ### 视频
 
 支持两种方式：
+
 1. HTML `<video>` 标签（`<video src="..." controls></video>`）
 2. YouTube / Bilibili iframe 嵌入（DOMPurify 白名单已允许）
 
@@ -551,7 +582,7 @@ function initLightbox() {
 /* ⚠️ 父容器必须是 align-items: flex-start，否则 sticky 不触发 */
 .article-page {
   display: flex;
-  align-items: flex-start;  /* 绝对不能是默认值 stretch */
+  align-items: flex-start; /* 绝对不能是默认值 stretch */
   gap: 48px;
 }
 
@@ -559,12 +590,14 @@ function initLightbox() {
   width: 208px;
   flex-shrink: 0;
   position: sticky;
-  top: 88px;                /* 导航栏高度 + 8px */
+  top: 88px; /* 导航栏高度 + 8px */
   max-height: calc(100vh - 104px);
   overflow-y: auto;
   scrollbar-width: none;
 }
-.article-toc-wrap::-webkit-scrollbar { display: none; }
+.article-toc-wrap::-webkit-scrollbar {
+  display: none;
+}
 ```
 
 **为什么 `align-items` 必须是 `flex-start`：**
@@ -575,12 +608,12 @@ function initLightbox() {
 
 ```javascript
 function initTOC() {
-  const tocLinks = document.querySelectorAll<HTMLElement>('.toc-item');
-  const headings = document.querySelectorAll<HTMLElement>('article h2, article h3');
+  const tocLinks = document.querySelectorAll < HTMLElement > '.toc-item';
+  const headings = document.querySelectorAll < HTMLElement > 'article h2, article h3';
   if (!tocLinks.length || !headings.length) return;
 
   const observer = new IntersectionObserver(
-    (entries) => {
+    entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const activeId = entry.target.id;
@@ -588,8 +621,12 @@ function initTOC() {
             link.classList.toggle('toc-active', link.getAttribute('data-id') === activeId);
           });
           // 目录本身跟随高亮项滚动（长文章目录超出视口时）
-          document.querySelector<HTMLElement>(`.toc-item[data-id="${activeId}"]`)
-            ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          document.querySelector <
+            HTMLElement >
+            `.toc-item[data-id="${activeId}"]`?.scrollIntoView({
+              behavior: 'smooth',
+              block: 'nearest',
+            });
         }
       });
     },
@@ -612,6 +649,7 @@ function initTOC() {
 ### 平板 / 手机端（< 1280px）
 
 改为文章正文顶部的**内联折叠目录块**：
+
 - 使用 HTML `<details>` 元素，默认折叠，只显示「目录」标题行
 - 展开后显示完整目录列表，目录项点击后滚动到对应标题，`<details>` 自动收起
 
@@ -629,7 +667,7 @@ function initTOC() {
 ```javascript
 btn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  btn.classList.remove('visible');  // 点击后立即隐藏，不等滚动完成
+  btn.classList.remove('visible'); // 点击后立即隐藏，不等滚动完成
 });
 ```
 
@@ -644,16 +682,17 @@ btn.addEventListener('click', () => {
 
 ## 十二、响应式断点规范
 
-| 断点名 | Tailwind 前缀 | 范围 | 说明 |
-|--------|--------------|------|------|
-| 手机 | 默认 | < 768px | 底部浮动操作栏，无侧边栏 |
-| 平板 | `md:` | ≥ 768px | 顶部导航出现，底部操作栏消失 |
-| 桌面小 | `lg:` | ≥ 1024px | 左侧侧边栏显示 |
-| 桌面大 | `xl:` | ≥ 1280px | 右侧 TOC 列显示 |
+| 断点名 | Tailwind 前缀 | 范围     | 说明                         |
+| ------ | ------------- | -------- | ---------------------------- |
+| 手机   | 默认          | < 768px  | 底部浮动操作栏，无侧边栏     |
+| 平板   | `md:`         | ≥ 768px  | 顶部导航出现，底部操作栏消失 |
+| 桌面小 | `lg:`         | ≥ 1024px | 左侧侧边栏显示               |
+| 桌面大 | `xl:`         | ≥ 1280px | 右侧 TOC 列显示              |
 
 ### 各断点关键功能变化
 
 **手机（< 768px）：**
+
 - 左侧侧边栏：`hidden`
 - 底部浮动操作栏：显示（`md:hidden`）
 - 文章列表：单列，右侧 TOC 隐藏改为内联折叠 `<details>`
@@ -661,14 +700,17 @@ btn.addEventListener('click', () => {
 - 回到顶部按钮：`right: 16px; bottom: 80px`（避开底部浮动操作栏）
 
 **平板（768px ～ 1024px）：**
+
 - 左侧侧边栏：`hidden`，底部浮动操作栏：`md:hidden`
 - 文章列表：两列，右侧 TOC 仍隐藏（内联折叠目录）
 - 精选页 / 分类页：两列
 
 **桌面（≥ 1024px）：**
+
 - 左侧侧边栏：显示（`hidden lg:block w-72`）
 
 **桌面大屏（≥ 1280px）：**
+
 - 右侧 TOC 列：显示（`hidden xl:block`）
 
 ### 触摸体验通用规范
@@ -694,13 +736,19 @@ btn.addEventListener('click', () => {
           "key": "Content-Security-Policy",
           "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' https:; frame-src https://www.youtube.com https://player.bilibili.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';"
         },
-        { "key": "X-Content-Type-Options",      "value": "nosniff" },
-        { "key": "X-Frame-Options",              "value": "SAMEORIGIN" },
-        { "key": "X-XSS-Protection",             "value": "1; mode=block" },
-        { "key": "Referrer-Policy",              "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy",           "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()" },
-        { "key": "Strict-Transport-Security",    "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "Cross-Origin-Opener-Policy",   "value": "same-origin" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
         { "key": "Cross-Origin-Resource-Policy", "value": "same-origin" }
       ]
     }
@@ -718,17 +766,62 @@ import DOMPurify from 'dompurify';
 const rawHtml = marked(markdownContent);
 const cleanHtml = DOMPurify.sanitize(rawHtml, {
   ALLOWED_TAGS: [
-    'h1','h2','h3','h4','h5','h6','p','br','hr',
-    'strong','em','del','code','pre','blockquote',
-    'ul','ol','li','table','thead','tbody','tr','th','td',
-    'a','img','video','audio','source','iframe',
-    'div','span','mark','details','summary',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'p',
+    'br',
+    'hr',
+    'strong',
+    'em',
+    'del',
+    'code',
+    'pre',
+    'blockquote',
+    'ul',
+    'ol',
+    'li',
+    'table',
+    'thead',
+    'tbody',
+    'tr',
+    'th',
+    'td',
+    'a',
+    'img',
+    'video',
+    'audio',
+    'source',
+    'iframe',
+    'div',
+    'span',
+    'mark',
+    'details',
+    'summary',
   ],
   ALLOWED_ATTR: [
-    'href','src','alt','title','class','id',
-    'controls','autoplay','loop','muted','poster',
-    'width','height','allowfullscreen','frameborder',
-    'target','rel','data-id','data-lang',
+    'href',
+    'src',
+    'alt',
+    'title',
+    'class',
+    'id',
+    'controls',
+    'autoplay',
+    'loop',
+    'muted',
+    'poster',
+    'width',
+    'height',
+    'allowfullscreen',
+    'frameborder',
+    'target',
+    'rel',
+    'data-id',
+    'data-lang',
   ],
   ALLOW_DATA_ATTR: false,
   FORBID_SCRIPTS: true,
@@ -784,13 +877,21 @@ if (window.top !== window.self) {
 ```typescript
 // src/utils/storage.ts
 export function safeGetStorage(key: string): string | null {
-  try { return localStorage.getItem(key); } catch { return null; }
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
 }
 export function safeSetStorage(key: string, value: string): void {
-  try { localStorage.setItem(key, value); } catch {}
+  try {
+    localStorage.setItem(key, value);
+  } catch {}
 }
 export function safeRemoveStorage(key: string): void {
-  try { localStorage.removeItem(key); } catch {}
+  try {
+    localStorage.removeItem(key);
+  } catch {}
 }
 ```
 
@@ -822,15 +923,15 @@ build: {
 
 ## 附录：设计参考来源
 
-| 参考网站 | 借鉴的功能点 |
-|----------|------------|
-| zarazhang.com | 内容优先、热门文章模块、正文首段作摘要 |
-| hzwer.com | 浏览量显示、精选页导航、💎 精品标记 |
-| writings.sh | 首页多 Tab 筛选、日期只显示年月 |
-| liuchuo.net | 代码块行号结构、语言标签、行号不可选中设计 |
-| The Atelier（参考稿） | 整体视觉语言，见《前端界面设计文档 v2.0》 |
+| 参考网站              | 借鉴的功能点                               |
+| --------------------- | ------------------------------------------ |
+| zarazhang.com         | 内容优先、热门文章模块、正文首段作摘要     |
+| hzwer.com             | 浏览量显示、精选页导航、💎 精品标记        |
+| writings.sh           | 首页多 Tab 筛选、日期只显示年月            |
+| liuchuo.net           | 代码块行号结构、语言标签、行号不可选中设计 |
+| The Atelier（参考稿） | 整体视觉语言，见《前端界面设计文档 v2.0》  |
 
 ---
 
-*文档版本：v2.0 · 2026年3月*
-*配套文档：《前端界面设计文档 v2.0》（blog_frontend_ui_v2.md）*
+_文档版本：v2.0 · 2026年3月_
+_配套文档：《前端界面设计文档 v2.0》（blog_frontend_ui_v2.md）_

@@ -6,5 +6,5 @@ export function SkipLink() {
     >
       跳转到主要内容
     </a>
-  )
+  );
 }

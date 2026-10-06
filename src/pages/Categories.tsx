@@ -17,12 +17,12 @@ export default function Categories() {
     description: t('categories_subtitle'),
   });
 
-  const filteredPosts = activeCategory 
+  const filteredPosts = activeCategory
     ? posts.filter(p => p.frontmatter.category === activeCategory)
     : posts;
 
   return (
-    <motion.div 
+    <motion.div
       id="categories-page"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -31,10 +31,16 @@ export default function Categories() {
       className="space-y-12"
     >
       <header id="categories-header" className="space-y-4">
-        <h1 id="categories-title" className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
+        <h1
+          id="categories-title"
+          className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100"
+        >
           {t('nav_categories')}
         </h1>
-        <p id="categories-subtitle" className="text-lg text-stone-600 dark:text-stone-400 max-w-2xl leading-relaxed">
+        <p
+          id="categories-subtitle"
+          className="text-lg text-stone-600 dark:text-stone-400 max-w-2xl leading-relaxed"
+        >
           {t('categories_subtitle')}
         </p>
       </header>

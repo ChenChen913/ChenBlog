@@ -14,7 +14,9 @@ export default function TableOfContents({ parsedHeadings }: Props) {
 
   const activeId = useIntersectionObserver(parsedHeadings);
 
-  useEffect(() => { setIsClient(true); }, []);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // activeId 变化时自动滚动 TOC 让高亮条目可见
   useEffect(() => {
@@ -30,7 +32,10 @@ export default function TableOfContents({ parsedHeadings }: Props) {
     if (!el) return;
     const header = document.querySelector('header');
     const offset = header?.offsetHeight ?? 0;
-    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset - 16, behavior: 'smooth' });
+    window.scrollTo({
+      top: el.getBoundingClientRect().top + window.scrollY - offset - 16,
+      behavior: 'smooth',
+    });
   }, []);
 
   if (parsedHeadings.length === 0) return null;
@@ -48,13 +53,17 @@ export default function TableOfContents({ parsedHeadings }: Props) {
               <motion.span
                 layoutId="toc-pill"
                 className="toc-pill"
-                transition={{ type: "spring", stiffness: 350, damping: 30, mass: 1 }}
+                transition={{ type: 'spring', stiffness: 350, damping: 30, mass: 1 }}
                 aria-hidden
               />
             )}
             <button
               onClick={() => scrollToHeading(node.id)}
-              className={'toc-item' + (isSubList ? ' toc-item--h3' : '') + (isActive ? ' toc-item--active' : '')}
+              className={
+                'toc-item' +
+                (isSubList ? ' toc-item--h3' : '') +
+                (isActive ? ' toc-item--active' : '')
+              }
               title={node.text}
             >
               <span className="truncate">{node.text}</span>
@@ -62,9 +71,7 @@ export default function TableOfContents({ parsedHeadings }: Props) {
           </div>
 
           {node.children?.length ? (
-            <ul className="toc-sub mt-0.5 space-y-0.5">
-              {renderItems(node.children, true)}
-            </ul>
+            <ul className="toc-sub mt-0.5 space-y-0.5">{renderItems(node.children, true)}</ul>
           ) : null}
         </li>
       );
@@ -74,7 +81,7 @@ export default function TableOfContents({ parsedHeadings }: Props) {
     <motion.div
       className={`toc-shell${collapsed ? ' toc-shell--collapsed' : ''}`}
       animate={{ width: collapsed ? 52 : 180 }}
-      transition={{ type: "spring", stiffness: 300, damping: 28 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 28 }}
     >
       {/* 收起后露出的柳条 */}
       <button
@@ -102,9 +109,7 @@ export default function TableOfContents({ parsedHeadings }: Props) {
             </span>
           </div>
           <div className="toc-scroll" ref={scrollRef}>
-            <ul className="space-y-0.5">
-              {renderItems(parsedHeadings)}
-            </ul>
+            <ul className="space-y-0.5">{renderItems(parsedHeadings)}</ul>
           </div>
         </>
       )}

@@ -29,7 +29,9 @@ export default function NetworkStatusBanner() {
         <WifiOff size={18} />
         <div>
           <div className="font-semibold">当前网络连接异常</div>
-          <div className="text-amber-800/80 dark:text-amber-200/80">请检查网络后刷新页面，或先返回首页继续浏览缓存内容。</div>
+          <div className="text-amber-800/80 dark:text-amber-200/80">
+            请检查网络后刷新页面，或先返回首页继续浏览缓存内容。
+          </div>
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-2">

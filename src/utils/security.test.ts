@@ -42,7 +42,9 @@ describe('security URL helpers', () => {
   });
 
   it('rejects untrusted or spoofed embeds', () => {
-    expect(isTrustedEmbedUrl('https://evil.example/embed/youtube.com/watch?v=dQw4w9WgXcQ')).toBe(false);
+    expect(isTrustedEmbedUrl('https://evil.example/embed/youtube.com/watch?v=dQw4w9WgXcQ')).toBe(
+      false
+    );
     expect(isTrustedEmbedUrl('https://youtube.com.evil.example/watch?v=dQw4w9WgXcQ')).toBe(false);
     expect(isTrustedEmbedUrl('javascript:alert(1)')).toBe(false);
   });

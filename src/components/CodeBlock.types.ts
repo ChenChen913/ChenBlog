@@ -1,6 +1,6 @@
 /**
  * TypeScript interfaces for CodeBlock component
- * 
+ *
  * This file defines the type interfaces for the enhanced CodeBlock component
  * using Shiki for syntax highlighting.
  */
@@ -11,22 +11,22 @@
 export interface CodeBlockProps {
   /** Child content from ReactMarkdown (typically code string or ReactNode) */
   children?: React.ReactNode;
-  
+
   /** CSS class name, typically "language-{lang}" from markdown */
   className?: string;
-  
+
   /** ReactMarkdown node metadata (optional) */
   node?: any;
-  
+
   /** Whether to display line numbers (default: true) */
   showLineNumbers?: boolean;
-  
+
   /** Whether to enable word wrap for long lines (default: true) */
   enableWordWrap?: boolean;
-  
+
   /** Optional maximum height with scroll behavior */
   maxHeight?: string;
-  
+
   /** Additional props passed through from ReactMarkdown */
   [key: string]: any;
 }
@@ -37,13 +37,13 @@ export interface CodeBlockProps {
 export interface CodeBlockState {
   /** Whether code has been copied to clipboard */
   copied: boolean;
-  
+
   /** Current theme mode (light or dark) */
   isDark: boolean;
-  
+
   /** Shiki-generated HTML output for syntax highlighting */
   highlightedCode: string;
-  
+
   /** Loading state for async highlighting operations */
   isLoading: boolean;
 }
@@ -54,13 +54,13 @@ export interface CodeBlockState {
 export interface CodeBlockHeaderProps {
   /** Programming language identifier for display */
   language: string;
-  
+
   /** Callback function when copy button is clicked */
   onCopy: () => void;
-  
+
   /** Whether code has been copied (for visual feedback) */
   copied: boolean;
-  
+
   /** Current theme mode for styling */
   isDark: boolean;
 }
@@ -71,19 +71,19 @@ export interface CodeBlockHeaderProps {
 export interface CodeBlockContentProps {
   /** Raw code string to be displayed */
   code: string;
-  
+
   /** Programming language identifier */
   language: string;
-  
+
   /** Current theme mode */
   isDark: boolean;
-  
+
   /** Whether to show line numbers */
   showLineNumbers: boolean;
-  
+
   /** Whether to enable word wrap */
   enableWordWrap: boolean;
-  
+
   /** Pre-rendered Shiki HTML output */
   highlightedHTML: string;
 }
@@ -95,32 +95,32 @@ export interface ThemeConfig {
   light: {
     /** Shiki theme name for light mode */
     shikiTheme: string;
-    
+
     /** Background color for code block */
     backgroundColor: string;
-    
+
     /** Text color for code content */
     textColor: string;
-    
+
     /** Color for line numbers */
     lineNumberColor: string;
-    
+
     /** Border color for code block */
     borderColor: string;
   };
   dark: {
     /** Shiki theme name for dark mode */
     shikiTheme: string;
-    
+
     /** Background color for code block */
     backgroundColor: string;
-    
+
     /** Text color for code content */
     textColor: string;
-    
+
     /** Color for line numbers */
     lineNumberColor: string;
-    
+
     /** Border color for code block */
     borderColor: string;
   };
@@ -132,13 +132,13 @@ export interface ThemeConfig {
 export interface A11yMetadata {
   /** ARIA label for copy button */
   copyButtonLabel: string;
-  
+
   /** ARIA label when code is copied */
   copiedLabel: string;
-  
+
   /** ARIA label for code block container */
   codeBlockLabel: string;
-  
+
   /** Function to generate line number labels */
   lineNumberLabel: (line: number) => string;
 }
@@ -170,5 +170,5 @@ export const defaultA11yMetadata: A11yMetadata = {
   copyButtonLabel: 'Copy code to clipboard',
   copiedLabel: 'Code copied to clipboard',
   codeBlockLabel: 'Code block',
-  lineNumberLabel: (line) => `Line ${line}`,
+  lineNumberLabel: line => `Line ${line}`,
 };

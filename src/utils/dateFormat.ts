@@ -4,10 +4,7 @@
  * @param lang - 语言 ('zh' | 'en')
  * @returns 格式化后的日期字符串
  */
-export function formatDate(
-  date: Date | string,
-  lang: 'zh' | 'en' = 'zh'
-): string {
+export function formatDate(date: Date | string, lang: 'zh' | 'en' = 'zh'): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
 
   if (lang === 'zh') {
@@ -37,8 +34,18 @@ function formatDateChinese(date: Date): string {
  */
 function formatDateEnglish(date: Date): string {
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
   // ✅ 修复：使用 UTC 方法，避免时区偏移导致的日期错误
@@ -55,10 +62,7 @@ function formatDateEnglish(date: Date): string {
  * @param lang - 语言
  * @returns 例如 "3天前", "3 days ago"
  */
-export function getRelativeTime(
-  date: Date | string,
-  lang: 'zh' | 'en' = 'zh'
-): string {
+export function getRelativeTime(date: Date | string, lang: 'zh' | 'en' = 'zh'): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   const now = new Date();
   // ✅ 修复：基于 UTC 日期计算天数差，避免时区偏移影响

@@ -1,9 +1,9 @@
 /**
  * Utility functions for code extraction and language detection
- * 
+ *
  * These utilities handle the extraction of code text from ReactMarkdown children
  * and language detection from className attributes with proper alias mapping.
- * 
+ *
  * Requirements: 4.1, 4.3
  */
 
@@ -14,48 +14,48 @@ import React from 'react';
  * Maps short aliases to their full language identifiers
  */
 const LANGUAGE_ALIAS_MAP: Record<string, string> = {
-  'js': 'javascript',
-  'ts': 'typescript',
-  'jsx': 'jsx',
-  'tsx': 'tsx',
-  'py': 'python',
-  'rb': 'ruby',
-  'sh': 'bash',
-  'bash': 'bash',
-  'zsh': 'bash',
-  'yaml': 'yaml',
-  'yml': 'yaml',
-  'json': 'json',
-  'xml': 'xml',
-  'html': 'html',
-  'css': 'css',
-  'scss': 'scss',
-  'sass': 'sass',
-  'less': 'less',
-  'sql': 'sql',
-  'java': 'java',
-  'c': 'c',
-  'cpp': 'cpp',
+  js: 'javascript',
+  ts: 'typescript',
+  jsx: 'jsx',
+  tsx: 'tsx',
+  py: 'python',
+  rb: 'ruby',
+  sh: 'bash',
+  bash: 'bash',
+  zsh: 'bash',
+  yaml: 'yaml',
+  yml: 'yaml',
+  json: 'json',
+  xml: 'xml',
+  html: 'html',
+  css: 'css',
+  scss: 'scss',
+  sass: 'sass',
+  less: 'less',
+  sql: 'sql',
+  java: 'java',
+  c: 'c',
+  cpp: 'cpp',
   'c++': 'cpp',
-  'go': 'go',
-  'rust': 'rust',
-  'rs': 'rust',
-  'php': 'php',
-  'swift': 'swift',
-  'kotlin': 'kotlin',
-  'kt': 'kotlin',
-  'dart': 'dart',
-  'r': 'r',
-  'scala': 'scala',
-  'perl': 'perl',
-  'lua': 'lua',
-  'vim': 'vim',
-  'diff': 'diff',
-  'markdown': 'markdown',
-  'md': 'markdown',
-  'text': 'text',
-  'txt': 'text',
-  'plaintext': 'text',
+  go: 'go',
+  rust: 'rust',
+  rs: 'rust',
+  php: 'php',
+  swift: 'swift',
+  kotlin: 'kotlin',
+  kt: 'kotlin',
+  dart: 'dart',
+  r: 'r',
+  scala: 'scala',
+  perl: 'perl',
+  lua: 'lua',
+  vim: 'vim',
+  diff: 'diff',
+  markdown: 'markdown',
+  md: 'markdown',
+  text: 'text',
+  txt: 'text',
+  plaintext: 'text',
 };
 
 const LANGUAGE_DISPLAY_MAP: Record<string, string> = {
@@ -87,33 +87,33 @@ const LANGUAGE_DISPLAY_MAP: Record<string, string> = {
 
 /**
  * Extract plain text code from ReactMarkdown children
- * 
+ *
  * Handles various ReactMarkdown output formats including:
  * - Plain strings
  * - Arrays of strings and ReactElements
  * - Nested ReactElements with children props
  * - Edge cases like null, undefined, numbers, booleans
- * 
+ *
  * @param children - ReactMarkdown children (can be string, ReactNode, array, etc.)
  * @returns Extracted code text with trailing newlines removed
- * 
+ *
  * @example
  * ```typescript
  * // String input
  * extractCodeText('const x = 1;') // => 'const x = 1;'
- * 
+ *
  * // Array input
  * extractCodeText(['const x = 1;', '\n', 'const y = 2;']) // => 'const x = 1;\nconst y = 2;'
- * 
+ *
  * // ReactElement input
  * extractCodeText(<code>const x = 1;</code>) // => 'const x = 1;'
- * 
+ *
  * // Edge cases
  * extractCodeText(null) // => ''
  * extractCodeText(undefined) // => ''
  * extractCodeText(42) // => '42'
  * ```
- * 
+ *
  * Requirements: 4.1, 4.3
  */
 export function extractCodeText(children: React.ReactNode): string {
@@ -135,29 +135,31 @@ export function extractCodeText(children: React.ReactNode): string {
 
   // Handle array type - recursively process each element
   if (Array.isArray(children)) {
-    const extracted = children.map(child => {
-      // Recursively extract from each child
-      if (child === null || child === undefined) {
-        return '';
-      }
-      
-      if (typeof child === 'string') {
-        return child;
-      }
-      
-      if (typeof child === 'number' || typeof child === 'boolean') {
+    const extracted = children
+      .map(child => {
+        // Recursively extract from each child
+        if (child === null || child === undefined) {
+          return '';
+        }
+
+        if (typeof child === 'string') {
+          return child;
+        }
+
+        if (typeof child === 'number' || typeof child === 'boolean') {
+          return String(child);
+        }
+
+        if (React.isValidElement(child)) {
+          const props = child.props as { children?: React.ReactNode };
+          return extractCodeText(props.children);
+        }
+
+        // Fallback for other types
         return String(child);
-      }
-      
-      if (React.isValidElement(child)) {
-        const props = child.props as { children?: React.ReactNode };
-        return extractCodeText(props.children);
-      }
-      
-      // Fallback for other types
-      return String(child);
-    }).join('');
-    
+      })
+      .join('');
+
     // Remove trailing newlines from the final result
     return extracted.replace(/\n+$/, '');
   }
@@ -181,35 +183,35 @@ export function extractCodeText(children: React.ReactNode): string {
 
 /**
  * Extract and normalize programming language from className
- * 
+ *
  * Parses className strings in the format "language-{lang}" and maps
  * common aliases to their full language identifiers. Returns 'text'
  * for plain text when no language is specified.
- * 
+ *
  * @param className - CSS className string, typically from ReactMarkdown
  * @returns Normalized language identifier
- * 
+ *
  * @example
  * ```typescript
  * // Standard language classes
  * getLanguageFromClassName('language-javascript') // => 'javascript'
  * getLanguageFromClassName('language-python') // => 'python'
- * 
+ *
  * // Alias mapping
  * getLanguageFromClassName('language-js') // => 'javascript'
  * getLanguageFromClassName('language-ts') // => 'typescript'
  * getLanguageFromClassName('language-py') // => 'python'
- * 
+ *
  * // Edge cases
  * getLanguageFromClassName(undefined) // => 'text'
  * getLanguageFromClassName('') // => 'text'
  * getLanguageFromClassName('not-a-language-class') // => 'text'
  * getLanguageFromClassName('language-unknown') // => 'unknown'
- * 
+ *
  * // Multiple classes
  * getLanguageFromClassName('foo language-rust bar') // => 'rust'
  * ```
- * 
+ *
  * Requirements: 4.1, 4.3
  */
 export function getLanguageFromClassName(className?: string): string {
@@ -220,24 +222,24 @@ export function getLanguageFromClassName(className?: string): string {
 
   // Trim whitespace
   const trimmed = className.trim();
-  
+
   if (trimmed === '') {
     return 'text';
   }
 
   // Split by whitespace to handle multiple classes
   const classes = trimmed.split(/\s+/);
-  
+
   // Find the first class that starts with 'language-'
   const languageClass = classes.find(cls => cls.startsWith('language-'));
-  
+
   if (!languageClass) {
     return 'text';
   }
 
   // Extract the language identifier after 'language-'
   const rawLang = languageClass.replace('language-', '').toLowerCase();
-  
+
   // Handle empty language identifier
   if (rawLang === '') {
     return 'text';
@@ -279,10 +281,7 @@ export function extractCodeClassName(children: React.ReactNode): string | undefi
 /**
  * Resolve the effective code language from the wrapper or nested code element.
  */
-export function resolveCodeLanguage(
-  className?: string,
-  children?: React.ReactNode
-): string {
+export function resolveCodeLanguage(className?: string, children?: React.ReactNode): string {
   const directLanguage = getLanguageFromClassName(className);
   if (directLanguage !== 'text') {
     return directLanguage;

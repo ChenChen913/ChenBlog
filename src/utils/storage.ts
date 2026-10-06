@@ -11,15 +11,23 @@ function sanitizeSlug(slug: string): string {
 }
 
 export function safeGetStorage(key: string): string | null {
-  try { return localStorage.getItem(key); } catch { return null; }
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
 }
 
 export function safeSetStorage(key: string, value: string): void {
-  try { localStorage.setItem(key, value); } catch {}
+  try {
+    localStorage.setItem(key, value);
+  } catch {}
 }
 
 export function safeRemoveStorage(key: string): void {
-  try { localStorage.removeItem(key); } catch {}
+  try {
+    localStorage.removeItem(key);
+  } catch {}
 }
 
 export function incrementViews(slug: string): number {
@@ -45,8 +53,11 @@ export function getViews(slug: string): number {
 
 export function calcReadTime(content: string): number {
   const cnChars = (content.match(/[\u4e00-\u9fa5]/g) || []).length;
-  const enWords = content.replace(/[\u4e00-\u9fa5]/g, '').trim()
-                         .split(/\s+/).filter(Boolean).length;
+  const enWords = content
+    .replace(/[\u4e00-\u9fa5]/g, '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
   const minutes = cnChars / 300 + enWords / 200;
   return Math.max(1, Math.round(minutes));
 }

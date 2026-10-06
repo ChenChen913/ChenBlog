@@ -10,7 +10,7 @@ function getBeijingHour(): number {
 
 function getAutoTheme(): 'dark' | 'light' {
   const hour = getBeijingHour();
-  return (hour >= 20 || hour < 6) ? 'dark' : 'light';
+  return hour >= 20 || hour < 6 ? 'dark' : 'light';
 }
 
 export function useTheme() {

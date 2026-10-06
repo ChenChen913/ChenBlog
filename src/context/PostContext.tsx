@@ -1,4 +1,12 @@
-import { createContext, useContext, useState, ReactNode, useCallback, useRef, useMemo } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useCallback,
+  useRef,
+  useMemo,
+} from 'react';
 import type { HeadingNode } from '../utils/headingParser';
 
 interface PostContextType {
@@ -25,11 +33,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
   // 使用 useMemo 缓存 value 对象，避免每次渲染都创建新对象导致 Context 消费者不必要的重渲染
   const value = useMemo(() => ({ headings, setHeadings }), [headings, setHeadings]);
 
-  return (
-    <PostContext.Provider value={value}>
-      {children}
-    </PostContext.Provider>
-  );
+  return <PostContext.Provider value={value}>{children}</PostContext.Provider>;
 }
 
 export function usePostContext() {

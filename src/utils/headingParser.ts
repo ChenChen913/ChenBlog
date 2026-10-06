@@ -13,7 +13,7 @@ export interface HeadingNode {
  */
 export interface ParsedHeadings {
   headings: HeadingNode[]; // 树形结构（h2 包含 h3），用于 TOC 渲染
-  totalCount: number;      // 标题总数，用于渲染器计数器同步校验
+  totalCount: number; // 标题总数，用于渲染器计数器同步校验
 }
 
 /**
@@ -22,11 +22,11 @@ export interface ParsedHeadings {
  */
 function stripInlineMarkdown(text: string): string {
   return text
-    .replace(/\*\*(.+?)\*\*/g, '$1')     // **粗体**
-    .replace(/\*(.+?)\*/g, '$1')          // *斜体*
-    .replace(/`(.+?)`/g, '$1')            // `行内代码`
-    .replace(/\[(.+?)\]\(.+?\)/g, '$1')  // [链接文字](url)
-    .replace(/<[^>]+>/g, '')              // <html标签>
+    .replace(/\*\*(.+?)\*\*/g, '$1') // **粗体**
+    .replace(/\*(.+?)\*/g, '$1') // *斜体*
+    .replace(/`(.+?)`/g, '$1') // `行内代码`
+    .replace(/\[(.+?)\]\(.+?\)/g, '$1') // [链接文字](url)
+    .replace(/<[^>]+>/g, '') // <html标签>
     .trim();
 }
 

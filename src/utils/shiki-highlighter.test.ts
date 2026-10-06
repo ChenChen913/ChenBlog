@@ -13,12 +13,10 @@ function hexToRgb(color: string): [number, number, number] {
 function luminance([red, green, blue]: [number, number, number]) {
   const channel = (value: number) => {
     const normalized = value / 255;
-    return normalized <= 0.03928
-      ? normalized / 12.92
-      : ((normalized + 0.055) / 1.055) ** 2.4;
+    return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
   };
 
-  return (0.2126 * channel(red)) + (0.7152 * channel(green)) + (0.0722 * channel(blue));
+  return 0.2126 * channel(red) + 0.7152 * channel(green) + 0.0722 * channel(blue);
 }
 
 function contrast(foreground: string, background: string) {

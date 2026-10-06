@@ -30,7 +30,7 @@ export interface PostFrontmatter {
 }
 
 // getAllPosts 函数签名预留了扩展空间
-export function getAllPosts(includeDraft = false): Post[]
+export function getAllPosts(includeDraft = false): Post[];
 ```
 
 **关键设计决策**：`getAllPosts()` 是所有页面获取文章列表的统一入口。未来方案二的所有过滤逻辑都可以在这个函数中扩展，不需要修改任何页面组件。
@@ -43,14 +43,14 @@ export function getAllPosts(includeDraft = false): Post[]
 
 ### 推荐技术栈
 
-| 层 | 推荐 | 备选 |
-|---|---|---|
-| 框架 | Next.js (App Router) | Nuxt 3 (如果偏好 Vue) |
-| API | Next.js API Routes | Express / Fastify / Cloudflare Workers |
-| 数据库 | SQLite (本地) / Turso (云端) | Supabase / PlanetScale |
-| 认证 | NextAuth.js | Clerk / 自建 JWT |
-| 文件存储 | 本地文件系统 / S3 兼容 | Cloudflare R2 / 上传 OSS |
-| 部署 | Vercel (Next.js 原生) | 自有服务器 / Docker |
+| 层       | 推荐                         | 备选                                   |
+| -------- | ---------------------------- | -------------------------------------- |
+| 框架     | Next.js (App Router)         | Nuxt 3 (如果偏好 Vue)                  |
+| API      | Next.js API Routes           | Express / Fastify / Cloudflare Workers |
+| 数据库   | SQLite (本地) / Turso (云端) | Supabase / PlanetScale                 |
+| 认证     | NextAuth.js                  | Clerk / 自建 JWT                       |
+| 文件存储 | 本地文件系统 / S3 兼容       | Cloudflare R2 / 上传 OSS               |
+| 部署     | Vercel (Next.js 原生)        | 自有服务器 / Docker                    |
 
 ### 迁移策略
 
@@ -88,7 +88,7 @@ export function getAllPosts(includeDraft = false): Post[]
   - API 设计：
     ```ts
     PATCH /api/posts/batch
-    Body: { 
+    Body: {
       action: 'publish' | 'unpublish' | 'delete' | 'update-category' | 'update-tags',
       slugs: string[],
       data?: { category?: string, tags?: string[] }

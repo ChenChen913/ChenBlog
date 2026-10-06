@@ -6,8 +6,7 @@ export type ArticleFontSizeMode = (typeof ARTICLE_FONT_SIZE_MODES)[number];
 
 export function isArticleFontSizeMode(value: unknown): value is ArticleFontSizeMode {
   return (
-    typeof value === 'string' &&
-    (ARTICLE_FONT_SIZE_MODES as readonly string[]).includes(value)
+    typeof value === 'string' && (ARTICLE_FONT_SIZE_MODES as readonly string[]).includes(value)
   );
 }
 

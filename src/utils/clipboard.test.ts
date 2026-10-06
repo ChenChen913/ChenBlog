@@ -1,9 +1,9 @@
 /**
  * Unit tests for clipboard utility
- * 
+ *
  * Tests the copyToClipboard function with both modern Clipboard API
  * and legacy execCommand fallback.
- * 
+ *
  * Requirements: 3.2, 3.4
  */
 
@@ -31,7 +31,7 @@ describe('copyToClipboard', () => {
       });
     }
     document.execCommand = originalExecCommand;
-    
+
     // Clean up any leftover textareas
     document.querySelectorAll('textarea').forEach(el => el.remove());
   });
@@ -117,7 +117,7 @@ describe('copyToClipboard', () => {
       expect(result).toBe(true);
       expect(mockWriteText).toHaveBeenCalled();
       expect(mockExecCommand).toHaveBeenCalledWith('copy');
-      
+
       // Verify textarea was cleaned up
       expect(document.querySelectorAll('textarea').length).toBe(0);
     });

@@ -21,15 +21,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const { theme, isManual: isManualTheme, toggleTheme, resetToAuto: resetThemeToAuto } = useTheme();
 
   // 使用 useCallback 缓存 t 函数,避免每次渲染都重新创建
-  const t = useCallback((key: LangKey) => {
-    return i18n[lang][key] || key;
-  }, [lang]);
+  const t = useCallback(
+    (key: LangKey) => {
+      return i18n[lang][key] || key;
+    },
+    [lang]
+  );
 
   return (
-    <AppContext.Provider value={{ lang, toggleLang, t, theme, isManualTheme, toggleTheme, resetThemeToAuto }}>
-      <PostProvider>
-        {children}
-      </PostProvider>
+    <AppContext.Provider
+      value={{ lang, toggleLang, t, theme, isManualTheme, toggleTheme, resetThemeToAuto }}
+    >
+      <PostProvider>{children}</PostProvider>
     </AppContext.Provider>
   );
 }

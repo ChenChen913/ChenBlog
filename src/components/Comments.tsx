@@ -59,7 +59,10 @@ export default function Comments() {
   }
 
   return (
-    <section id="post-comments" className="mt-16 pt-8 border-t border-stone-200 dark:border-stone-800">
+    <section
+      id="post-comments"
+      className="mt-16 pt-8 border-t border-stone-200 dark:border-stone-800"
+    >
       <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100 mb-6">
         {lang === 'en' ? 'Comments' : '评论'}
       </h2>

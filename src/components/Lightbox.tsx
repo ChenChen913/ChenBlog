@@ -1,34 +1,34 @@
-import { useEffect, useRef } from 'react'
-import { motion } from 'motion/react'
-import { X } from 'lucide-react'
+import { useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
+import { X } from 'lucide-react';
 
 interface LightboxProps {
-  src: string
-  alt: string
-  onClose: () => void
+  src: string;
+  alt: string;
+  onClose: () => void;
 }
 
 export function Lightbox({ src, alt, onClose }: LightboxProps) {
-  const lightboxRef = useRef<HTMLDivElement>(null)
+  const lightboxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
+      if (e.key === 'Escape') onClose();
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    document.body.style.overflow = 'hidden'
+    document.addEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = 'hidden';
 
     // 将焦点移入模态框
     if (lightboxRef.current) {
-      lightboxRef.current.focus()
+      lightboxRef.current.focus();
     }
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = ''
-    }
-  }, [onClose])
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
 
   return (
     <motion.div
@@ -44,11 +44,7 @@ export function Lightbox({ src, alt, onClose }: LightboxProps) {
       onClick={onClose}
       tabIndex={-1}
     >
-      <button
-        className="lightbox-close"
-        onClick={onClose}
-        aria-label="关闭"
-      >
+      <button className="lightbox-close" onClick={onClose} aria-label="关闭">
         <X size={24} />
       </button>
       <motion.img
@@ -59,8 +55,8 @@ export function Lightbox({ src, alt, onClose }: LightboxProps) {
         src={src}
         alt={alt}
         className="lightbox-image"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       />
     </motion.div>
-  )
+  );
 }

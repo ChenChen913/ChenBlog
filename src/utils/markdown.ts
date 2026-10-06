@@ -53,9 +53,7 @@ export function loadPostContent(slug: string): Promise<string | null> {
   let pending = contentCache.get(slug);
   if (!pending) {
     const loader = loaderBySlug[slug];
-    pending = loader
-      ? loader().then(raw => stripFrontmatter(raw))
-      : Promise.resolve(null);
+    pending = loader ? loader().then(raw => stripFrontmatter(raw)) : Promise.resolve(null);
     contentCache.set(slug, pending);
     pending.catch(() => contentCache.delete(slug));
   }
@@ -83,14 +81,9 @@ export function getAllPosts(includeDraft = false, includeUnpublished = false): P
 }
 
 /** 同步获取单篇文章元数据（不含正文）——文章页头部信息可即刻渲染 */
-export function getPostMetaBySlug(
-  slug: string,
-  includeUnpublished = false
-): PostMeta | undefined {
+export function getPostMetaBySlug(slug: string, includeUnpublished = false): PostMeta | undefined {
   const entry = postsIndex.find(
-    entry =>
-      entry.slug === slug &&
-      (includeUnpublished || entry.frontmatter.published !== false)
+    entry => entry.slug === slug && (includeUnpublished || entry.frontmatter.published !== false)
   );
   return entry ? toMeta(entry) : undefined;
 }

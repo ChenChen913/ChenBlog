@@ -17,7 +17,7 @@ export default function Highlights() {
   });
 
   return (
-    <motion.div 
+    <motion.div
       id="highlights-page"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -26,16 +26,25 @@ export default function Highlights() {
       className="space-y-12"
     >
       <header id="highlights-header" className="space-y-4">
-        <h1 id="highlights-title" className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
+        <h1
+          id="highlights-title"
+          className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100"
+        >
           {t('nav_highlights')}
         </h1>
-        <p id="highlights-subtitle" className="text-lg text-stone-600 dark:text-stone-400 max-w-2xl leading-relaxed">
+        <p
+          id="highlights-subtitle"
+          className="text-lg text-stone-600 dark:text-stone-400 max-w-2xl leading-relaxed"
+        >
           {t('highlights_subtitle')}
         </p>
       </header>
 
       {highlights.length === 0 ? (
-        <div id="no-highlights-message" className="py-20 text-center text-stone-500 dark:text-stone-400">
+        <div
+          id="no-highlights-message"
+          className="py-20 text-center text-stone-500 dark:text-stone-400"
+        >
           {t('no_highlights')}
         </div>
       ) : (

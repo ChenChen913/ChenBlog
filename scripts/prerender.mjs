@@ -121,15 +121,17 @@ async function main() {
         await page.goto(url, { waitUntil: 'networkidle', timeout: 45000 });
 
         // 等待 React 应用挂载完成
-        await page.waitForFunction(
-          () => document.querySelector('#root')?.children.length > 0,
-          { timeout: 20000 }
-        );
+        await page.waitForFunction(() => document.querySelector('#root')?.children.length > 0, {
+          timeout: 20000,
+        });
 
         // 文章页：等待异步正文 chunk 渲染（骨架屏消失）
         if (route.startsWith('/posts/')) {
           await page
-            .waitForSelector('#post-content #post-content-skeleton', { state: 'detached', timeout: 20000 })
+            .waitForSelector('#post-content #post-content-skeleton', {
+              state: 'detached',
+              timeout: 20000,
+            })
             .catch(() => log(`⚠️ ${route} 骨架屏未按期消失`));
         }
 
@@ -145,7 +147,9 @@ async function main() {
         fs.mkdirSync(path.dirname(outFile), { recursive: true });
         fs.writeFileSync(outFile, html);
         rendered++;
-        log(`✓ ${route} -> ${path.relative(DIST, outFile)} (${(html.length / 1024).toFixed(0)} KB)`);
+        log(
+          `✓ ${route} -> ${path.relative(DIST, outFile)} (${(html.length / 1024).toFixed(0)} KB)`
+        );
       } catch (err) {
         failed++;
         log(`✗ ${route}: ${err.message.split('\n')[0]}`);
@@ -172,14 +176,18 @@ function stopServer(server, graceMs = 3000) {
       return;
     }
     const forceKill = setTimeout(() => {
-      try { server.kill('SIGKILL'); } catch {}
+      try {
+        server.kill('SIGKILL');
+      } catch {}
       resolve();
     }, graceMs);
     server.once('exit', () => {
       clearTimeout(forceKill);
       resolve();
     });
-    try { server.kill('SIGTERM'); } catch {}
+    try {
+      server.kill('SIGTERM');
+    } catch {}
   });
 }
 

@@ -166,10 +166,7 @@ export function isFullTextReady(): boolean {
 /**
  * 执行搜索。contents 为空时退化为元数据搜索（标题/标签/摘要）。
  */
-export function searchPosts(
-  query: string,
-  contents: Record<string, string> = {}
-): SearchResult[] {
+export function searchPosts(query: string, contents: Record<string, string> = {}): SearchResult[] {
   const tokens = tokenizeQuery(query);
   if (tokens.length === 0) {
     return [];
@@ -178,11 +175,7 @@ export function searchPosts(
   return getAllPosts()
     .map(post => scorePost(post, tokens, contents[post.slug]))
     .filter((result): result is SearchResult => result !== null)
-    .sort(
-      (a, b) =>
-        b.score - a.score ||
-        new Date(b.date).getTime() - new Date(a.date).getTime()
-    )
+    .sort((a, b) => b.score - a.score || new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 20);
 }
 

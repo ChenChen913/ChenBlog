@@ -1,11 +1,11 @@
 /**
  * Unit tests for code extraction and language detection utilities
- * 
+ *
  * Tests cover:
  * - extractCodeText() with various input types
  * - getLanguageFromClassName() with aliases and edge cases
  * - Defensive type checking for edge cases
- * 
+ *
  * Requirements: 4.1, 4.3
  */
 
@@ -144,10 +144,10 @@ describe('extractCodeText', () => {
     });
 
     test('handles deeply nested structure', () => {
-      const deep = React.createElement('div', {},
-        React.createElement('code', {},
-          React.createElement('span', {}, 'const x = 1;')
-        )
+      const deep = React.createElement(
+        'div',
+        {},
+        React.createElement('code', {}, React.createElement('span', {}, 'const x = 1;'))
       );
       const result = extractCodeText(deep);
       expect(result).toBe('const x = 1;');
