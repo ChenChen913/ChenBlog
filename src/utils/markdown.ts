@@ -9,6 +9,8 @@ export interface PostFrontmatter {
   tags: string[];
   featured?: boolean;
   gem?: boolean;
+  /** 周刊文章：一周写的文章（属性而非独立实体，驱动 /weekly 页分组） */
+  weekly?: boolean;
   coverImage?: string;
   draft?: boolean;
   published?: boolean;

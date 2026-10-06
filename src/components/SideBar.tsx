@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Hash, Star, User, Github, Search } from 'lucide-react';
+import { Home, Newspaper, Hash, User, Github, Search } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { getAllPosts } from '../utils/markdown';
 
 const XIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -32,10 +33,16 @@ export default function SideBar({ onOpenSearch }: { onOpenSearch: () => void }) 
 
   const navItems = [
     { path: '/', icon: Home, label: t('nav_home'), id: 'nav-home' },
+    { path: '/weekly', icon: Newspaper, label: t('nav_weekly'), id: 'nav-weekly' },
     { path: '/categories', icon: Hash, label: t('nav_categories'), id: 'nav-categories' },
-    { path: '/highlights', icon: Star, label: t('nav_highlights'), id: 'nav-highlights' },
     { path: '/about', icon: User, label: t('nav_about'), id: 'nav-about' },
   ];
+
+  // 周刊筹备期：还没有周刊文章时，导航项带「筹备中」小字（有文章后自然消失）
+  const weeklyCount = useMemo(
+    () => getAllPosts().filter(p => p.frontmatter.weekly === true).length,
+    []
+  );
 
   const activeIndex = navItems.findIndex(
     item =>
@@ -135,6 +142,14 @@ export default function SideBar({ onOpenSearch }: { onOpenSearch: () => void }) 
               <span className={`text-sm ${lang === 'en' ? 'flex-1 text-center' : ''}`}>
                 {item.label}
               </span>
+              {item.path === '/weekly' && weeklyCount === 0 && (
+                <span
+                  className="ml-1 text-[10.5px] tracking-wider text-amber-600 dark:text-amber-400 shrink-0"
+                  title={t('weekly_coming_soon')}
+                >
+                  {t('weekly_coming_soon')}
+                </span>
+              )}
             </Link>
           );
         })}

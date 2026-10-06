@@ -15,6 +15,7 @@ declare module 'virtual:posts-index' {
       tags: string[];
       featured?: boolean;
       gem?: boolean;
+      weekly?: boolean;
       coverImage?: string;
       draft?: boolean;
       published?: boolean;

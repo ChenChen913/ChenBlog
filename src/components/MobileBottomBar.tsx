@@ -137,15 +137,11 @@ function NavBottomBar() {
 
   const navItems = [
     { path: '/', label: t('nav_home').replace(/\s/g, ''), id: 'mobile-nav-home' },
+    { path: '/weekly', label: t('nav_weekly').replace(/\s/g, ''), id: 'mobile-nav-weekly' },
     {
       path: '/categories',
       label: t('nav_categories').replace(/\s/g, ''),
       id: 'mobile-nav-categories',
-    },
-    {
-      path: '/highlights',
-      label: t('nav_highlights').replace(/\s/g, ''),
-      id: 'mobile-nav-highlights',
     },
     { path: '/about', label: t('nav_about').replace(/\s/g, ''), id: 'mobile-nav-about' },
   ];

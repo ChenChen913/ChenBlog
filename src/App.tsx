@@ -1,5 +1,12 @@
 import React, { Suspense, lazy, useEffect, useLayoutEffect, useRef } from 'react';
-import { BrowserRouter, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigationType,
+} from 'react-router-dom';
 import Home from './pages/Home';
 import { AppProvider } from './context/AppContext';
 import Layout from './components/Layout';
@@ -13,11 +20,11 @@ import NotFound from './pages/NotFound';
  */
 const Post = lazy(() => import('./pages/Post'));
 const Categories = lazy(() => import('./pages/Categories'));
-const Highlights = lazy(() => import('./pages/Highlights'));
+const Weekly = lazy(() => import('./pages/Weekly'));
 const About = lazy(() => import('./pages/About'));
 const StatusPage = lazy(() => import('./pages/StatusPage'));
 
-const LIST_PATHS = new Set(['/', '/categories', '/highlights']);
+const LIST_PATHS = new Set(['/', '/categories', '/weekly']);
 
 /** 懒加载路由的加载态：极简骨架，避免布局抖动 */
 function RouteFallback() {
@@ -98,7 +105,12 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/posts/:slug" element={<Post />} />
                 <Route path="/categories" element={<Categories />} />
-                <Route path="/highlights" element={<Highlights />} />
+                <Route path="/weekly" element={<Weekly />} />
+                {/* 精选页已下线：能力归并到分类页的 ◆ 过滤（第三轮定稿），旧链接重定向保 SEO */}
+                <Route
+                  path="/highlights"
+                  element={<Navigate to="/categories?filter=gem" replace />}
+                />
                 <Route path="/about" element={<About />} />
                 <Route path="/status/:code" element={<StatusPage />} />
                 <Route path="*" element={<NotFound />} />

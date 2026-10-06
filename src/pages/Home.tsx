@@ -1,22 +1,28 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { getAllPosts } from '../utils/markdown';
-import PostCard from '../components/PostCard';
+import PostTimeline from '../components/PostTimeline';
 import { useAppContext } from '../context/AppContext';
 import { motion } from 'motion/react';
 import Pagination from '../components/Pagination';
-import { formatDate } from '../utils/dateFormat';
 import { usePageMeta } from '../hooks/usePageMeta';
 import JsonLd from '../components/JsonLd';
 
+/**
+ * 首页 = 纯文章列表（第三轮 UI 提案定稿）
+ * ------------------------------------------------------------------
+ * 「个人博客里全都是文章，没必要把类别分得那么清楚」：
+ *  - 「精选」「最新周刊」等一切栏目模块全部撤下
+ *  - gem / weekly / 普通文章按日期统一倒序混排（此前 featured 被
+ *    排除出近期列表的逻辑一并反转——列表即首页，首页即列表）
+ *  - gem 的全部存在形式 = 时间轴上的一个金色菱形（PostTimeline 内处理）
+ *  - 周刊文章在首页无任何标识，想看周刊的人走左侧导航
+ */
 export default function Home() {
   const { t, lang } = useAppContext();
   const posts = getAllPosts();
   const [currentPage, setCurrentPage] = useState(1);
 
   const POSTS_PER_PAGE = 10;
-
-  const featuredPosts = posts.filter(p => p.frontmatter.featured).slice(0, 2);
 
   // 🔧 SEO：首页动态元数据
   usePageMeta({
@@ -42,18 +48,13 @@ export default function Home() {
     [t, lang]
   );
 
-  // 🔧 修复重复内容：近期列表排除已在推荐位展示的文章
-  const featuredSlugs = new Set(featuredPosts.map(p => p.slug));
-  const recentPosts = posts.filter(p => !featuredSlugs.has(p.slug));
-
-  // 计算当前页显示的文章
+  // 全量混排：全部文章按日期倒序（无任何排除逻辑）
   const currentPosts = useMemo(() => {
     const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-    const endIndex = startIndex + POSTS_PER_PAGE;
-    return recentPosts.slice(startIndex, endIndex);
-  }, [recentPosts, currentPage]);
+    return posts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+  }, [posts, currentPage]);
 
-  const totalPages = Math.ceil(recentPosts.length / POSTS_PER_PAGE);
+  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -66,7 +67,7 @@ export default function Home() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.18 }}
-      className="space-y-16"
+      className="space-y-14"
     >
       <JsonLd data={websiteJsonLd} />
       <header id="home-header" className="space-y-4">
@@ -92,71 +93,12 @@ export default function Home() {
         </p>
       </header>
 
-      {featuredPosts.length > 0 && (
-        <section id="featured-posts-section">
-          <h2 id="featured-posts-title" className="text-2xl font-bold mb-8 flex items-center gap-3">
-            <span className="bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 px-3 py-1 rounded-lg text-sm tracking-widest uppercase">
-              {t('tab_recommend')}
-            </span>
-          </h2>
-          <div id="featured-posts-grid" className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {featuredPosts.map(post => (
-              <div
-                key={post.slug}
-                id={`featured-post-${post.slug}`}
-                className="group relative flex flex-col gap-2"
-              >
-                <div id={`featured-post-content-${post.slug}`}>
-                  <div
-                    id={`featured-post-meta-${post.slug}`}
-                    className="flex items-center gap-3 mb-2 text-xs font-medium text-stone-500 dark:text-stone-400"
-                  >
-                    <span className="text-blue-600 dark:text-blue-400 uppercase tracking-wider">
-                      {t(`category_${post.frontmatter.category}` as any) ||
-                        post.frontmatter.category}
-                    </span>
-                    <span>•</span>
-                    <time dateTime={post.frontmatter.date}>
-                      {formatDate(post.frontmatter.date, lang === 'en' ? 'en' : 'zh')}
-                    </time>
-                  </div>
-                  <Link
-                    id={`featured-post-link-title-${post.slug}`}
-                    to={`/posts/${post.slug}`}
-                    className="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
-                  >
-                    <h3
-                      id={`featured-post-title-${post.slug}`}
-                      className="text-xl font-bold text-stone-900 dark:text-stone-100 mb-2 leading-tight line-clamp-2"
-                    >
-                      {lang === 'en' && post.frontmatter.title_en
-                        ? post.frontmatter.title_en
-                        : post.frontmatter.title}
-                    </h3>
-                  </Link>
-                  <p
-                    id={`featured-post-excerpt-${post.slug}`}
-                    className="text-stone-600 dark:text-stone-400 line-clamp-2 text-sm"
-                  >
-                    {post.excerpt}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <section id="recent-posts-section">
-        <h2 id="recent-posts-title" className="text-2xl font-bold mb-8 flex items-center gap-3">
-          <span className="bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100 px-3 py-1 rounded-lg text-sm tracking-widest uppercase">
-            {t('recent_posts')}
-          </span>
-        </h2>
-        <div id="recent-posts-list" className="flex flex-col gap-4">
-          {currentPosts.map(post => (
-            <PostCard key={post.slug} post={post} showCover={false} />
-          ))}
+      <section id="home-posts-section" aria-label={t('nav_posts')}>
+        <span className="sec-label" id="home-posts-label">
+          {t('nav_posts')}
+        </span>
+        <div id="home-posts-list" className="mt-3">
+          <PostTimeline posts={currentPosts} ariaLabel={t('nav_posts')} />
         </div>
 
         {/* 分页组件 */}

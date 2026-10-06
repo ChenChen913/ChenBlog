@@ -10,6 +10,7 @@ import rehypeRaw from 'rehype-raw';
 import type { PluggableList } from 'unified';
 import TableOfContents from '../components/TableOfContents';
 import PostNavigation from '../components/PostNavigation';
+import WeeklyNavigation from '../components/WeeklyNavigation';
 import RelatedPosts from '../components/RelatedPosts';
 import { Lightbox } from '../components/Lightbox';
 import { ArrowLeft, Eye, Share2, Check } from 'lucide-react';
@@ -881,6 +882,13 @@ export default function Post() {
                 </span>
               ))}
             </div>
+
+            {/* 周刊文章：周上下文互链（上一周 / 下一周，空周自然跳过） */}
+            {post.frontmatter.weekly === true && (
+              <div className="mt-8">
+                <WeeklyNavigation currentSlug={post.slug} />
+              </div>
+            )}
 
             {/* 上一篇 / 下一篇导航 */}
             <div className="mt-8">

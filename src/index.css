@@ -2261,3 +2261,810 @@ html {
     transition: none;
   }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   时间轴文章列表（首页 / 分类页共用）
+   ── 第三轮 UI 提案定稿：一行只有「轴点标识 · 标题 · 时间」
+   ── 几何约定：轴线中心 = --pt-axis；行/组的全部节点都以此定位，
+      点永远压在线的中心上（提案 3.1 对齐问题的根治方案）
+   ════════════════════════════════════════════════════════════════ */
+.pt-timeline {
+  --pt-axis: 4.75px; /* 轴线中心 x（相对容器左缘） */
+  --pt-pad: 24px; /* 内容列左缩进：轴与文字的间距 */
+  --pt-bleed: 16px; /* 行悬停玻璃的左右出血（负 margin + 等量 padding 补偿） */
+  position: relative;
+  max-width: 684px;
+  padding-left: var(--pt-pad);
+}
+
+/* 轴线本体（渐隐收尾） */
+.pt-timeline::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--pt-axis) - 0.75px);
+  top: 12px;
+  bottom: 16px;
+  width: 1.5px;
+  background: linear-gradient(to bottom, rgba(120, 113, 108, 0.42), rgba(120, 113, 108, 0.14));
+}
+.dark .pt-timeline::before {
+  background: linear-gradient(to bottom, rgba(214, 211, 209, 0.34), rgba(214, 211, 209, 0.1));
+}
+
+/* 月份分组：组头日期一律楷体（用户定稿：日期数字用秀气字体） */
+.pt-group {
+  position: relative;
+  padding-bottom: 22px;
+}
+.pt-group:last-child {
+  padding-bottom: 4px;
+}
+.pt-group-label {
+  font-family: var(--font-kai);
+  font-size: 13px;
+  letter-spacing: 2px;
+  line-height: 22px;
+  color: rgba(87, 83, 78, 0.92);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pt-group-label b {
+  font-weight: 700;
+  font-size: 14.5px;
+  color: rgba(63, 60, 57, 1);
+  margin-right: 8px;
+}
+.dark .pt-group-label {
+  color: rgba(168, 162, 158, 0.95);
+}
+.dark .pt-group-label b {
+  color: rgba(231, 229, 228, 1);
+}
+
+/* 月份节点：9px 圆环，中心严格落在轴线上（top 为组头文字行中心） */
+.pt-group::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--pt-axis) - var(--pt-pad));
+  top: 11px;
+  transform: translate(-50%, -50%);
+  width: 9px;
+  height: 9px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  border: 2px solid rgba(120, 113, 108, 0.55);
+}
+.dark .pt-group::before {
+  background: rgba(28, 25, 23, 0.92);
+  border-color: rgba(168, 162, 158, 0.5);
+}
+/* 最新月份的节点着色（时间轴的「现在」端） */
+.pt-group:first-child::before {
+  border-color: #2563eb;
+  background: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+.dark .pt-group:first-child::before {
+  border-color: #60a5fa;
+  background: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.16);
+}
+
+/* 文章行：标题 + 行尾时间；标识挂轴点，标题文字流零参与 */
+.pt-row {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 11px var(--pt-bleed);
+  margin: 0 calc(-1 * var(--pt-bleed));
+  border-radius: 13px;
+  transition:
+    background 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s ease;
+}
+.pt-row::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--pt-axis) - var(--pt-pad) + var(--pt-bleed));
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(87, 83, 78, 0.95);
+  opacity: 0.38;
+}
+.dark .pt-row::before {
+  background: rgba(214, 211, 209, 0.95);
+}
+/* gem 文章：轴点升级为金菱形（带光环，无动效） */
+.pt-row--gem::before {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #fbbf24, #d97706);
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(45deg);
+  box-shadow:
+    0 0 0 3px rgba(180, 83, 9, 0.13),
+    0 1px 3px rgba(180, 83, 9, 0.3);
+}
+.dark .pt-row--gem::before {
+  background: linear-gradient(135deg, #fde68a, #f59e0b);
+  box-shadow:
+    0 0 0 3px rgba(251, 191, 36, 0.16),
+    0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+/* 悬停玻璃：inset 光环替代实体边框，几何零扰动（对齐不被 border 破坏） */
+.pt-row:hover,
+.pt-row:focus-visible {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.88),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 1px 4px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+.dark .pt-row:hover,
+.dark .pt-row:focus-visible {
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.26),
+    0 4px 20px rgba(0, 0, 0, 0.35),
+    0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 标题：一行里唯一的主体（17px 加粗楷体，无摘要/副标题） */
+.pt-title {
+  font-family: var(--font-kai);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.55;
+  color: rgba(28, 25, 23, 1);
+  transition: color 0.2s ease;
+  min-width: 0;
+}
+.dark .pt-title {
+  color: rgba(245, 245, 244, 1);
+}
+.pt-row:hover .pt-title,
+.pt-row:focus-visible .pt-title {
+  color: #2563eb;
+}
+.dark .pt-row:hover .pt-title,
+.dark .pt-row:focus-visible .pt-title {
+  color: #60a5fa;
+}
+
+/* 时间：行尾唯一元信息（14px 次级墨色楷体数字） */
+.pt-date {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: var(--font-kai);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  color: rgba(87, 83, 78, 1);
+}
+.dark .pt-date {
+  color: rgba(214, 211, 209, 0.95);
+}
+
+/* 移动端：轴缩进与出血同步收窄，字号微调 */
+@media (max-width: 639px) {
+  .pt-timeline {
+    --pt-pad: 18px;
+    --pt-bleed: 10px;
+  }
+  .pt-row {
+    padding: 10px var(--pt-bleed);
+    gap: 10px;
+  }
+  .pt-title {
+    font-size: 15.5px;
+  }
+  .pt-date {
+    font-size: 13px;
+  }
+}
+
+/* 「文 章」区段小标签（首页） */
+.sec-label {
+  display: inline-block;
+  font-family: var(--font-kai);
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: rgba(87, 83, 78, 1);
+  background: rgba(245, 242, 238, 0.85);
+  border: 1px solid rgba(210, 205, 200, 0.65);
+  padding: 4px 12px;
+  border-radius: 8px;
+}
+.dark .sec-label {
+  color: rgba(214, 211, 209, 0.95);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* 分类页 ◆ 精选 chip 的金色玻璃激活态（过滤不是栏目，保住「只看精选」能力） */
+.cat-glass-gem-active {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.96), rgba(217, 119, 6, 0.94));
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-top: 1px solid rgba(254, 243, 199, 0.95);
+  border-left: 1px solid rgba(254, 243, 199, 0.9);
+  border-right: 1px solid rgba(180, 83, 9, 0.6);
+  border-bottom: 1px solid rgba(180, 83, 9, 0.6);
+  border-radius: 12px;
+  box-shadow:
+    0 1px 1px rgba(254, 243, 199, 0.9),
+    0 4px 16px rgba(180, 83, 9, 0.28),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.55);
+  color: #fff;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+.cat-glass-gem-active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.04) 40%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+.dark .cat-glass-gem-active {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.92), rgba(146, 64, 14, 0.92));
+  border-top-color: rgba(254, 243, 199, 0.5);
+  border-left-color: rgba(254, 243, 199, 0.4);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.4),
+    inset 0 1.5px 0 rgba(254, 243, 199, 0.3);
+  color: #fef3c7;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   周刊页（/weekly）
+   ── 顶部 28px 周历刻度条（零动效）+ 周分组时间线
+   ── 每周结构：周头行（日期区间 + 行尾周序/篇数）在上，
+      文章标题行在日期下方（用户定稿：不管几篇，标题都在对应日期下面）
+   ── 几何约定与首页列表同构：轴线中心 = --wk-axis
+   ════════════════════════════════════════════════════════════════ */
+.wk-page {
+  --wk-axis: 6px;
+  --wk-pad: 26px;
+  --wk-bleed: 16px;
+}
+
+/* 页头 */
+.wk-headline {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.wk-title {
+  font-family: var(--font-kai);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: rgba(28, 25, 23, 1);
+}
+.dark .wk-title {
+  color: rgba(245, 245, 244, 1);
+}
+.wk-badge {
+  font-size: 11.5px;
+  letter-spacing: 2px;
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.5);
+  border-radius: 999px;
+  padding: 2px 10px;
+  opacity: 0.85;
+}
+.dark .wk-badge {
+  color: #60a5fa;
+  border-color: rgba(96, 165, 250, 0.5);
+}
+.wk-subtitle {
+  font-family: var(--font-kai);
+  font-size: 14px;
+  color: rgba(87, 83, 78, 0.95);
+  letter-spacing: 0.5px;
+  margin-top: 6px;
+}
+.dark .wk-subtitle {
+  color: rgba(168, 162, 158, 0.95);
+}
+
+/* 周历条：玻璃容器，格子是刻度不是动画（零动效定稿） */
+.wk-strip {
+  margin: 20px 0 6px;
+  padding: 12px 14px 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.66);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(210, 205, 200, 0.55);
+  border-bottom: 1px solid rgba(210, 205, 200, 0.55);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 4px 16px rgba(0, 0, 0, 0.07),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+}
+.dark .wk-strip {
+  background: rgba(255, 255, 255, 0.07);
+  border-top-color: rgba(255, 255, 255, 0.24);
+  border-left-color: rgba(255, 255, 255, 0.18);
+  border-right-color: rgba(255, 255, 255, 0.08);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.22);
+}
+.wk-strip-cells {
+  display: flex;
+  gap: 2.5px;
+}
+.wk-cell {
+  flex: 1;
+  min-width: 2px;
+  height: 26px;
+  border-radius: 2.5px;
+  background: rgba(231, 229, 228, 0.65);
+  border: 1px solid rgba(214, 211, 209, 0.55);
+  box-sizing: border-box;
+}
+.dark .wk-cell {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+/* 篇数着色：1 篇浅、2 篇中、3+ 篇深（蓝阶） */
+.wk-cell--p1 {
+  background: #bfdbfe;
+  border-color: #93c5fd;
+}
+.wk-cell--p2 {
+  background: #60a5fa;
+  border-color: #3b82f6;
+}
+.wk-cell--p3 {
+  background: #2563eb;
+  border-color: #1d4ed8;
+}
+.dark .wk-cell--p1 {
+  background: #1e3a5f;
+  border-color: #2d4f7c;
+}
+.dark .wk-cell--p2 {
+  background: #3b82f6;
+  border-color: #2563eb;
+}
+.dark .wk-cell--p3 {
+  background: #93c5fd;
+  border-color: #60a5fa;
+}
+/* 当前周：静态描边（无脉动，动效收敛定稿） */
+.wk-cell--now {
+  background: transparent;
+  border: 1.5px solid #2563eb;
+}
+.dark .wk-cell--now {
+  border-color: #60a5fa;
+}
+/* 未来周：30% 透明空格（诚实记录，不渲染噪声） */
+.wk-cell--future {
+  opacity: 0.3;
+}
+.wk-months {
+  display: flex;
+  margin-top: 6px;
+}
+.wk-months span {
+  flex: 1;
+  text-align: right;
+  font-family: var(--font-kai);
+  font-size: 10.5px;
+  color: rgba(120, 113, 108, 0.85);
+  letter-spacing: 1px;
+}
+.wk-months span:first-child {
+  text-align: left;
+}
+.dark .wk-months span {
+  color: rgba(168, 162, 158, 0.8);
+}
+.wk-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  font-family: var(--font-kai);
+  font-size: 12.5px;
+  color: rgba(87, 83, 78, 0.95);
+}
+.dark .wk-stats {
+  color: rgba(168, 162, 158, 0.95);
+}
+.wk-stats b {
+  font-weight: 700;
+  color: rgba(41, 37, 34, 1);
+}
+.dark .wk-stats b {
+  color: rgba(231, 229, 228, 1);
+}
+.wk-legend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+}
+.wk-legend i {
+  width: 9px;
+  height: 9px;
+  border-radius: 2.5px;
+  display: inline-block;
+  background: rgba(231, 229, 228, 0.65);
+  border: 1px solid rgba(214, 211, 209, 0.7);
+  box-sizing: border-box;
+}
+.dark .wk-legend i {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.wk-legend i.f1 {
+  background: #bfdbfe;
+  border-color: #93c5fd;
+}
+.dark .wk-legend i.f1 {
+  background: #1e3a5f;
+  border-color: #2d4f7c;
+}
+.wk-legend i.f2 {
+  background: #60a5fa;
+  border-color: #3b82f6;
+}
+.dark .wk-legend i.f2 {
+  background: #3b82f6;
+  border-color: #2563eb;
+}
+.wk-legend i.now {
+  background: transparent;
+  border: 1.5px solid #2563eb;
+}
+.dark .wk-legend i.now {
+  border-color: #60a5fa;
+}
+
+/* 周分组时间线（主体） */
+.wk-groups {
+  position: relative;
+  max-width: 720px;
+  padding-left: var(--wk-pad);
+  margin-top: 26px;
+}
+.wk-groups::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--wk-axis) - 0.75px);
+  top: 10px;
+  bottom: 14px;
+  width: 1.5px;
+  background: linear-gradient(to bottom, rgba(37, 99, 235, 0.55), rgba(120, 113, 108, 0.22));
+}
+.dark .wk-groups::before {
+  background: linear-gradient(to bottom, rgba(96, 165, 250, 0.5), rgba(214, 211, 209, 0.14));
+}
+.wk-year {
+  font-family: var(--font-kai);
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: rgba(87, 83, 78, 0.92);
+  margin: 6px 0 14px;
+}
+.wk-year b {
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(41, 37, 34, 1);
+  margin-right: 8px;
+}
+.dark .wk-year,
+.dark .wk-year b {
+  color: rgba(214, 211, 209, 0.95);
+}
+
+/* 周头行：日期区间为主标注，周序/篇数降为行尾小字 */
+.wk-week {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 0 6px;
+}
+.wk-week::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--wk-axis) - var(--wk-pad));
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 9px;
+  height: 9px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  border: 2px solid rgba(120, 113, 108, 0.55);
+}
+.dark .wk-week::before {
+  background: rgba(28, 25, 23, 0.92);
+  border-color: rgba(168, 162, 158, 0.5);
+}
+/* 当前周节点：静态填充 */
+.wk-week--current::before {
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+.dark .wk-week--current::before {
+  background: #60a5fa;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.16);
+}
+.wk-range {
+  font-family: var(--font-kai);
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(41, 37, 34, 1);
+}
+.dark .wk-range {
+  color: rgba(231, 229, 228, 1);
+}
+.wk-weekno {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: var(--font-kai);
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: rgba(120, 113, 108, 1);
+}
+.dark .wk-weekno {
+  color: rgba(168, 162, 158, 0.9);
+}
+
+/* 文章标题行：永远在对应日期的下方，左缘与日期严格对齐 */
+.wk-entry {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px var(--wk-bleed);
+  margin: 0 calc(-1 * var(--wk-bleed)) 2px;
+  border-radius: 12px;
+  transition:
+    background 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s ease;
+}
+.wk-entry::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--wk-axis) - var(--wk-pad) + var(--wk-bleed));
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(87, 83, 78, 0.95);
+  opacity: 0.38;
+}
+.dark .wk-entry::before {
+  background: rgba(214, 211, 209, 0.95);
+}
+.wk-entry:hover,
+.wk-entry:focus-visible {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.88),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 1px 4px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+.dark .wk-entry:hover,
+.dark .wk-entry:focus-visible {
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.26),
+    0 4px 20px rgba(0, 0, 0, 0.35),
+    0 1px 4px rgba(0, 0, 0, 0.2);
+}
+.wk-entry-title {
+  font-family: var(--font-kai);
+  font-size: 16.5px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: rgba(28, 25, 23, 1);
+  transition: color 0.2s ease;
+  min-width: 0;
+}
+.dark .wk-entry-title {
+  color: rgba(245, 245, 244, 1);
+}
+.wk-entry:hover .wk-entry-title,
+.wk-entry:focus-visible .wk-entry-title {
+  color: #2563eb;
+}
+.dark .wk-entry:hover .wk-entry-title,
+.dark .wk-entry:focus-visible .wk-entry-title {
+  color: #60a5fa;
+}
+
+/* 周刊空态（冷启动：0 篇时的引导） */
+.wk-empty {
+  text-align: center;
+  padding: 44px 20px 36px;
+  border: 1.5px dashed rgba(201, 196, 190, 0.7);
+  border-radius: 14px;
+  background: rgba(245, 242, 238, 0.5);
+}
+.dark .wk-empty {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.03);
+}
+.wk-empty-title {
+  font-family: var(--font-kai);
+  font-size: 17px;
+  font-weight: 700;
+  color: rgba(68, 64, 60, 1);
+  margin-bottom: 6px;
+}
+.dark .wk-empty-title {
+  color: rgba(231, 229, 228, 1);
+}
+.wk-empty-hint {
+  font-family: var(--font-kai);
+  font-size: 13px;
+  color: rgba(120, 113, 108, 1);
+}
+.dark .wk-empty-hint {
+  color: rgba(168, 162, 158, 0.9);
+}
+
+/* 周刊页移动端 */
+@media (max-width: 639px) {
+  .wk-page {
+    --wk-pad: 20px;
+    --wk-bleed: 10px;
+  }
+  .wk-cell {
+    height: 20px;
+  }
+  .wk-strip {
+    padding: 10px 10px 8px;
+  }
+  .wk-strip-cells {
+    gap: 1.5px;
+  }
+  .wk-title {
+    font-size: 24px;
+    letter-spacing: 4px;
+  }
+  .wk-entry-title {
+    font-size: 15.5px;
+  }
+  .wk-range {
+    font-size: 13.5px;
+  }
+  .wk-stats {
+    gap: 12px;
+    font-size: 11.5px;
+  }
+  .wk-legend {
+    margin-left: 0;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   文章页周刊上下文（weekly 文章底部：周 chip + 上一周/下一周）
+   ════════════════════════════════════════════════════════════════ */
+.wk-context {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.wk-context-chip {
+  font-family: var(--font-kai);
+  font-size: 11.5px;
+  letter-spacing: 1px;
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.5);
+  border-radius: 999px;
+  padding: 2px 10px;
+  opacity: 0.9;
+}
+.dark .wk-context-chip {
+  color: #60a5fa;
+  border-color: rgba(96, 165, 250, 0.5);
+}
+.wk-navbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  font-family: var(--font-kai);
+  font-size: 13px;
+  color: rgba(68, 64, 60, 1);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(210, 205, 200, 0.6);
+  border-bottom: 1px solid rgba(210, 205, 200, 0.6);
+  border-radius: 999px;
+  padding: 7px 16px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.wk-navbtn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.95),
+    0 4px 14px rgba(0, 0, 0, 0.1);
+}
+.dark .wk-navbtn {
+  background: rgba(255, 255, 255, 0.09);
+  border-top-color: rgba(255, 255, 255, 0.24);
+  border-left-color: rgba(255, 255, 255, 0.18);
+  border-right-color: rgba(255, 255, 255, 0.08);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+  color: rgba(231, 229, 228, 1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+.dark .wk-navbtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+.wk-navbtn:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.wk-navbtn span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wk-context-hint {
+  font-family: var(--font-kai);
+  font-size: 11.5px;
+  color: rgba(120, 113, 108, 0.9);
+}
+.dark .wk-context-hint {
+  color: rgba(168, 162, 158, 0.85);
+}
