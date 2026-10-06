@@ -519,7 +519,8 @@ export default function Post() {
             '@type': 'WebPage',
             '@id': typeof window !== 'undefined' ? window.location.origin + window.location.pathname : undefined,
           },
-          image: safeCoverImage || undefined,
+          image: safeCoverImage
+            || (typeof window !== 'undefined' ? new URL('/og-image.png', window.location.origin).href : undefined),
         }}
       />
       <div className="article-page">

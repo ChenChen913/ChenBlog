@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 /**
- * 页级 SEO 元数据接口
+ * 页面级 SEO 元数据接口
  */
 export interface PageMeta {
   /** 文档标题（浏览器标签页 + og:title + twitter:title） */
@@ -10,9 +10,12 @@ export interface PageMeta {
   description?: string;
   /** Open Graph 类型，文章页用 'article'，其余页面默认 'website' */
   ogType?: 'website' | 'article';
-  /** 分享卡片图（og:image / twitter:image 的绝对 URL） */
+  /** 分享卡片图（og:image / twitter:image 的绝对 URL），缺省时回退站点默认卡片 */
   imageUrl?: string;
 }
+
+/** 站点默认分享卡片（public/og-image.png，1200×630 液态玻璃风格） */
+const DEFAULT_OG_IMAGE = '/og-image.png';
 
 function setMeta(attr: 'name' | 'property', key: string, content: string) {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
@@ -60,10 +63,11 @@ export function usePageMeta({ title, description, ogType, imageUrl }: PageMeta) 
       setMeta('property', 'og:type', ogType);
     }
 
-    if (imageUrl) {
-      setMeta('property', 'og:image', imageUrl);
-      setMeta('name', 'twitter:image', imageUrl);
-    }
+    // 分享卡片图：优先文章封面，否则回退站点默认卡片（相对路径转绝对，社交平台要求绝对 URL）
+    const resolvedImage = imageUrl ?? DEFAULT_OG_IMAGE;
+    const absoluteImage = new URL(resolvedImage, window.location.origin).href;
+    setMeta('property', 'og:image', absoluteImage);
+    setMeta('name', 'twitter:image', absoluteImage);
 
     // 真实地址替换构建模板里的 your-domain.com 占位符
     setMeta('property', 'og:url', url);
