@@ -1,16 +1,10 @@
 @import "tailwindcss";
+/* LXGW WenKai unicode-range 三分片（latin/cjk-common/cjk-rare），由 scripts/font-split.py 生成 */
+@import "./fonts.css";
 
 html {
   overflow-x: hidden;
   -webkit-text-size-adjust: 100%;
-}
-
-@font-face {
-  font-family: "LXGW Local WenKai";
-  src: url("/fonts/lxgw/LXGWWenKai-Medium-subset.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
 }
 
 @font-face {
