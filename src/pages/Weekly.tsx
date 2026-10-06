@@ -91,6 +91,10 @@ export default function Weekly() {
   const stripScrollRef = useRef<HTMLDivElement>(null);
   // 滚动侦测的稳定参照（setState 只在变化时触发，避免闭包过期）
   const activeRef = useRef<string | null>(null);
+  // 用户主动跳转（点格子/选年份）后的侦测抑制窗口：
+  // 跳转滚动动画期间侦测让位，避免「点了 W39 高亮却被抢到 W41」
+  // （短页面滚动被钳制时目标周可能滚不到探测线下，侦测会算出别的周）
+  const suppressSpyUntilRef = useRef(0);
 
   /* ------------------------------------------------------------------
    * 滚动联动（rAF 节流）：
@@ -108,6 +112,10 @@ export default function Weekly() {
       const rect = wrap.getBoundingClientRect();
       const stickyTop = parseFloat(getComputedStyle(wrap).top) || 0;
       wrap.classList.toggle('is-stuck', rect.top <= stickyTop + 0.5);
+
+      // 用户主动跳转的滚动动画期间：吸顶照常更新，周侦测让位
+      // （此时探测线扫过的周不是用户意图，覆盖会「抢走高亮」）
+      if (Date.now() < suppressSpyUntilRef.current) return;
 
       // 周侦测：按文档序找「已滚过探测线」的最后一个周块
       const blocks = document.querySelectorAll<HTMLElement>('.wk-week-block');
@@ -168,17 +176,20 @@ export default function Weekly() {
     }
   }, [activeWeek, stripYear]);
 
-  /** 点击着色周格 → 平滑滚到下方对应的周分组（scroll-margin 预留吸顶条高度） */
+  /** 点击着色周格 → 平滑滚到下方对应的周分组（scroll-margin 预留吸顶条高度）。
+   *  跳转后的滚动动画期间侦测抑制，保证高亮稳定停在用户点的周上 */
   const jumpToWeek = useCallback((key: WeekKey) => {
     setActiveWeek(key);
     activeRef.current = `${key.year}-W${key.week}`;
+    suppressSpyUntilRef.current = Date.now() + 900;
     const target = document.getElementById(`wk-week-${key.year}-W${key.week}`);
     target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, []);
 
-  /** 年份切换：周历条换年 + 滚到该年份的第一个周分组 */
+  /** 年份切换：周历条换年 + 滚到该年份的第一个周分组（同样抑制跳转期间的侦测） */
   const selectYear = useCallback((year: number) => {
     setStripYear(year);
+    suppressSpyUntilRef.current = Date.now() + 900;
     const first = document.querySelector<HTMLElement>(
       `#weekly-groups section[data-year="${year}"] .wk-week-block`
     );

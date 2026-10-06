@@ -112,8 +112,10 @@ test.describe('首页时间轴列表', () => {
     });
     expect(sizes).not.toBeNull();
     const px = (s: string) => parseFloat(s);
-    expect(px(sizes!.year)).toBeGreaterThanOrEqual(19);
-    expect(px(sizes!.month)).toBeGreaterThanOrEqual(14.5);
+    // 桌面 20px / 移动 18px（响应式断点），统一不小于 17px
+    expect(px(sizes!.year)).toBeGreaterThanOrEqual(17);
+    // 桌面 15.5px / 移动 14px，统一不小于 13.5px
+    expect(px(sizes!.month)).toBeGreaterThanOrEqual(13.5);
     expect(px(sizes!.year)).toBeGreaterThan(px(sizes!.month));
   });
 
