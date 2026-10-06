@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { getPostBySlug } from '../utils/markdown';
+import { getPostMetaBySlug, loadPostContent, type Post } from '../utils/markdown';
 import { incrementViews, getViews } from '../utils/storage';
 import { useAppContext } from '../context/AppContext';
 import { usePostContext } from '../context/PostContext';
@@ -308,6 +308,21 @@ function AudioPlayer({ src }: { src: string }) {
   );
 }
 
+/** 正文加载骨架：与液态玻璃质感一致的轻量占位，避免布局抖动 */
+function ArticleBodySkeleton() {
+  return (
+    <div id="post-content-skeleton" className="space-y-4 py-4" aria-hidden="true">
+      {[92, 100, 96, 88, 100, 75].map((width, index) => (
+        <div
+          key={index}
+          className="h-4 rounded-full bg-stone-200/70 dark:bg-stone-700/40 animate-pulse"
+          style={{ width: `${width}%`, animationDelay: `${index * 0.08}s` }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function Post() {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
@@ -316,7 +331,49 @@ export default function Post() {
   const [views, setViews] = useState(0);
   const [articleFontSize, setArticleFontSize] = useState<ArticleFontSizeMode>(() => readArticleFontSizeMode());
 
-  const post = slug ? getPostBySlug(slug) : undefined;
+  // 同步元数据 + 按需正文：头部信息（标题/日期/分类）即刻渲染，
+  // 正文 chunk 到达后再补齐，TOC 随正文一起更新
+  const postMeta = useMemo(
+    () => (slug ? getPostMetaBySlug(slug) : undefined),
+    [slug]
+  );
+  const [loadedContent, setLoadedContent] = useState<{ slug: string; content: string } | null>(null);
+  const [contentFailed, setContentFailed] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+
+  useEffect(() => {
+    if (!slug || !postMeta) {
+      return;
+    }
+    let cancelled = false;
+    setLoadedContent(null);
+    setContentFailed(false);
+    loadPostContent(slug)
+      .then(content => {
+        if (cancelled) return;
+        if (content == null) {
+          setContentFailed(true);
+        } else {
+          setLoadedContent({ slug, content });
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setContentFailed(true);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug, postMeta, retryCount]);
+
+  const post = useMemo<Post | undefined>(() => {
+    if (!postMeta) return undefined;
+    if (loadedContent?.slug === slug) {
+      return { ...postMeta, content: loadedContent.content };
+    }
+    return postMeta;
+  }, [postMeta, loadedContent, slug]);
 
   // 解析 Markdown 标题，构建 TOC 树形结构
   // ID 由 rehypeSequentialIds 插件在 unified 管道内统一分配，与此处编号严格对应
@@ -521,6 +578,23 @@ export default function Post() {
         className="article-body max-w-none"
         data-article-font-size={articleFontSize}
       >
+        {post.content === undefined ? (
+          contentFailed ? (
+            <div id="post-content-error" className="not-prose flex flex-col items-center gap-4 py-16 text-center" role="alert">
+              <p className="text-stone-600 dark:text-stone-400">
+                {lang === 'en' ? 'Failed to load this article. Please check your network and try again.' : '正文加载失败，请检查网络后重试。'}
+              </p>
+              <button
+                onClick={() => setRetryCount(count => count + 1)}
+                className="px-4 py-2 rounded-lg bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 text-sm font-medium hover:opacity-90 transition-opacity"
+              >
+                {lang === 'en' ? 'Retry' : '重新加载'}
+              </button>
+            </div>
+          ) : (
+            <ArticleBodySkeleton />
+          )
+        ) : (
         <ReactMarkdown
           remarkPlugins={[remarkGfm, remarkMath]}
           rehypePlugins={[
@@ -627,6 +701,7 @@ export default function Post() {
         >
           {post.content}
         </ReactMarkdown>
+        )}
       </div>
 
       <footer id="post-footer" className="mt-16 pt-8 border-t border-stone-200 dark:border-stone-800">

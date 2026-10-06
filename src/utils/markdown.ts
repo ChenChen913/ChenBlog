@@ -1,3 +1,4 @@
+import { postsIndex } from 'virtual:posts-index';
 import { calcReadTime } from './storage';
 
 export interface PostFrontmatter {
@@ -16,98 +17,82 @@ export interface PostFrontmatter {
 export interface Post {
   slug: string;
   frontmatter: PostFrontmatter;
-  content: string;
+  /** 正文仅在文章页按需加载，列表页该字段为 undefined */
+  content?: string;
   excerpt: string;
   readTime: number;
 }
 
-function parseFrontmatter(rawContent: string) {
-  const match = rawContent.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
-  if (!match) {
-    return { data: {} as any, content: rawContent };
-  }
-  
-  const frontmatterStr = match[1];
-  const content = match[2];
-  const data: Record<string, any> = {};
-  
-  frontmatterStr.split('\n').forEach(line => {
-    const trimmedLine = line.trim();
-    if (!trimmedLine) return;
-    
-    const colonIdx = trimmedLine.indexOf(':');
-    if (colonIdx > -1) {
-      const key = trimmedLine.slice(0, colonIdx).trim();
-      let value = trimmedLine.slice(colonIdx + 1).trim();
-      
-      if (value.startsWith('"') && value.endsWith('"')) {
-        value = value.slice(1, -1);
-      } else if (value.startsWith("'") && value.endsWith("'")) {
-        value = value.slice(1, -1);
-      }
-      
-      if (value === 'true') data[key] = true;
-      else if (value === 'false') data[key] = false;
-      else if (value.startsWith('[') && value.endsWith(']')) {
-        try {
-          data[key] = JSON.parse(value.replace(/'/g, '"'));
-        } catch {
-          data[key] = [];
-        }
-      }
-      else {
-        data[key] = value;
-      }
-    }
-  });
-  
-  return { data, content };
+/** 列表页使用的轻量元数据视图（无正文） */
+export type PostMeta = Omit<Post, 'content'>;
+
+/**
+ * 文章正文按需加载：非 eager 的 import.meta.glob 让每篇文章成为独立 chunk，
+ * 只有进入对应文章页时才发起请求。
+ */
+const postLoaders = import.meta.glob('../posts/*.md', {
+  query: '?raw',
+  import: 'default',
+}) as Record<string, () => Promise<string>>;
+
+const loaderBySlug: Record<string, () => Promise<string>> = {};
+for (const filePath in postLoaders) {
+  loaderBySlug[filePath.replace('../posts/', '').replace('.md', '')] = postLoaders[filePath];
 }
 
-// Vite's import.meta.glob
-// 由于是在客户端渲染，直接使用 import: 'default' 提取内容字符串
-const postFiles = import.meta.glob('../posts/*.md', { query: '?raw', import: 'default', eager: true });
+/** 剥离 frontmatter 块，仅保留正文（元数据已由构建期 gray-matter 解析完毕） */
+function stripFrontmatter(raw: string): string {
+  const match = raw.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/);
+  return match ? raw.slice(match[0].length) : raw;
+}
 
+const contentCache = new Map<string, Promise<string | null>>();
+
+/** 按需加载单篇文章正文（带缓存，重复进入秒开；失败不缓存，允许重试） */
+export function loadPostContent(slug: string): Promise<string | null> {
+  let pending = contentCache.get(slug);
+  if (!pending) {
+    const loader = loaderBySlug[slug];
+    pending = loader
+      ? loader().then(raw => stripFrontmatter(raw))
+      : Promise.resolve(null);
+    contentCache.set(slug, pending);
+    pending.catch(() => contentCache.delete(slug));
+  }
+  return pending;
+}
+
+function toMeta(entry: (typeof postsIndex)[number]): PostMeta {
+  return {
+    slug: entry.slug,
+    frontmatter: entry.frontmatter as unknown as PostFrontmatter,
+    excerpt: entry.excerpt,
+    readTime: entry.readTime,
+  };
+}
+
+/** 全部文章元数据（已按日期倒序）。draft / published 默认过滤，Post 页显式放开 */
 export function getAllPosts(includeDraft = false, includeUnpublished = false): Post[] {
-  const posts: Post[] = [];
-
-  for (const path in postFiles) {
-    const slug = path.replace('../posts/', '').replace('.md', '');
-    // import: 'default' 会直接返回字符串
-    const rawContent = postFiles[path] as string;
-
-    try {
-      const { data, content } = parseFrontmatter(rawContent);
-
-      if (!includeDraft && data.draft === true) {
-        continue;
-      }
-
-      // 过滤私密文章：未显式声明 published 或 published: true 的才展示
-      if (!includeUnpublished && data.published === false) {
-        continue;
-      }
-
-      const plainText = content.replace(/[#*`_\[\]\(\)!>-]/g, '').replace(/\n+/g, ' ').trim();
-      const excerpt = plainText.substring(0, 150) + (plainText.length > 150 ? '...' : '');
-
-      posts.push({
-        slug,
-        frontmatter: data as PostFrontmatter,
-        content,
-        excerpt,
-        readTime: calcReadTime(plainText)
-      });
-    } catch (e) {
-      console.error(`Error parsing markdown file: ${path}`, e);
-    }
-  }
-
-  return posts.sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+  return postsIndex
+    .filter(
+      entry =>
+        (includeDraft || entry.frontmatter.draft !== true) &&
+        (includeUnpublished || entry.frontmatter.published !== false)
+    )
+    .map(toMeta);
 }
 
-export function getPostBySlug(slug: string, includeUnpublished = false): Post | undefined {
-  return getAllPosts(true, includeUnpublished).find(post => post.slug === slug);
+/** 同步获取单篇文章元数据（不含正文）——文章页头部信息可即刻渲染 */
+export function getPostMetaBySlug(
+  slug: string,
+  includeUnpublished = false
+): PostMeta | undefined {
+  const entry = postsIndex.find(
+    entry =>
+      entry.slug === slug &&
+      (includeUnpublished || entry.frontmatter.published !== false)
+  );
+  return entry ? toMeta(entry) : undefined;
 }
 
 export function getCategories(): string[] {
@@ -122,13 +107,4 @@ export function getTags(): string[] {
   return Array.from(tags);
 }
 
-// 清除缓存函数(用于开发时热更新或添加新文章后)
-export function clearPostCache() {
-}
-
-// 强制清除缓存以应对热更新
-if (import.meta.hot) {
-  import.meta.hot.accept(() => {
-    clearPostCache();
-  });
-}
+export { calcReadTime };
