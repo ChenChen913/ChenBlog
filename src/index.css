@@ -1095,22 +1095,20 @@ html {
   text-align: left;
 }
 
-/*
-  修复问题2:  当 <p> 内只包含一个 .katex-display 时，
+/* 修复问题2：当 <p> 内只包含一个 .katex-display 时，消除段落额外行高 */
 .article-body p:has(> .katex-display) {
   margin-top: 0;
   margin-bottom: 0;
   line-height: 1;
 }
 
-/*
 .article-body .katex-display {
   margin: 24px 0 !important;
   padding: 0;
   overflow-x: auto;
 }
 
-/*
+/* 暗色模式 KaTeX 配色（原规则曾被未闭合注释意外吞掉，已修复） */
 .dark .katex {
   color: #e7e5e4 !important;
 }
