@@ -229,6 +229,30 @@ export function ensureReadableLightColor(
   backgroundColor = '#fbfaf8',
   minContrast = 5.6
 ): string | undefined {
+  return ensureReadableColor(color, backgroundColor, minContrast, [15, 23, 42], '#0f172a');
+}
+
+/**
+ * 夜间模式可读性保障：github-dark 主题的注释色 #6a737d 在 #24292e 背景上
+ * 对比度仅 3.05（低于 WCAG AA 的 4.5），暗色小字号下明显发灰。这里向
+ * 主题前景色 #e1e4e8 插值提亮至 4.5 —— 注释会落在 #8e959d 附近，与
+ * VS Code GitHub Dark 的 #8b949e 视觉一致，其余 token 对比度本就达标不受影响。
+ */
+export function ensureReadableDarkColor(
+  color?: string,
+  backgroundColor = '#24292e',
+  minContrast = 4.5
+): string | undefined {
+  return ensureReadableColor(color, backgroundColor, minContrast, [225, 228, 232], '#e1e4e8');
+}
+
+function ensureReadableColor(
+  color: string | undefined,
+  backgroundColor: string,
+  minContrast: number,
+  ink: [number, number, number],
+  fallbackInk: string
+): string | undefined {
   const parsedColor = parseHexColor(color);
   const parsedBackground = parseHexColor(backgroundColor);
 
@@ -239,8 +263,6 @@ export function ensureReadableLightColor(
   if (contrastRatio(parsedColor, parsedBackground) >= minContrast) {
     return color;
   }
-
-  const ink: [number, number, number] = [15, 23, 42];
 
   for (let step = 1; step <= 10; step += 1) {
     const weight = step / 10;
@@ -255,7 +277,7 @@ export function ensureReadableLightColor(
     }
   }
 
-  return '#0f172a';
+  return fallbackInk;
 }
 
 function hashCode(value: string): number {
@@ -334,7 +356,9 @@ export async function getHighlightedTokens(
       lines: tokens.tokens.map(line => ({
         tokens: line.map(token => ({
           color:
-            themeMode === 'light' ? ensureReadableLightColor(token.color, themeBg) : token.color,
+            themeMode === 'light'
+              ? ensureReadableLightColor(token.color, themeBg)
+              : ensureReadableDarkColor(token.color, themeBg),
           content: token.content,
           fontStyle: token.fontStyle ?? 0,
         })),

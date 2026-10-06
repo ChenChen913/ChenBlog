@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { ensureReadableLightColor } from './shiki-highlighter';
+import { ensureReadableDarkColor, ensureReadableLightColor } from './shiki-highlighter';
 
 function hexToRgb(color: string): [number, number, number] {
   const value = color.replace('#', '');
@@ -68,5 +68,36 @@ describe('ensureReadableLightColor', () => {
     expect(adjusted).toBeDefined();
     expect(adjusted).not.toBe('#e36209');
     expect(contrast(adjusted!, '#ffffff')).toBeGreaterThanOrEqual(5.6);
+  });
+});
+
+describe('ensureReadableDarkColor', () => {
+  test('lifts the github-dark comment gray to the AA floor', () => {
+    // github-dark 注释色 #6a737d 对 #24292e 仅 3.05:1，应提亮至 ≥ 4.5
+    const adjusted = ensureReadableDarkColor('#6a737d', '#24292e');
+    expect(adjusted).toBeDefined();
+    expect(adjusted).not.toBe('#6a737d');
+    expect(contrast(adjusted!, '#24292e')).toBeGreaterThanOrEqual(4.5);
+  });
+
+  test('keeps already readable dark tokens unchanged', () => {
+    // github-dark 关键字 #f97583 对 #24292e 约 5.5:1，应保持原色
+    expect(ensureReadableDarkColor('#f97583', '#24292e')).toBe('#f97583');
+    // 前景灰 #e1e4e8 对比度 13+，应保持原色
+    expect(ensureReadableDarkColor('#e1e4e8', '#24292e')).toBe('#e1e4e8');
+  });
+
+  test('lifts colors without flipping hue dominance', () => {
+    // 提亮是向 #e1e4e8 插值：暗青色提亮后绿色通道仍应高于红色通道
+    const adjusted = ensureReadableDarkColor('#2f6f3f', '#24292e');
+    expect(adjusted).toBeDefined();
+    expect(contrast(adjusted!, '#24292e')).toBeGreaterThanOrEqual(4.5);
+    const rgb = hexToRgb(adjusted!);
+    expect(rgb[1]).toBeGreaterThan(rgb[0]);
+  });
+
+  test('returns the color unchanged when parsing fails (fail-open)', () => {
+    expect(ensureReadableDarkColor(undefined, '#24292e')).toBeUndefined();
+    expect(ensureReadableDarkColor('rgb(1,2,3)', '#24292e')).toBe('rgb(1,2,3)');
   });
 });

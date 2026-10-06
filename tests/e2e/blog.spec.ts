@@ -96,6 +96,61 @@ test.describe('文章代码框', () => {
   });
 
   test('亮色模式代码 token 保持足够清晰', async ({ page }) => {
+    // 显式固定亮色：主题默认值随北京时间自动切换（20:00–06:00 为暗色），
+    // 不固定的话这条"亮色"用例在夜间时段会实际测到暗色渲染（时间依赖缺陷）。
+    await page.addInitScript(() => {
+      window.localStorage.setItem('theme-preference', 'light');
+    });
+    await page.goto('/posts/typescript-advanced');
+    await page.waitForLoadState('networkidle');
+
+    const minimumContrast = await page
+      .locator('.code-block')
+      .first()
+      .evaluate(block => {
+        const background = getComputedStyle(
+          block.querySelector('.code-block__viewport') as HTMLElement
+        ).backgroundColor;
+        const tokens = Array.from(block.querySelectorAll('.code-block__token')).slice(0, 80);
+
+        const parseRgb = (value: string) => {
+          const match = value.match(/\d+/g);
+          if (!match) return [0, 0, 0];
+          return match.slice(0, 3).map(Number);
+        };
+
+        const luminance = ([red, green, blue]: number[]) => {
+          const channel = (raw: number) => {
+            const normalized = raw / 255;
+            return normalized <= 0.03928
+              ? normalized / 12.92
+              : ((normalized + 0.055) / 1.055) ** 2.4;
+          };
+
+          return 0.2126 * channel(red) + 0.7152 * channel(green) + 0.0722 * channel(blue);
+        };
+
+        const backgroundLuminance = luminance(parseRgb(background));
+
+        return tokens.reduce((minimum, token) => {
+          const color = getComputedStyle(token as HTMLElement).color;
+          const tokenLuminance = luminance(parseRgb(color));
+          const lighter = Math.max(backgroundLuminance, tokenLuminance);
+          const darker = Math.min(backgroundLuminance, tokenLuminance);
+          const contrast = (lighter + 0.05) / (darker + 0.05);
+          return Math.min(minimum, contrast);
+        }, Number.POSITIVE_INFINITY);
+      });
+
+    expect(minimumContrast).toBeGreaterThanOrEqual(4.2);
+  });
+
+  test('暗色模式代码 token 保持足够清晰（含注释灰）', async ({ page }) => {
+    // github-dark 的注释色 #6a737d 在 #24292e 上原始对比度仅 3.05，
+    // 由 ensureReadableDarkColor 提亮兜底 —— 这条用例锁定该行为。
+    await page.addInitScript(() => {
+      window.localStorage.setItem('theme-preference', 'dark');
+    });
     await page.goto('/posts/typescript-advanced');
     await page.waitForLoadState('networkidle');
 

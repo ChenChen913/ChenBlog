@@ -18,7 +18,9 @@
             var hour = new Date(Date.now() + 8 * 3600 * 1000).getUTCHours();
             dark = hour >= 20 || hour < 6;
           }
-          document.documentElement.classList.toggle('dark', dark);
+          var root = document.documentElement;
+          root.classList.toggle('dark', dark);
+          root.classList.toggle('light', !dark);
         } catch (e) {}
       })();
     </script>
