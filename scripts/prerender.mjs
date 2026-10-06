@@ -32,7 +32,7 @@ function log(msg) {
 function getRoutes() {
   const matter = require('gray-matter');
   const postsDir = path.join(ROOT, 'src/posts');
-  const routes = ['/', '/categories', '/highlights', '/about'];
+  const routes = ['/', '/categories', '/weekly', '/about'];
 
   for (const file of fs.readdirSync(postsDir)) {
     if (!file.endsWith('.md')) continue;

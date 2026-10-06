@@ -151,7 +151,7 @@ export function buildSitemap(siteUrl: string, posts: FeedPost[]): string {
   const urls = [
     { loc: `${siteUrl}/`, lastmod: latest, changefreq: 'weekly', priority: '1.0' },
     { loc: `${siteUrl}/categories`, lastmod: latest, changefreq: 'weekly', priority: '0.6' },
-    { loc: `${siteUrl}/highlights`, lastmod: latest, changefreq: 'weekly', priority: '0.6' },
+    { loc: `${siteUrl}/weekly`, lastmod: latest, changefreq: 'weekly', priority: '0.6' },
     { loc: `${siteUrl}/about`, lastmod: latest, changefreq: 'monthly', priority: '0.5' },
     ...posts.map(post => ({
       loc: postUrl(siteUrl, post.slug),

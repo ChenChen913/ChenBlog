@@ -64,12 +64,12 @@ test.describe('Navigation scroll restoration', () => {
     await expectListScrollRestored(page, '/categories');
   });
 
-  test('desktop: returns from article to the previous highlights scroll position when scrollable', async ({
+  test('desktop: returns from article to the previous weekly scroll position when scrollable', async ({
     page,
   }, testInfo) => {
     test.skip(isMobileProject(testInfo.project.name), 'Desktop-only Back button behavior');
 
-    await expectListScrollRestored(page, '/highlights');
+    await expectListScrollRestored(page, '/weekly');
   });
 
   // Playwright 固定签名：首参必须为 fixture 解构对象（此处无需 fixture）
@@ -82,7 +82,7 @@ test.describe('Navigation scroll restoration', () => {
       'src/pages/Post.tsx',
       'src/pages/Home.tsx',
       'src/pages/Categories.tsx',
-      'src/pages/Highlights.tsx',
+      'src/pages/Weekly.tsx',
     ];
 
     for (const file of files) {
