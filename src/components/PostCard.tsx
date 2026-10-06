@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Clock, Eye, Star } from 'lucide-react';
-import { Post } from '../utils/markdown';
+import { Post, loadPostContent } from '../utils/markdown';
 import { useAppContext } from '../context/AppContext';
 import { getViews } from '../utils/storage';
 import { getCategoryLabel } from '../config/categories';
@@ -17,12 +17,29 @@ export default function PostCard({ post, showCover = false }: PostCardProps) {
   const { title, title_en, date, category, tags, coverImage, gem } = post.frontmatter;
   const views = getViews(post.slug);
 
+  // 预取正文 chunk：hover / 键盘聚焦时提前拉取，点开即达
+  // （loadPostContent 自带缓存；省流模式或低速网络下跳过，避免浪费流量）
+  const prefetchContent = useCallback(() => {
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    if (connection?.saveData || connection?.effectiveType === 'slow-2g') {
+      return;
+    }
+    loadPostContent(post.slug).catch(() => {
+      /* 预取失败静默：正式进入文章页时还有重试机制 */
+    });
+  }, [post.slug]);
+
   const displayTitle = lang === 'en' && title_en ? title_en : title;
   const categoryLabel = getCategoryLabel(category, lang === 'en' ? 'en' : 'zh');
   const formattedDate = formatDate(date, lang === 'en' ? 'en' : 'zh');
 
   return (
-    <article id={`post-card-${post.slug}`} className="group flex flex-col md:flex-row gap-6 py-6 border-b border-stone-100 dark:border-stone-800/50 hover:bg-stone-50 dark:hover:bg-stone-800/30 transition-colors rounded-2xl -mx-4 px-4">
+    <article
+      id={`post-card-${post.slug}`}
+      onPointerEnter={prefetchContent}
+      onFocus={prefetchContent}
+      className="group flex flex-col md:flex-row gap-6 py-6 border-b border-stone-100 dark:border-stone-800/50 hover:bg-stone-50 dark:hover:bg-stone-800/30 transition-colors rounded-2xl -mx-4 px-4"
+    >
       {showCover && coverImage && (
         <Link id={`post-card-img-link-${post.slug}`} to={`/posts/${post.slug}`} className="md:w-1/3 aspect-video md:aspect-[4/3] overflow-hidden rounded-xl bg-stone-100 dark:bg-stone-800 shrink-0 relative">
           <img 

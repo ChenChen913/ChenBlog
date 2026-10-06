@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import type { Post } from '../utils/markdown';
+import { type Post, loadPostContent } from '../utils/markdown';
 import { useAppContext } from '../context/AppContext';
 
 interface PostNavigationProps {
@@ -26,6 +26,11 @@ export default function PostNavigation({ olderPost, newerPost }: PostNavigationP
   const titleOf = (post: Post) =>
     lang === 'en' && post.frontmatter.title_en ? post.frontmatter.title_en : post.frontmatter.title;
 
+  // 与 PostCard 同款预取：hover / 聚焦时拉取目标文章正文 chunk，点开即达
+  const makePrefetch = (slug: string) => () => {
+    loadPostContent(slug).catch(() => {});
+  };
+
   return (
     <nav
       id="post-navigation"
@@ -36,6 +41,8 @@ export default function PostNavigation({ olderPost, newerPost }: PostNavigationP
         <Link
           id={`post-nav-prev-${newerPost.slug}`}
           to={`/posts/${newerPost.slug}`}
+          onPointerEnter={makePrefetch(newerPost.slug)}
+          onFocus={makePrefetch(newerPost.slug)}
           className="group flex items-center gap-3 rounded-xl border border-stone-200 dark:border-stone-700/60 bg-white/60 dark:bg-stone-800/40 hover:bg-white/90 dark:hover:bg-stone-800/70 hover:border-stone-300 dark:hover:border-stone-600 transition-all duration-300 px-4 py-3.5 text-left"
         >
           <span className="flex shrink-0 items-center justify-center w-8 h-8 rounded-lg bg-stone-100 dark:bg-stone-700/60 text-stone-500 dark:text-stone-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:-translate-x-0.5 transition-all">
@@ -58,6 +65,8 @@ export default function PostNavigation({ olderPost, newerPost }: PostNavigationP
         <Link
           id={`post-nav-next-${olderPost.slug}`}
           to={`/posts/${olderPost.slug}`}
+          onPointerEnter={makePrefetch(olderPost.slug)}
+          onFocus={makePrefetch(olderPost.slug)}
           className="group flex items-center justify-end gap-3 rounded-xl border border-stone-200 dark:border-stone-700/60 bg-white/60 dark:bg-stone-800/40 hover:bg-white/90 dark:hover:bg-stone-800/70 hover:border-stone-300 dark:hover:border-stone-600 transition-all duration-300 px-4 py-3.5 text-right"
         >
           <span className="min-w-0">
