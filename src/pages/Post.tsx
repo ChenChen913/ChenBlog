@@ -30,38 +30,87 @@ import {
   saveArticleFontSizeMode,
   type ArticleFontSizeMode,
 } from '../utils/article-font-size';
-import {
-  getSafeLinkAttributes,
-  isSafeResourceUrl,
-  toTrustedEmbedUrl,
-} from '../utils/security';
+import { getSafeLinkAttributes, isSafeResourceUrl, toTrustedEmbedUrl } from '../utils/security';
 
 const SAFE_MARKDOWN_TAGS = new Set([
-  'a','audio','b','blockquote','br','code','del','details','div','em','figcaption',
-  'figure','h1','h2','h3','h4','h5','h6','hr','i','img','input','ins','li','mark',
-  'ol','p','pre','source','span','strong','summary','table','tbody','td','th',
-  'thead','tr','ul','video','iframe',
+  'a',
+  'audio',
+  'b',
+  'blockquote',
+  'br',
+  'code',
+  'del',
+  'details',
+  'div',
+  'em',
+  'figcaption',
+  'figure',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'hr',
+  'i',
+  'img',
+  'input',
+  'ins',
+  'li',
+  'mark',
+  'ol',
+  'p',
+  'pre',
+  'source',
+  'span',
+  'strong',
+  'summary',
+  'table',
+  'tbody',
+  'td',
+  'th',
+  'thead',
+  'tr',
+  'ul',
+  'video',
+  'iframe',
 ]);
 
 const DROP_MARKDOWN_TAGS = new Set([
-  'base','embed','form','frame','frameset','link','meta','object','script','style',
-  'svg','math','textarea',
+  'base',
+  'embed',
+  'form',
+  'frame',
+  'frameset',
+  'link',
+  'meta',
+  'object',
+  'script',
+  'style',
+  'svg',
+  'math',
+  'textarea',
 ]);
 
 const GLOBAL_MARKDOWN_ATTRS = new Set([
-  'aria-hidden','aria-label','className','id','role','title',
+  'aria-hidden',
+  'aria-label',
+  'className',
+  'id',
+  'role',
+  'title',
 ]);
 
 const TAG_MARKDOWN_ATTRS: Record<string, Set<string>> = {
-  a: new Set(['href','rel','target','title']),
-  audio: new Set(['controls','preload','src','title']),
-  iframe: new Set(['allow','allowFullScreen','src','title']),
-  img: new Set(['alt','height','loading','referrerPolicy','src','title','width']),
-  input: new Set(['checked','disabled','type']),
-  source: new Set(['src','type']),
+  a: new Set(['href', 'rel', 'target', 'title']),
+  audio: new Set(['controls', 'preload', 'src', 'title']),
+  iframe: new Set(['allow', 'allowFullScreen', 'src', 'title']),
+  img: new Set(['alt', 'height', 'loading', 'referrerPolicy', 'src', 'title', 'width']),
+  input: new Set(['checked', 'disabled', 'type']),
+  source: new Set(['src', 'type']),
   td: new Set(['align']),
   th: new Set(['align']),
-  video: new Set(['controls','height','preload','src','title','width']),
+  video: new Set(['controls', 'height', 'preload', 'src', 'title', 'width']),
 };
 
 function rehypeSanitizeMarkdown() {
@@ -119,7 +168,7 @@ function rehypeSanitizeMarkdown() {
         }
       }
 
-      if (['img','audio','video','source'].includes(tagName)) {
+      if (['img', 'audio', 'video', 'source'].includes(tagName)) {
         const src = String(sourceProps.src ?? '');
         if (!isSafeResourceUrl(src)) {
           return null;
@@ -133,7 +182,8 @@ function rehypeSanitizeMarkdown() {
           return null;
         }
         safeProps.src = embedSrc;
-        safeProps.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        safeProps.allow =
+          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
         safeProps.allowFullScreen = true;
       }
 
@@ -244,11 +294,7 @@ function ArticleImage({ src, alt }: { src: string; alt: string }) {
       />
       <AnimatePresence>
         {lightboxOpen && (
-          <Lightbox
-            src={safeSrc}
-            alt={alt}
-            onClose={() => setLightboxOpen(false)}
-          />
+          <Lightbox src={safeSrc} alt={alt} onClose={() => setLightboxOpen(false)} />
         )}
       </AnimatePresence>
     </>
@@ -283,12 +329,7 @@ function VideoPlayer({ src, title }: { src?: string; title?: string }) {
   return (
     <div className="video-container not-prose my-6">
       <div className="video-wrapper">
-        <video
-          src={safeSrc}
-          controls
-          className="video-native"
-          preload="metadata"
-        >
+        <video src={safeSrc} controls className="video-native" preload="metadata">
           您的浏览器不支持视频播放
         </video>
       </div>
@@ -333,15 +374,16 @@ export default function Post() {
   const { lang, t } = useAppContext();
   const [copied, setCopied] = useState(false);
   const [views, setViews] = useState(0);
-  const [articleFontSize, setArticleFontSize] = useState<ArticleFontSizeMode>(() => readArticleFontSizeMode());
+  const [articleFontSize, setArticleFontSize] = useState<ArticleFontSizeMode>(() =>
+    readArticleFontSizeMode()
+  );
 
   // 同步元数据 + 按需正文：头部信息（标题/日期/分类）即刻渲染，
   // 正文 chunk 到达后再补齐，TOC 随正文一起更新
-  const postMeta = useMemo(
-    () => (slug ? getPostMetaBySlug(slug) : undefined),
-    [slug]
+  const postMeta = useMemo(() => (slug ? getPostMetaBySlug(slug) : undefined), [slug]);
+  const [loadedContent, setLoadedContent] = useState<{ slug: string; content: string } | null>(
+    null
   );
-  const [loadedContent, setLoadedContent] = useState<{ slug: string; content: string } | null>(null);
   const [contentFailed, setContentFailed] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
@@ -392,7 +434,9 @@ export default function Post() {
 
   // 共享 headings 给手机端目录
   const { setHeadings } = usePostContext();
-  useEffect(() => { setHeadings(headings); }, [headings, setHeadings]);
+  useEffect(() => {
+    setHeadings(headings);
+  }, [headings, setHeadings]);
 
   // 用于从 DOM 提取标题的 ref
   const contentRef = useRef<HTMLDivElement>(null);
@@ -427,9 +471,10 @@ export default function Post() {
 
   // 🔧 SEO：文章页动态元数据（标题/描述/og:article 随文章内容更新）
   usePageMeta({
-    title: post && !post.frontmatter.draft
-      ? `${post.frontmatter.title} | MaoChen Blog`
-      : 'MaoChen - Personal Blog',
+    title:
+      post && !post.frontmatter.draft
+        ? `${post.frontmatter.title} | MaoChen Blog`
+        : 'MaoChen - Personal Blog',
     description: post?.excerpt?.replace(/\.\.\.$/, '') || undefined,
     ogType: 'article',
     imageUrl: post?.frontmatter.coverImage,
@@ -439,7 +484,8 @@ export default function Post() {
     if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
       const url = window.location.href;
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(url)
+        navigator.clipboard
+          .writeText(url)
           .then(() => {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
@@ -498,8 +544,7 @@ export default function Post() {
     );
   }
 
-  const { title, title_en, date, category, tags, coverImage } = post.frontmatter;
-
+  const { date, category, tags } = post.frontmatter;
 
   return (
     <>
@@ -517,10 +562,16 @@ export default function Post() {
           inLanguage: 'zh-CN',
           mainEntityOfPage: {
             '@type': 'WebPage',
-            '@id': typeof window !== 'undefined' ? window.location.origin + window.location.pathname : undefined,
+            '@id':
+              typeof window !== 'undefined'
+                ? window.location.origin + window.location.pathname
+                : undefined,
           },
-          image: safeCoverImage
-            || (typeof window !== 'undefined' ? new URL('/og-image.png', window.location.origin).href : undefined),
+          image:
+            safeCoverImage ||
+            (typeof window !== 'undefined'
+              ? new URL('/og-image.png', window.location.origin).href
+              : undefined),
         }}
       />
       <div className="article-page">
@@ -551,15 +602,27 @@ export default function Post() {
           </button>
 
           <header id="post-header" className="mb-10">
-            <div id="post-meta-top" className="flex items-center gap-3 mb-4 text-sm font-medium text-stone-500 dark:text-stone-400">
-              <Link id={`category-link-${category}`} to="/categories" className="text-blue-600 dark:text-blue-400 uppercase tracking-wider hover:underline">
+            <div
+              id="post-meta-top"
+              className="flex items-center gap-3 mb-4 text-sm font-medium text-stone-500 dark:text-stone-400"
+            >
+              <Link
+                id={`category-link-${category}`}
+                to="/categories"
+                className="text-blue-600 dark:text-blue-400 uppercase tracking-wider hover:underline"
+              >
                 {categoryLabel}
               </Link>
               <span>•</span>
-              <time id="post-date" dateTime={date}>{formattedDate}</time>
+              <time id="post-date" dateTime={date}>
+                {formattedDate}
+              </time>
             </div>
 
-            <h1 id="post-title" className="text-2xl md:text-4xl font-bold tracking-tight text-stone-900 dark:text-stone-100 mb-6 leading-tight font-kai">
+            <h1
+              id="post-title"
+              className="text-2xl md:text-4xl font-bold tracking-tight text-stone-900 dark:text-stone-100 mb-6 leading-tight font-kai"
+            >
               {displayTitle}
             </h1>
 
@@ -569,189 +632,211 @@ export default function Post() {
               onChange={handleArticleFontSizeChange}
             />
 
-        <div id="post-meta-bottom" className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-6">
-          <div id="post-stats" className="flex flex-wrap items-center gap-3 text-sm text-stone-500 dark:text-stone-400">
-            <span id="post-views" className="flex items-center gap-1.5">
-              <Eye size={16} />
-              {views} {t('views')}
-            </span>
-          </div>
-
-          <button 
-            id="copy-link-button"
-            onClick={handleCopyLink}
-            className="flex items-center gap-2 text-sm font-medium text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
-          >
-            {copied ? <Check size={16} className="text-green-500" /> : <Share2 size={16} />}
-            <span className="hidden sm:inline">{copied ? t('copied') : t('copy')}</span>
-          </button>
-        </div>
-      </header>
-
-      {safeCoverImage && (
-        <div id="post-cover-image-container" className="mb-10 aspect-video rounded-2xl overflow-hidden bg-stone-100 dark:bg-stone-800">
-          <img 
-            id="post-cover-image"
-            src={safeCoverImage} 
-            alt={displayTitle}
-            className="w-full h-full object-cover"
-            loading="lazy"
-            referrerPolicy="no-referrer"
-          />
-        </div>
-      )}
-
-      <div
-        id="post-content"
-        ref={contentRef}
-        className="article-body max-w-none"
-        data-article-font-size={articleFontSize}
-      >
-        {post.content === undefined ? (
-          contentFailed ? (
-            <div id="post-content-error" className="not-prose flex flex-col items-center gap-4 py-16 text-center" role="alert">
-              <p className="text-stone-600 dark:text-stone-400">
-                {lang === 'en' ? 'Failed to load this article. Please check your network and try again.' : '正文加载失败，请检查网络后重试。'}
-              </p>
-              <button
-                onClick={() => setRetryCount(count => count + 1)}
-                className="px-4 py-2 rounded-lg bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 text-sm font-medium hover:opacity-90 transition-opacity"
+            <div
+              id="post-meta-bottom"
+              className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-6"
+            >
+              <div
+                id="post-stats"
+                className="flex flex-wrap items-center gap-3 text-sm text-stone-500 dark:text-stone-400"
               >
-                {lang === 'en' ? 'Retry' : '重新加载'}
+                <span id="post-views" className="flex items-center gap-1.5">
+                  <Eye size={16} />
+                  {views} {t('views')}
+                </span>
+              </div>
+
+              <button
+                id="copy-link-button"
+                onClick={handleCopyLink}
+                className="flex items-center gap-2 text-sm font-medium text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
+              >
+                {copied ? <Check size={16} className="text-green-500" /> : <Share2 size={16} />}
+                <span className="hidden sm:inline">{copied ? t('copied') : t('copy')}</span>
               </button>
             </div>
-          ) : (
-            <ArticleBodySkeleton />
-          )
-        ) : (
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm, remarkMath]}
-          rehypePlugins={[
-            rehypeRaw,
-            rehypeHighlightMarks,
-            rehypeSanitizeMarkdown,
-            rehypeSequentialIds,
-            [rehypeKatex, { throwOnError: false, strict: false }]
-          ]}
-          components={{
-            pre({ children, ...props }) {
-              return <CodeBlock {...props}>{children}</CodeBlock>;
-            },
-            img({ src, alt }) {
-              if (!src) return null;
-              return <ArticleImage src={src} alt={alt || ''} />;
-            },
-            a({ href, children, ...props }) {
-              const safeAttributes = getSafeLinkAttributes(href);
-              if (!safeAttributes.href) {
-                return <>{children}</>;
-              }
+          </header>
 
-              return (
-                <a {...props} {...safeAttributes}>
-                  {children}
-                </a>
-              );
-            },
-            video({ src }) {
-              return <VideoPlayer src={src} />;
-            },
-            iframe({ src, title }) {
-              if (!src) return null;
-              return <VideoPlayer src={src} title={title} />;
-            },
-            audio({ src }) {
-              if (!src) return null;
-              return <AudioPlayer src={src} />;
-            },
-            p: ({ children }) => {
-              return <p className="mb-4">{children}</p>;
-            },
+          {safeCoverImage && (
+            <div
+              id="post-cover-image-container"
+              className="mb-10 aspect-video rounded-2xl overflow-hidden bg-stone-100 dark:bg-stone-800"
+            >
+              <img
+                id="post-cover-image"
+                src={safeCoverImage}
+                alt={displayTitle}
+                className="w-full h-full object-cover"
+                loading="lazy"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          )}
 
-            // h1 渲染器
-            h1: ({ children, id, ...props }) => (
-              <h1
-                id={id}
-                {...props}
-                style={{
-                  fontSize: 'var(--article-h1-size)',
-                  lineHeight: '1.4',
-                  fontWeight: '700',
-                  marginTop: '1.5rem',
-                  marginBottom: '0.75rem',
-                  color: 'rgb(15 23 42)',
+          <div
+            id="post-content"
+            ref={contentRef}
+            className="article-body max-w-none"
+            data-article-font-size={articleFontSize}
+          >
+            {post.content === undefined ? (
+              contentFailed ? (
+                <div
+                  id="post-content-error"
+                  className="not-prose flex flex-col items-center gap-4 py-16 text-center"
+                  role="alert"
+                >
+                  <p className="text-stone-600 dark:text-stone-400">
+                    {lang === 'en'
+                      ? 'Failed to load this article. Please check your network and try again.'
+                      : '正文加载失败，请检查网络后重试。'}
+                  </p>
+                  <button
+                    onClick={() => setRetryCount(count => count + 1)}
+                    className="px-4 py-2 rounded-lg bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 text-sm font-medium hover:opacity-90 transition-opacity"
+                  >
+                    {lang === 'en' ? 'Retry' : '重新加载'}
+                  </button>
+                </div>
+              ) : (
+                <ArticleBodySkeleton />
+              )
+            ) : (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[
+                  rehypeRaw,
+                  rehypeHighlightMarks,
+                  rehypeSanitizeMarkdown,
+                  rehypeSequentialIds,
+                  [rehypeKatex, { throwOnError: false, strict: false }],
+                ]}
+                components={{
+                  pre({ children, ...props }) {
+                    return <CodeBlock {...props}>{children}</CodeBlock>;
+                  },
+                  img({ src, alt }) {
+                    if (!src) return null;
+                    return <ArticleImage src={src} alt={alt || ''} />;
+                  },
+                  a({ href, children, ...props }) {
+                    const safeAttributes = getSafeLinkAttributes(href);
+                    if (!safeAttributes.href) {
+                      return <>{children}</>;
+                    }
+
+                    return (
+                      <a {...props} {...safeAttributes}>
+                        {children}
+                      </a>
+                    );
+                  },
+                  video({ src }) {
+                    return <VideoPlayer src={src} />;
+                  },
+                  iframe({ src, title }) {
+                    if (!src) return null;
+                    return <VideoPlayer src={src} title={title} />;
+                  },
+                  audio({ src }) {
+                    if (!src) return null;
+                    return <AudioPlayer src={src} />;
+                  },
+                  p: ({ children }) => {
+                    return <p className="mb-4">{children}</p>;
+                  },
+
+                  // h1 渲染器
+                  h1: ({ children, id, ...props }) => (
+                    <h1
+                      id={id}
+                      {...props}
+                      style={{
+                        fontSize: 'var(--article-h1-size)',
+                        lineHeight: '1.4',
+                        fontWeight: '700',
+                        marginTop: '1.5rem',
+                        marginBottom: '0.75rem',
+                        color: 'rgb(15 23 42)',
+                      }}
+                      className="dark:!text-stone-200 heading-anchor"
+                    >
+                      {children}
+                    </h1>
+                  ),
+
+                  // h2 渲染器：ID 已由 rehypeSequentialIds 插件注入，直接透传
+                  h2: ({ children, id, ...props }) => (
+                    <h2
+                      id={id}
+                      {...props}
+                      style={{
+                        fontSize: 'var(--article-h2-size)',
+                        lineHeight: '1.4',
+                        fontWeight: '700',
+                        marginTop: '2rem',
+                        marginBottom: '1rem',
+                        paddingBottom: '0.5rem',
+                        borderBottom: '1px solid rgb(228 228 231)',
+                        color: 'rgb(15 23 42)',
+                      }}
+                      className="dark:!border-stone-700/30 dark:!text-stone-200 heading-anchor"
+                    >
+                      {children}
+                    </h2>
+                  ),
+
+                  // h3 渲染器：ID 已由 rehypeSequentialIds 插件注入，直接透传
+                  h3: ({ children, id, ...props }) => (
+                    <h3
+                      id={id}
+                      {...props}
+                      style={{
+                        fontSize: 'var(--article-h3-size)',
+                        lineHeight: '1.4',
+                        fontWeight: '700',
+                        marginTop: '1.5rem',
+                        marginBottom: '0.75rem',
+                        color: 'rgb(15 23 42)',
+                      }}
+                      className="dark:!text-stone-200 heading-anchor"
+                    >
+                      {children}
+                    </h3>
+                  ),
                 }}
-                className="dark:!text-stone-200 heading-anchor"
               >
-                {children}
-              </h1>
-            ),
+                {post.content}
+              </ReactMarkdown>
+            )}
+          </div>
 
-            // h2 渲染器：ID 已由 rehypeSequentialIds 插件注入，直接透传
-            h2: ({ children, id, ...props }) => (
-              <h2
-                id={id}
-                {...props}
-                style={{
-                  fontSize: 'var(--article-h2-size)',
-                  lineHeight: '1.4',
-                  fontWeight: '700',
-                  marginTop: '2rem',
-                  marginBottom: '1rem',
-                  paddingBottom: '0.5rem',
-                  borderBottom: '1px solid rgb(228 228 231)',
-                  color: 'rgb(15 23 42)'
-                }}
-                className="dark:!border-stone-700/30 dark:!text-stone-200 heading-anchor"
-              >
-                {children}
-              </h2>
-            ),
+          <footer
+            id="post-footer"
+            className="mt-16 pt-8 border-t border-stone-200 dark:border-stone-800"
+          >
+            <div id="post-tags" className="flex flex-wrap gap-2">
+              {tags?.map(tag => (
+                <span
+                  key={tag}
+                  id={`tag-${tag}`}
+                  className="px-3 py-1.5 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 rounded-lg text-sm font-medium"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
 
-            // h3 渲染器：ID 已由 rehypeSequentialIds 插件注入，直接透传
-            h3: ({ children, id, ...props }) => (
-              <h3
-                id={id}
-                {...props}
-                style={{
-                  fontSize: 'var(--article-h3-size)',
-                  lineHeight: '1.4',
-                  fontWeight: '700',
-                  marginTop: '1.5rem',
-                  marginBottom: '0.75rem',
-                  color: 'rgb(15 23 42)'
-                }}
-                className="dark:!text-stone-200 heading-anchor"
-              >
-                {children}
-              </h3>
-            ),
-          }}
-        >
-          {post.content}
-        </ReactMarkdown>
-        )}
-      </div>
+            {/* 上一篇 / 下一篇导航 */}
+            <div className="mt-8">
+              <PostNavigation newerPost={newerPost} olderPost={olderPost} />
+            </div>
+          </footer>
 
-      <footer id="post-footer" className="mt-16 pt-8 border-t border-stone-200 dark:border-stone-800">
-        <div id="post-tags" className="flex flex-wrap gap-2">
-          {tags?.map(tag => (
-            <span key={tag} id={`tag-${tag}`} className="px-3 py-1.5 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 rounded-lg text-sm font-medium">
-              #{tag}
-            </span>
-          ))}
-        </div>
-
-        {/* 上一篇 / 下一篇导航 */}
-        <div className="mt-8">
-          <PostNavigation newerPost={newerPost} olderPost={olderPost} />
-        </div>
-      </footer>
-
-      {/* 相关文章推荐（按标签交集，回退同分类） */}
-      <RelatedPosts currentSlug={post.slug} tags={tags} category={category} />
-      </motion.article>
-      <TableOfContents parsedHeadings={headings} />
+          {/* 相关文章推荐（按标签交集，回退同分类） */}
+          <RelatedPosts currentSlug={post.slug} tags={tags} category={category} />
+        </motion.article>
+        <TableOfContents parsedHeadings={headings} />
       </div>
 
       {/* giscus 评论（未配置环境变量时渲染 null，零开销） */}

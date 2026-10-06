@@ -72,8 +72,6 @@ const LANG_LOADERS: Record<string, () => Promise<{ default: unknown }>> = {
   csharp: () => import('shiki/langs/csharp.mjs'),
 };
 
-const SUPPORTED_LANGUAGES = Object.keys(LANG_LOADERS);
-
 /** Languages that most articles use - preloaded with the highlighter. */
 const PRELOAD_LANGUAGES = ['javascript', 'typescript', 'tsx', 'jsx', 'css', 'html', 'json', 'bash'];
 
@@ -87,10 +85,7 @@ export async function getHighlighter(): Promise<HighlighterCore> {
   }
 
   highlighterPromise = createHighlighterCore({
-    themes: [
-      import('shiki/themes/github-light.mjs'),
-      import('shiki/themes/github-dark.mjs'),
-    ],
+    themes: [import('shiki/themes/github-light.mjs'), import('shiki/themes/github-dark.mjs')],
     langs: PRELOAD_LANGUAGES.map(lang => LANG_LOADERS[lang]() as LanguageInput),
     engine: createJavaScriptRegexEngine({ forgiving: true }),
   })
@@ -190,15 +185,16 @@ function parseHexColor(color?: string): [number, number, number] | null {
 function toRelativeLuminance([red, green, blue]: [number, number, number]): number {
   const channel = (value: number) => {
     const normalized = value / 255;
-    return normalized <= 0.03928
-      ? normalized / 12.92
-      : ((normalized + 0.055) / 1.055) ** 2.4;
+    return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
   };
 
-  return (0.2126 * channel(red)) + (0.7152 * channel(green)) + (0.0722 * channel(blue));
+  return 0.2126 * channel(red) + 0.7152 * channel(green) + 0.0722 * channel(blue);
 }
 
-function contrastRatio(foreground: [number, number, number], background: [number, number, number]): number {
+function contrastRatio(
+  foreground: [number, number, number],
+  background: [number, number, number]
+): number {
   const foregroundLuminance = toRelativeLuminance(foreground);
   const backgroundLuminance = toRelativeLuminance(background);
   const lighter = Math.max(foregroundLuminance, backgroundLuminance);
@@ -211,7 +207,10 @@ function toHexColor([red, green, blue]: [number, number, number]): string {
   return `#${[red, green, blue].map(value => value.toString(16).padStart(2, '0')).join('')}`;
 }
 
-export function ensureReadableLightColor(color?: string, backgroundColor = '#fbfaf8'): string | undefined {
+export function ensureReadableLightColor(
+  color?: string,
+  backgroundColor = '#fbfaf8'
+): string | undefined {
   const parsedColor = parseHexColor(color);
   const parsedBackground = parseHexColor(backgroundColor);
 
@@ -224,18 +223,17 @@ export function ensureReadableLightColor(color?: string, backgroundColor = '#fbf
   }
 
   const ink: [number, number, number] = [15, 23, 42];
-  let adjusted = parsedColor;
 
   for (let step = 1; step <= 10; step += 1) {
     const weight = step / 10;
-    adjusted = [
+    const candidate: [number, number, number] = [
       Math.round(parsedColor[0] * (1 - weight) + ink[0] * weight),
       Math.round(parsedColor[1] * (1 - weight) + ink[1] * weight),
       Math.round(parsedColor[2] * (1 - weight) + ink[2] * weight),
     ];
 
-    if (contrastRatio(adjusted, parsedBackground) >= 4.5) {
-      return toHexColor(adjusted);
+    if (contrastRatio(candidate, parsedBackground) >= 4.5) {
+      return toHexColor(candidate);
     }
   }
 
@@ -247,7 +245,7 @@ function hashCode(value: string): number {
 
   for (let index = 0; index < value.length; index += 1) {
     const char = value.charCodeAt(index);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash |= 0;
   }
 

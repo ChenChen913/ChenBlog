@@ -5,14 +5,17 @@ This directory contains utilities for the enhanced code block component with Shi
 ## Files
 
 ### `shiki-config.ts`
+
 Theme configuration for Shiki syntax highlighting with dual-theme support (light/dark).
 
 **Exports:**
+
 - `ThemeConfig` - TypeScript interface for theme configuration
 - `defaultThemeConfig` - Default theme settings using GitHub light/dark themes
 - `getThemeConfig(isDark: boolean)` - Get theme config for current mode
 
 **Usage:**
+
 ```typescript
 import { getThemeConfig } from './shiki-config';
 
@@ -21,19 +24,23 @@ console.log(themeConfig.backgroundColor); // '#ffffff' or '#09090b'
 ```
 
 ### `theme-detection.ts`
+
 Utilities for detecting and monitoring the current theme (light/dark) with multiple fallback strategies.
 
 **Exports:**
+
 - `detectTheme()` - Detect current theme with fallbacks
 - `observeThemeChanges(callback)` - Set up theme change observers
-- `useThemeDetection(setTheme)` - Hook-friendly theme detection
+- `subscribeThemeDetection(setTheme)` - Hook-friendly theme detection
 
 **Detection Strategy:**
+
 1. Check `document.documentElement.classList` for 'dark' class
 2. Fall back to `prefers-color-scheme` media query
 3. Default to 'light' if all methods fail
 
 **Usage:**
+
 ```typescript
 import { detectTheme, observeThemeChanges } from './theme-detection';
 
@@ -41,7 +48,7 @@ import { detectTheme, observeThemeChanges } from './theme-detection';
 const theme = detectTheme(); // 'light' | 'dark'
 
 // Watch for theme changes
-const cleanup = observeThemeChanges((newTheme) => {
+const cleanup = observeThemeChanges(newTheme => {
   console.log('Theme changed to:', newTheme);
 });
 
@@ -50,9 +57,11 @@ cleanup();
 ```
 
 ### `shiki-highlighter.ts`
+
 Core Shiki syntax highlighting utilities with caching and dual-theme support.
 
 **Exports:**
+
 - `getHighlighter()` - Get or create singleton Shiki highlighter instance
 - `highlightCode(code, language)` - Highlight code with dual-theme support
 - `getHighlightedCode(code, language)` - Get highlighted code with caching
@@ -60,6 +69,7 @@ Core Shiki syntax highlighting utilities with caching and dual-theme support.
 - `clearHighlightCache()` - Clear the highlight cache
 
 **Features:**
+
 - Singleton highlighter instance for performance
 - LRU cache with automatic eviction (max 100 entries)
 - Language alias normalization (js → javascript, py → python, etc.)
@@ -67,29 +77,25 @@ Core Shiki syntax highlighting utilities with caching and dual-theme support.
 - HTML escaping for security
 
 **Usage:**
+
 ```typescript
 import { getHighlightedCode } from './shiki-highlighter';
 
 // Highlight code (with caching)
-const html = await getHighlightedCode(
-  'const x = 42;',
-  'javascript'
-);
+const html = await getHighlightedCode('const x = 42;', 'javascript');
 
 // The HTML includes both light and dark themes
 // Theme switching happens via CSS without re-rendering
 ```
 
 ### `index.ts`
+
 Central export file for all utilities.
 
 **Usage:**
+
 ```typescript
-import {
-  detectTheme,
-  getThemeConfig,
-  getHighlightedCode,
-} from '@/utils';
+import { detectTheme, getThemeConfig, getHighlightedCode } from '@/utils';
 ```
 
 ## Implementation Details
@@ -107,6 +113,7 @@ The Shiki highlighter generates HTML with both light and dark themes embedded:
 ```
 
 Theme switching is handled by CSS:
+
 - Light mode: Uses inline `color` values
 - Dark mode: Uses CSS custom properties (`--shiki-dark`)
 
@@ -122,6 +129,7 @@ This allows instant theme switching without re-rendering or re-highlighting.
 ### Error Handling
 
 All utilities include comprehensive error handling:
+
 - Theme detection falls back to 'light' on error
 - Highlighting falls back to plain text on error
 - Cache operations are wrapped in try-catch
@@ -130,6 +138,7 @@ All utilities include comprehensive error handling:
 ## Testing
 
 The utilities have been verified to work correctly:
+
 - ✓ Theme detection with fallbacks
 - ✓ Code highlighting with dual-theme support
 - ✓ Cache functionality (same instance returned)
@@ -149,6 +158,7 @@ This implementation satisfies the following requirements from the spec:
 ## Next Steps
 
 These utilities will be integrated into the CodeBlock component in subsequent tasks:
+
 - Task 2: Core component structure
 - Task 8: Syntax highlighting integration
 - Task 10: Visual styling and theming

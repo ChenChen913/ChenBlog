@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function About() {
-  const { t, lang } = useAppContext();
+  const { t } = useAppContext();
 
   // 🔧 SEO：关于页动态元数据
   usePageMeta({
@@ -13,7 +13,7 @@ export default function About() {
   });
 
   return (
-    <motion.div 
+    <motion.div
       id="about-page"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -22,7 +22,10 @@ export default function About() {
       className="space-y-12 max-w-2xl"
     >
       <header id="about-header" className="space-y-4">
-        <h1 id="about-title" className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
+        <h1
+          id="about-title"
+          className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100"
+        >
           {t('nav_about')}
         </h1>
       </header>
@@ -31,7 +34,7 @@ export default function About() {
         <p className="text-lg leading-relaxed text-stone-700 dark:text-stone-300">
           {t('about_intro')}
         </p>
-        
+
         <p className="text-lg leading-relaxed text-stone-700 dark:text-stone-300">
           {t('about_description')}
         </p>
@@ -56,7 +59,7 @@ export default function About() {
         <p className="text-lg leading-relaxed text-stone-700 dark:text-stone-300">
           {t('about_contact_desc')}
         </p>
-        
+
         <ul className="list-none space-y-2 mt-4">
           <li className="flex items-center gap-2 text-stone-700 dark:text-stone-300">
             <span className="font-medium">GitHub:</span>

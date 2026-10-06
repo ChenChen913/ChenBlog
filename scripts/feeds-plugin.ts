@@ -35,7 +35,7 @@ export function resolveSiteUrl(): string {
   if (!url) {
     console.warn(
       `[feeds] ⚠️ 未检测到站点域名环境变量（VITE_SITE_URL / VERCEL_PROJECT_PRODUCTION_DOMAIN / VERCEL_URL），` +
-      `已使用兜底域名 ${DEFAULT_SITE_URL}。请在部署平台配置后重新构建。`
+        `已使用兜底域名 ${DEFAULT_SITE_URL}。请在部署平台配置后重新构建。`
     );
     return DEFAULT_SITE_URL;
   }
@@ -61,9 +61,7 @@ function rfc822(dateStr: string): string {
 /** W3C 日期（sitemap lastmod 要求） */
 function w3cDate(dateStr: string): string {
   const d = new Date(dateStr);
-  return isNaN(d.getTime())
-    ? new Date().toISOString().slice(0, 10)
-    : d.toISOString().slice(0, 10);
+  return isNaN(d.getTime()) ? new Date().toISOString().slice(0, 10) : d.toISOString().slice(0, 10);
 }
 
 function postUrl(siteUrl: string, slug: string): string {
@@ -91,19 +89,12 @@ function renderHtml(raw: string): string {
   }
 }
 
-function buildFeedPosts(postsDir: string, siteUrl: string): FeedPost[] {
+function buildFeedPosts(postsDir: string): FeedPost[] {
   return buildPostsIndex(postsDir)
-    .filter(
-      entry =>
-        entry.frontmatter.draft !== true &&
-        entry.frontmatter.published !== false
-    )
+    .filter(entry => entry.frontmatter.draft !== true && entry.frontmatter.published !== false)
     .map(entry => {
       const fm = entry.frontmatter;
-      const raw = fs.readFileSync(
-        path.join(postsDir, `${entry.slug}.md`),
-        'utf-8'
-      );
+      const raw = fs.readFileSync(path.join(postsDir, `${entry.slug}.md`), 'utf-8');
       return {
         slug: entry.slug,
         title: String(fm.title ?? entry.slug),
@@ -121,9 +112,7 @@ export function buildRss(siteUrl: string, posts: FeedPost[]): string {
   const items = posts
     .map(post => {
       const link = postUrl(siteUrl, post.slug);
-      const categories = post.tags
-        .map(tag => `\n      <category>${esc(tag)}</category>`)
-        .join('');
+      const categories = post.tags.map(tag => `\n      <category>${esc(tag)}</category>`).join('');
       return `
     <item>
       <title>${esc(post.title)}</title>
@@ -203,7 +192,7 @@ export function feedsPlugin(): Plugin {
 
   const buildAll = () => {
     const siteUrl = resolveSiteUrl();
-    const posts = buildFeedPosts(postsDir, siteUrl);
+    const posts = buildFeedPosts(postsDir);
     return {
       siteUrl,
       rss: buildRss(siteUrl, posts),
@@ -230,7 +219,12 @@ export function feedsPlugin(): Plugin {
         if (req.url === '/rss.xml' || req.url === '/sitemap.xml' || req.url === '/robots.txt') {
           const { rss, sitemap, robots } = buildAll();
           const xml = req.url === '/rss.xml' ? rss : req.url === '/sitemap.xml' ? sitemap : robots;
-          res.setHeader('Content-Type', req.url === '/robots.txt' ? 'text/plain; charset=utf-8' : 'application/xml; charset=utf-8');
+          res.setHeader(
+            'Content-Type',
+            req.url === '/robots.txt'
+              ? 'text/plain; charset=utf-8'
+              : 'application/xml; charset=utf-8'
+          );
           res.end(xml);
           return;
         }

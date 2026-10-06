@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { getAllPosts, type Post } from '../utils/markdown';
+import { getAllPosts } from '../utils/markdown';
 import PostCard from './PostCard';
 import { useAppContext } from '../context/AppContext';
 
@@ -15,7 +15,12 @@ interface RelatedPostsProps {
  * 相关文章推荐：按标签交集数量排序，交集为零时回退到同分类最新文章。
  * 复用 PostCard 保持与首页/精选页完全一致的卡片视觉。
  */
-export default function RelatedPosts({ currentSlug, tags, category, limit = 2 }: RelatedPostsProps) {
+export default function RelatedPosts({
+  currentSlug,
+  tags,
+  category,
+  limit = 2,
+}: RelatedPostsProps) {
   const { t } = useAppContext();
 
   const related = useMemo(() => {
@@ -31,7 +36,8 @@ export default function RelatedPosts({ currentSlug, tags, category, limit = 2 }:
     });
 
     // 第一梯队：有标签交集（按交集数降序，再按日期即列表顺序）
-    const byTags = scored.filter(({ overlap }) => overlap > 0)
+    const byTags = scored
+      .filter(({ overlap }) => overlap > 0)
       .sort((a, b) => b.overlap - a.overlap)
       .map(({ post }) => post);
 

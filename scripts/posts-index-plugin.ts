@@ -29,8 +29,7 @@ function calcReadTime(text: string): number {
     .replace(/[\u4e00-\u9fa5]/g, '')
     .trim()
     .split(/\s+/)
-    .filter(Boolean)
-    .length;
+    .filter(Boolean).length;
   const minutes = cnChars / 300 + enWords / 200;
   return Math.max(1, Math.round(minutes));
 }
@@ -38,7 +37,7 @@ function calcReadTime(text: string): number {
 /** 与旧版运行时完全一致的摘要生成，保证列表页观感不变 */
 function buildExcerpt(content: string): string {
   const plainText = content
-    .replace(/[#*`_\[\]\(\)!>-]/g, '')
+    .replace(/[#*`_[\]()!>-]/g, '')
     .replace(/\n+/g, ' ')
     .trim();
   return plainText.substring(0, 150) + (plainText.length > 150 ? '...' : '');
@@ -52,7 +51,10 @@ interface PostIndexEntry {
 }
 
 /** 规范化 frontmatter，避免 YAML 标量类型带来的隐性差异 */
-function normalizeFrontmatter(data: Record<string, unknown>, slug: string): Record<string, unknown> {
+function normalizeFrontmatter(
+  data: Record<string, unknown>,
+  slug: string
+): Record<string, unknown> {
   const fm: Record<string, unknown> = { ...data };
 
   // YAML 会把未加引号的日期解析成 Date 对象，统一回 YYYY-MM-DD 字符串
@@ -101,8 +103,8 @@ export function buildPostsIndex(postsDir: string): PostIndexEntry[] {
       // 单篇文章解析失败不应拖垮整站构建：降级为最小元数据并给出显著告警
       console.warn(
         `[posts-index] ⚠️ 解析失败: ${file}（已按无 frontmatter 文章降级处理）\n` +
-        `  常见原因：title 中含未加引号的半角冒号、tags 写法不符合 YAML 等\n` +
-        `  错误详情：${err instanceof Error ? err.message : err}`
+          `  常见原因：title 中含未加引号的半角冒号、tags 写法不符合 YAML 等\n` +
+          `  错误详情：${err instanceof Error ? err.message : err}`
       );
       const content = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, '');
       entries.push({

@@ -15,7 +15,9 @@ async function expectListScrollRestored(page: Page, listPath: string) {
   await page.goto(listPath);
   await page.waitForLoadState('networkidle');
 
-  const canScroll = await page.evaluate(() => document.documentElement.scrollHeight > window.innerHeight + 260);
+  const canScroll = await page.evaluate(
+    () => document.documentElement.scrollHeight > window.innerHeight + 260
+  );
   test.skip(!canScroll, `${listPath} is not tall enough to verify scroll restoration`);
 
   await page.evaluate(() => {
@@ -27,10 +29,11 @@ async function expectListScrollRestored(page: Page, listPath: string) {
 
   await page.evaluate(() => {
     const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('a[href*="/posts/"]'));
-    const visibleLink = links.find(link => {
-      const rect = link.getBoundingClientRect();
-      return rect.top >= 0 && rect.bottom <= window.innerHeight;
-    }) ?? links[0];
+    const visibleLink =
+      links.find(link => {
+        const rect = link.getBoundingClientRect();
+        return rect.top >= 0 && rect.bottom <= window.innerHeight;
+      }) ?? links[0];
     visibleLink.click();
   });
   await waitForArticle(page);
@@ -45,24 +48,32 @@ async function expectListScrollRestored(page: Page, listPath: string) {
 }
 
 test.describe('Navigation scroll restoration', () => {
-  test('desktop: returns from article to the previous home scroll position', async ({ page }, testInfo) => {
+  test('desktop: returns from article to the previous home scroll position', async ({
+    page,
+  }, testInfo) => {
     test.skip(isMobileProject(testInfo.project.name), 'Desktop-only Back button behavior');
 
     await expectListScrollRestored(page, '/');
   });
 
-  test('desktop: returns from article to the previous categories scroll position', async ({ page }, testInfo) => {
+  test('desktop: returns from article to the previous categories scroll position', async ({
+    page,
+  }, testInfo) => {
     test.skip(isMobileProject(testInfo.project.name), 'Desktop-only Back button behavior');
 
     await expectListScrollRestored(page, '/categories');
   });
 
-  test('desktop: returns from article to the previous highlights scroll position when scrollable', async ({ page }, testInfo) => {
+  test('desktop: returns from article to the previous highlights scroll position when scrollable', async ({
+    page,
+  }, testInfo) => {
     test.skip(isMobileProject(testInfo.project.name), 'Desktop-only Back button behavior');
 
     await expectListScrollRestored(page, '/highlights');
   });
 
+  // Playwright 固定签名：首参必须为 fixture 解构对象（此处无需 fixture）
+  // eslint-disable-next-line no-empty-pattern
   test('source: page route transitions do not use vertical y displacement', async ({}, testInfo) => {
     test.skip(isMobileProject(testInfo.project.name), 'Source assertion only needs one project');
 
@@ -76,11 +87,15 @@ test.describe('Navigation scroll restoration', () => {
 
     for (const file of files) {
       const source = fs.readFileSync(path.join(root, file), 'utf8');
-      expect(source, `${file} should not define y displacement route transitions`).not.toMatch(/\by\s*:\s*[-\d]/);
+      expect(source, `${file} should not define y displacement route transitions`).not.toMatch(
+        /\by\s*:\s*[-\d]/
+      );
     }
   });
 
-  test('desktop: floating Back button stays visible while article scrolls', async ({ page }, testInfo) => {
+  test('desktop: floating Back button stays visible while article scrolls', async ({
+    page,
+  }, testInfo) => {
     test.skip(isMobileProject(testInfo.project.name), 'Desktop-only Back button behavior');
 
     await page.goto('/posts/typescript-advanced');
@@ -102,7 +117,9 @@ test.describe('Navigation scroll restoration', () => {
     expect(Math.abs(after!.x - before!.x)).toBeLessThan(2);
   });
 
-  test('mobile: article pages do not gain horizontal overflow from Back controls', async ({ page }, testInfo) => {
+  test('mobile: article pages do not gain horizontal overflow from Back controls', async ({
+    page,
+  }, testInfo) => {
     test.skip(!isMobileProject(testInfo.project.name), 'Mobile-only layout behavior');
 
     await page.goto('/posts/typescript-advanced');

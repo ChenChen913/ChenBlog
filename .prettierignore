@@ -1,0 +1,16 @@
+# 依赖与产物
+node_modules
+dist
+coverage
+playwright-report
+test-results
+
+# 站点资源（二进制与字体源文件）
+public/fonts
+scripts/font-src
+
+# 文章正文属于内容创作，不做机器重排（避免 diff 污染作者意图）
+src/posts
+
+# 锁文件与生成物
+package-lock.json

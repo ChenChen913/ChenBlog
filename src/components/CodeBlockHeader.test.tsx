@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import CodeBlock from './CodeBlock';
 
 vi.mock('../utils/theme-detection', () => ({
-  useThemeDetection: vi.fn((callback: (theme: 'light' | 'dark') => void) => {
+  subscribeThemeDetection: vi.fn((callback: (theme: 'light' | 'dark') => void) => {
     callback('light');
     return () => {};
   }),
@@ -23,9 +23,7 @@ vi.mock('../utils/shiki-highlighter', () => ({
 describe('CodeBlock header contract', () => {
   test('renders three macOS-style window dots with stable classes', () => {
     const { container } = render(
-      <CodeBlock className="language-javascript">
-        const x = 1;
-      </CodeBlock>
+      <CodeBlock className="language-javascript">const x = 1;</CodeBlock>
     );
 
     expect(container.querySelectorAll('.code-block__window-dot')).toHaveLength(3);
@@ -35,21 +33,13 @@ describe('CodeBlock header contract', () => {
   });
 
   test('renders a human-friendly language label', () => {
-    render(
-      <CodeBlock className="language-ts">
-        const value: string = "hello";
-      </CodeBlock>
-    );
+    render(<CodeBlock className="language-ts">const value: string = "hello";</CodeBlock>);
 
     expect(screen.getByText('TypeScript')).toBeInTheDocument();
   });
 
   test('renders a compact copy button with icon and accessible name', () => {
-    const { container } = render(
-      <CodeBlock className="language-go">
-        package main
-      </CodeBlock>
-    );
+    const { container } = render(<CodeBlock className="language-go">package main</CodeBlock>);
 
     const button = screen.getByRole('button', { name: /copy code/i });
     expect(button).toHaveClass('code-block__copy-button');
@@ -59,9 +49,7 @@ describe('CodeBlock header contract', () => {
 
   test('uses BEM classes as the stable styling contract', () => {
     const { container } = render(
-      <CodeBlock className="language-html">
-        {'<main>Hello</main>'}
-      </CodeBlock>
+      <CodeBlock className="language-html">{'<main>Hello</main>'}</CodeBlock>
     );
 
     expect(container.querySelector('.code-block')).toBeInTheDocument();

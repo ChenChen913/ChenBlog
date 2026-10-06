@@ -4,29 +4,29 @@ import { render, screen, waitFor } from '@testing-library/react';
 import CodeBlock from './CodeBlock';
 
 vi.mock('../utils/theme-detection', () => ({
-  useThemeDetection: vi.fn((callback: (theme: 'light' | 'dark') => void) => {
+  subscribeThemeDetection: vi.fn((callback: (theme: 'light' | 'dark') => void) => {
     callback('light');
     return () => {};
   }),
 }));
 
 vi.mock('../utils/shiki-highlighter', () => ({
-  getHighlightedTokens: vi.fn(async (code: string, _language: string, themeMode: 'light' | 'dark') => ({
-    bg: themeMode === 'dark' ? '#09090b' : '#f8fafc',
-    fg: themeMode === 'dark' ? '#e5e7eb' : '#0f172a',
-    lines: (code === '' ? [''] : code.split('\n')).map(line => ({
-      tokens: line === '' ? [] : [{ content: line, color: '#0f172a', fontStyle: 0 }],
-    })),
-    themeName: themeMode === 'dark' ? 'github-dark' : 'github-light',
-  })),
+  getHighlightedTokens: vi.fn(
+    async (code: string, _language: string, themeMode: 'light' | 'dark') => ({
+      bg: themeMode === 'dark' ? '#09090b' : '#f8fafc',
+      fg: themeMode === 'dark' ? '#e5e7eb' : '#0f172a',
+      lines: (code === '' ? [''] : code.split('\n')).map(line => ({
+        tokens: line === '' ? [] : [{ content: line, color: '#0f172a', fontStyle: 0 }],
+      })),
+      themeName: themeMode === 'dark' ? 'github-dark' : 'github-light',
+    })
+  ),
 }));
 
 describe('CodeBlock rendering contract', () => {
   test('renders the code block shell, header, language label, and copy action', () => {
     const { container } = render(
-      <CodeBlock className="language-typescript">
-        const value: number = 1;
-      </CodeBlock>
+      <CodeBlock className="language-typescript">const value: number = 1;</CodeBlock>
     );
 
     expect(container.querySelector('.code-block')).toBeInTheDocument();
@@ -47,9 +47,7 @@ describe('CodeBlock rendering contract', () => {
 
   test('renders highlighted rows with stable line numbers', async () => {
     const { container } = render(
-      <CodeBlock className="language-python">
-        {'def hello():\n    print("hi")'}
-      </CodeBlock>
+      <CodeBlock className="language-python">{'def hello():\n    print("hi")'}</CodeBlock>
     );
 
     await waitFor(() => {
@@ -64,9 +62,7 @@ describe('CodeBlock rendering contract', () => {
 
   test('keeps line numbers outside selectable and copyable code content', async () => {
     const { container } = render(
-      <CodeBlock className="language-rust">
-        {'fn main() {\n    println!("hi");\n}'}
-      </CodeBlock>
+      <CodeBlock className="language-rust">{'fn main() {\n    println!("hi");\n}'}</CodeBlock>
     );
 
     await waitFor(() => {
@@ -81,9 +77,7 @@ describe('CodeBlock rendering contract', () => {
 
   test('renders a semantic pre/code pair for assistive technology and browser defaults', async () => {
     const { container } = render(
-      <CodeBlock className="language-css">
-        {'body {\n  color: red;\n}'}
-      </CodeBlock>
+      <CodeBlock className="language-css">{'body {\n  color: red;\n}'}</CodeBlock>
     );
 
     await waitFor(() => {
@@ -101,11 +95,7 @@ describe('CodeBlock rendering contract', () => {
   });
 
   test('falls back to plain text for unknown languages while preserving the label', async () => {
-    const { container } = render(
-      <CodeBlock className="language-madeup">
-        value
-      </CodeBlock>
-    );
+    const { container } = render(<CodeBlock className="language-madeup">value</CodeBlock>);
 
     expect(screen.getByText('Madeup')).toBeInTheDocument();
     await waitFor(() => {

@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import CodeBlock from './CodeBlock';
 
 vi.mock('../utils/theme-detection', () => ({
-  useThemeDetection: vi.fn((callback: (theme: 'light' | 'dark') => void) => {
+  subscribeThemeDetection: vi.fn((callback: (theme: 'light' | 'dark') => void) => {
     callback('light');
     return () => {};
   }),
@@ -40,11 +40,7 @@ describe('CodeBlock copy contract', () => {
   test('copies the original multiline source exactly', async () => {
     const source = 'function test() {\n  return 42;\n}';
 
-    render(
-      <CodeBlock className="language-javascript">
-        {source}
-      </CodeBlock>
-    );
+    render(<CodeBlock className="language-javascript">{source}</CodeBlock>);
 
     fireEvent.click(screen.getByRole('button', { name: /copy code/i }));
 
@@ -54,11 +50,7 @@ describe('CodeBlock copy contract', () => {
   });
 
   test('shows success feedback and announces it to assistive technology', async () => {
-    render(
-      <CodeBlock className="language-python">
-        print("hello")
-      </CodeBlock>
-    );
+    render(<CodeBlock className="language-python">print("hello")</CodeBlock>);
 
     fireEvent.click(screen.getByRole('button', { name: /copy code/i }));
 
@@ -68,11 +60,7 @@ describe('CodeBlock copy contract', () => {
   });
 
   test('clears success feedback after two seconds', async () => {
-    render(
-      <CodeBlock className="language-typescript">
-        const value = 1;
-      </CodeBlock>
-    );
+    render(<CodeBlock className="language-typescript">const value = 1;</CodeBlock>);
 
     fireEvent.click(screen.getByRole('button', { name: /copy code/i }));
     await screen.findByRole('button', { name: /code copied/i });
@@ -90,11 +78,7 @@ describe('CodeBlock copy contract', () => {
     const execCommand = vi.fn().mockReturnValue(true);
     document.execCommand = execCommand;
 
-    render(
-      <CodeBlock className="language-rust">
-        fn main() {}
-      </CodeBlock>
-    );
+    render(<CodeBlock className="language-rust">fn main() {}</CodeBlock>);
 
     fireEvent.click(screen.getByRole('button', { name: /copy code/i }));
 
@@ -108,11 +92,7 @@ describe('CodeBlock copy contract', () => {
     clipboardWriteText.mockRejectedValueOnce(new Error('Clipboard unavailable'));
     document.execCommand = vi.fn().mockReturnValue(false);
 
-    render(
-      <CodeBlock className="language-go">
-        package main
-      </CodeBlock>
-    );
+    render(<CodeBlock className="language-go">package main</CodeBlock>);
 
     fireEvent.click(screen.getByRole('button', { name: /copy code/i }));
 

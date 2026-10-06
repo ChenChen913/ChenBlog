@@ -2,17 +2,9 @@
  * Utility exports for code block enhancement
  */
 
-export {
-  defaultThemeConfig,
-  getThemeConfig,
-  type ThemeConfig,
-} from './shiki-config';
+export { defaultThemeConfig, getThemeConfig, type ThemeConfig } from './shiki-config';
 
-export {
-  detectTheme,
-  observeThemeChanges,
-  useThemeDetection,
-} from './theme-detection';
+export { detectTheme, observeThemeChanges, subscribeThemeDetection } from './theme-detection';
 
 export {
   getHighlighter,
@@ -33,6 +25,4 @@ export {
   resolveCodeLanguage,
 } from './code-extraction';
 
-export {
-  copyToClipboard,
-} from './clipboard';
+export { copyToClipboard } from './clipboard';

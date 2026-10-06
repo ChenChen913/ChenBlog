@@ -31,7 +31,10 @@ function PostBottomBar() {
       if (!el) return;
       const header = document.querySelector('header');
       const offset = header?.getBoundingClientRect().bottom ?? 0;
-      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset - 16, behavior: 'smooth' });
+      window.scrollTo({
+        top: el.getBoundingClientRect().top + window.scrollY - offset - 16,
+        behavior: 'smooth',
+      });
     });
   }, []);
 
@@ -80,7 +83,7 @@ function PostBottomBar() {
       <AnimatePresence>
         {showTOC && (
           <>
-          {/* 遮罩 */}
+            {/* 遮罩 */}
             <motion.div
               className="fixed inset-0 z-[60] bg-black/30 md:hidden"
               initial={{ opacity: 0 }}
@@ -97,7 +100,9 @@ function PostBottomBar() {
               transition={{ type: 'tween', duration: 0.25, ease: 'easeOut' }}
             >
               <div className="flex items-center justify-between px-5 py-4 border-b border-white/20 dark:border-white/10">
-                <span className="text-base font-bold text-stone-800 dark:text-stone-100">{t('toc_title')}</span>
+                <span className="text-base font-bold text-stone-800 dark:text-stone-100">
+                  {t('toc_title')}
+                </span>
                 <button
                   onClick={() => setShowTOC(false)}
                   className="w-8 h-8 flex items-center justify-center rounded-full mobile-action-btn"
@@ -132,8 +137,16 @@ function NavBottomBar() {
 
   const navItems = [
     { path: '/', label: t('nav_home').replace(/\s/g, ''), id: 'mobile-nav-home' },
-    { path: '/categories', label: t('nav_categories').replace(/\s/g, ''), id: 'mobile-nav-categories' },
-    { path: '/highlights', label: t('nav_highlights').replace(/\s/g, ''), id: 'mobile-nav-highlights' },
+    {
+      path: '/categories',
+      label: t('nav_categories').replace(/\s/g, ''),
+      id: 'mobile-nav-categories',
+    },
+    {
+      path: '/highlights',
+      label: t('nav_highlights').replace(/\s/g, ''),
+      id: 'mobile-nav-highlights',
+    },
     { path: '/about', label: t('nav_about').replace(/\s/g, ''), id: 'mobile-nav-about' },
   ];
 
@@ -158,7 +171,7 @@ function NavBottomBar() {
 
   useEffect(() => {
     const index = navItems.findIndex(
-      (item) =>
+      item =>
         location.pathname === item.path ||
         (item.path !== '/' && location.pathname.startsWith(item.path))
     );
@@ -184,22 +197,28 @@ function NavBottomBar() {
     return () => container.removeEventListener('touchmove', onTouchMove);
   }, []);
 
-  const findNearestIndex = useCallback((clientX: number) => {
-    const container = containerRef.current;
-    if (!container) return activeIndex;
-    const containerRect = container.getBoundingClientRect();
-    const x = clientX - containerRect.left;
-    let nearest = 0;
-    let minDist = Infinity;
-    itemsRef.current.forEach((el, i) => {
-      if (!el) return;
-      const ir = el.getBoundingClientRect();
-      const center = (ir.left + ir.right) / 2 - containerRect.left;
-      const dist = Math.abs(x - center);
-      if (dist < minDist) { minDist = dist; nearest = i; }
-    });
-    return nearest;
-  }, [activeIndex]);
+  const findNearestIndex = useCallback(
+    (clientX: number) => {
+      const container = containerRef.current;
+      if (!container) return activeIndex;
+      const containerRect = container.getBoundingClientRect();
+      const x = clientX - containerRect.left;
+      let nearest = 0;
+      let minDist = Infinity;
+      itemsRef.current.forEach((el, i) => {
+        if (!el) return;
+        const ir = el.getBoundingClientRect();
+        const center = (ir.left + ir.right) / 2 - containerRect.left;
+        const dist = Math.abs(x - center);
+        if (dist < minDist) {
+          minDist = dist;
+          nearest = i;
+        }
+      });
+      return nearest;
+    },
+    [activeIndex]
+  );
 
   const calcRefraction = useCallback(() => {
     const pill = indicatorRef.current;
@@ -222,7 +241,12 @@ function NavBottomBar() {
     const pill = indicatorRef.current;
     if (!pill) return;
     const r = pill.getBoundingClientRect();
-    if (touch.clientX >= r.left && touch.clientX <= r.right && touch.clientY >= r.top && touch.clientY <= r.bottom) {
+    if (
+      touch.clientX >= r.left &&
+      touch.clientX <= r.right &&
+      touch.clientY >= r.top &&
+      touch.clientY <= r.bottom
+    ) {
       setIsDragging(true);
       isDraggingRef.current = true;
       setDragOffset(touch.clientX - r.left);
@@ -237,7 +261,7 @@ function NavBottomBar() {
     if (!pill || !container) return;
     const cr = container.getBoundingClientRect();
     const pw = pill.offsetWidth;
-    let nl = Math.max(0, Math.min(cr.width - pw, touch.clientX - cr.left - dragOffset));
+    const nl = Math.max(0, Math.min(cr.width - pw, touch.clientX - cr.left - dragOffset));
     pill.style.left = `${nl}px`;
     pill.style.transition = 'none';
     const nearest = findNearestIndex(touch.clientX);
@@ -286,8 +310,12 @@ function NavBottomBar() {
               id={item.id}
               to={item.path}
               aria-current={isActive ? 'page' : undefined}
-              ref={(el) => { itemsRef.current[index] = el; }}
-              onClick={() => { if (!isDragging) setActiveIndex(index); }}
+              ref={el => {
+                itemsRef.current[index] = el;
+              }}
+              onClick={() => {
+                if (!isDragging) setActiveIndex(index);
+              }}
               className={`
                 relative z-10 flex items-center justify-center
                 ${lang === 'en' ? 'px-3' : 'px-5'} py-2 rounded-full font-medium whitespace-nowrap
@@ -295,11 +323,15 @@ function NavBottomBar() {
                 transition-all duration-150 ease-out
                 ${isActive ? 'text-stone-900 dark:text-stone-100' : 'text-stone-500 dark:text-stone-400'}
               `}
-              style={isDragging && refraction > 0 ? {
-                transform: `scale(${1 + refraction * 0.15}) translateY(${-refraction * 2}px)`,
-                filter: `blur(${refraction * 0.3}px) brightness(${1 + refraction * 0.15}) saturate(${1 + refraction * 0.4})`,
-                color: refraction > 0.3 ? 'rgba(28, 25, 23, 1)' : undefined,
-              } : undefined}
+              style={
+                isDragging && refraction > 0
+                  ? {
+                      transform: `scale(${1 + refraction * 0.15}) translateY(${-refraction * 2}px)`,
+                      filter: `blur(${refraction * 0.3}px) brightness(${1 + refraction * 0.15}) saturate(${1 + refraction * 0.4})`,
+                      color: refraction > 0.3 ? 'rgba(28, 25, 23, 1)' : undefined,
+                    }
+                  : undefined
+              }
             >
               {item.label}
             </Link>

@@ -4,10 +4,21 @@ const BLOCKED_PROTOCOLS = new Set(['javascript:', 'vbscript:', 'data:', 'file:']
 const SAFE_LINK_PROTOCOLS = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 const SAFE_RESOURCE_PROTOCOLS = new Set(['http:', 'https:']);
 const YOUTUBE_HOSTS = new Set(['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be']);
-const BILIBILI_HOSTS = new Set(['bilibili.com', 'www.bilibili.com', 'm.bilibili.com', 'player.bilibili.com']);
+const BILIBILI_HOSTS = new Set([
+  'bilibili.com',
+  'www.bilibili.com',
+  'm.bilibili.com',
+  'player.bilibili.com',
+]);
 
 function hasUnsafeProtocol(value: string): boolean {
-  const compact = value.trim().replace(/[\u0000-\u001f\u007f\s]+/g, '').toLowerCase();
+  // 正则有意匹配控制字符（\u0000-\u001f）：用于剥离协议字符串中的
+  // 换行/制表符等注入载体（如 "java\nscript:"），并非缺陷
+  // eslint-disable-next-line no-control-regex
+  const compact = value
+    .trim()
+    .replace(/[\u0000-\u001f\u007f\s]+/g, '')
+    .toLowerCase();
   return Array.from(BLOCKED_PROTOCOLS).some(protocol => compact.startsWith(protocol));
 }
 
@@ -48,7 +59,11 @@ export function isSafeResourceUrl(value?: string): boolean {
 
 export function isExternalHref(value?: string): boolean {
   const parsed = parseUrl(value);
-  return parsed !== null && SAFE_RESOURCE_PROTOCOLS.has(parsed.protocol) && parsed.origin !== SAFE_URL_BASE;
+  return (
+    parsed !== null &&
+    SAFE_RESOURCE_PROTOCOLS.has(parsed.protocol) &&
+    parsed.origin !== SAFE_URL_BASE
+  );
 }
 
 export function getSafeLinkAttributes(value?: string): {
@@ -121,9 +136,7 @@ export function toTrustedEmbedUrl(value?: string): string | undefined {
 
   if (YOUTUBE_HOSTS.has(hostname)) {
     const videoId = getYouTubeVideoId(parsed);
-    return isSafeYouTubeId(videoId)
-      ? `https://www.youtube.com/embed/${videoId}`
-      : undefined;
+    return isSafeYouTubeId(videoId) ? `https://www.youtube.com/embed/${videoId}` : undefined;
   }
 
   if (BILIBILI_HOSTS.has(hostname)) {

@@ -7,7 +7,7 @@ import {
   resolveCodeLanguage,
 } from '../utils/code-extraction';
 import { getHighlightedTokens, type HighlightResult } from '../utils/shiki-highlighter';
-import { useThemeDetection } from '../utils/theme-detection';
+import { subscribeThemeDetection } from '../utils/theme-detection';
 import type { CodeBlockProps } from './CodeBlock.types';
 
 function getTokenStyle(color?: string, fontStyle = 0): React.CSSProperties {
@@ -19,14 +19,8 @@ function getTokenStyle(color?: string, fontStyle = 0): React.CSSProperties {
   };
 }
 
-function CodeBlockErrorFallback({
-  code,
-  languageLabel,
-}: {
-  code: string;
-  languageLabel: string;
-}) {
-  const lines = (code === '' ? [''] : code.split('\n'));
+function CodeBlockErrorFallback({ code, languageLabel }: { code: string; languageLabel: string }) {
+  const lines = code === '' ? [''] : code.split('\n');
 
   return (
     <div className="code-block not-prose my-8">
@@ -54,9 +48,7 @@ function CodeBlockErrorFallback({
                 {index + 1}
               </div>
               <div className="code-block__line-content">
-                <span className="code-block__code code-block__code--plain">
-                  {line || '\u200B'}
-                </span>
+                <span className="code-block__code code-block__code--plain">{line || '\u200B'}</span>
               </div>
             </div>
           ))}
@@ -84,7 +76,7 @@ function CodeBlockContainer({
 
   useEffect(() => {
     try {
-      return useThemeDetection(setThemeMode);
+      return subscribeThemeDetection(setThemeMode);
     } catch (error) {
       console.error('Theme detection setup failed:', error);
       return undefined;
@@ -194,7 +186,10 @@ function CodeBlockContainer({
             </>
           ) : copyError ? (
             <>
-              <AlertCircle className="code-block__copy-icon code-block__copy-icon--error" size={15} />
+              <AlertCircle
+                className="code-block__copy-icon code-block__copy-icon--error"
+                size={15}
+              />
               <span>Retry</span>
             </>
           ) : (
@@ -210,19 +205,17 @@ function CodeBlockContainer({
         <code>{codeText}</code>
       </pre>
 
-      <div
-        className="code-block__viewport"
-        style={maxHeight ? { maxHeight } : undefined}
-      >
+      <div className="code-block__viewport" style={maxHeight ? { maxHeight } : undefined}>
         {isLoading ? (
           <div className="code-block__rows" aria-hidden="true">
             {Array.from({ length: lineTotal }).map((_, index) => (
               <div className="code-block__row" key={index}>
-                <div className="code-block__line-number">
-                  {showLineNumbers ? index + 1 : ''}
-                </div>
+                <div className="code-block__line-number">{showLineNumbers ? index + 1 : ''}</div>
                 <div className="code-block__line-content">
-                  <div className="code-block__skeleton" style={{ width: `${40 + ((index * 13) % 45)}%` }} />
+                  <div
+                    className="code-block__skeleton"
+                    style={{ width: `${40 + ((index * 13) % 45)}%` }}
+                  />
                 </div>
               </div>
             ))}
@@ -240,7 +233,8 @@ function CodeBlockContainer({
             }
           >
             {(highlighted?.lines ?? []).map((line, index) => {
-              const isEmptyLine = line.tokens.length === 0 || line.tokens.every(token => token.content === '');
+              const isEmptyLine =
+                line.tokens.length === 0 || line.tokens.every(token => token.content === '');
 
               return (
                 <div className="code-block__row" key={`${index}-${language}`}>
@@ -286,7 +280,9 @@ export default function CodeBlock(props: CodeBlockProps) {
     return (
       <CodeBlockErrorFallback
         code={extractCodeText(props.children)}
-        languageLabel={formatCodeLanguageLabel(resolveCodeLanguage(props.className, props.children))}
+        languageLabel={formatCodeLanguageLabel(
+          resolveCodeLanguage(props.className, props.children)
+        )}
       />
     );
   }
