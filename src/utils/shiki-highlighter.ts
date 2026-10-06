@@ -9,10 +9,15 @@
  * chunks) instead of the full `shiki` bundle. Each language grammar becomes
  * a separate lazy chunk that is only fetched when an article actually uses
  * that language - instead of shipping 200+ grammars (~800KB gzip) up front.
+ *
+ * 🔬 Engine: JavaScript regex engine (no WebAssembly). Compiles TextMate
+ * grammars to native RegExp at load time, removing the ~600KB oniguruma
+ * wasm chunk entirely. `forgiving` mode degrades gracefully if a grammar
+ * uses an unsupported regex feature (logged to console, never throws).
  */
 
 import { createHighlighterCore, type HighlighterCore, type LanguageInput } from 'shiki/core';
-import { createOnigurumaEngine } from '@shikijs/engine-oniguruma';
+import { createJavaScriptRegexEngine } from '@shikijs/engine-javascript';
 import { defaultThemeConfig } from './shiki-config';
 
 export interface HighlightToken {
@@ -87,7 +92,7 @@ export async function getHighlighter(): Promise<HighlighterCore> {
       import('shiki/themes/github-dark.mjs'),
     ],
     langs: PRELOAD_LANGUAGES.map(lang => LANG_LOADERS[lang]() as LanguageInput),
-    engine: createOnigurumaEngine(import('shiki/wasm')),
+    engine: createJavaScriptRegexEngine({ forgiving: true }),
   })
     .then(highlighter => {
       highlighterInstance = highlighter;
