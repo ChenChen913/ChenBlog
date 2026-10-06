@@ -7,9 +7,7 @@ import { usePostContext } from '../context/PostContext';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
-import 'katex/dist/katex.min.css';
+import type { PluggableList } from 'unified';
 import TableOfContents from '../components/TableOfContents';
 import PostNavigation from '../components/PostNavigation';
 import RelatedPosts from '../components/RelatedPosts';
@@ -31,6 +29,17 @@ import {
   type ArticleFontSizeMode,
 } from '../utils/article-font-size';
 import { getSafeLinkAttributes, isSafeResourceUrl, toTrustedEmbedUrl } from '../utils/security';
+import { hasMathDelimiters } from '../utils/math-detect';
+
+/**
+ * KaTeX 懒加载：公式渲染管线（remark-math + rehype-katex + katex CSS）
+ * 体积大，仅当正文探测到公式定界符时才动态拉取。非公式文章不再为
+ * KaTeX 付出约 250KB 的下载与解析成本。
+ */
+type MathExtensions = {
+  remarkMath: typeof import('remark-math').default;
+  rehypeKatex: typeof import('rehype-katex').default;
+};
 
 const SAFE_MARKDOWN_TAGS = new Set([
   'a',
@@ -421,6 +430,55 @@ export default function Post() {
     return postMeta;
   }, [postMeta, loadedContent, slug]);
 
+  // ---- KaTeX 懒加载：仅在正文含公式定界符时拉取渲染管线 ----
+  const [mathExtensions, setMathExtensions] = useState<MathExtensions | null>(null);
+  const [mathLoadFailed, setMathLoadFailed] = useState(false);
+  const needsMath = useMemo(
+    () => (post?.content ? hasMathDelimiters(post.content) : false),
+    [post?.content]
+  );
+
+  useEffect(() => {
+    if (!needsMath || mathExtensions || mathLoadFailed) {
+      return;
+    }
+    let cancelled = false;
+    Promise.all([import('remark-math'), import('rehype-katex'), import('katex/dist/katex.min.css')])
+      .then(([remarkMathMod, rehypeKatexMod]) => {
+        if (cancelled) return;
+        setMathExtensions({
+          remarkMath: remarkMathMod.default,
+          rehypeKatex: rehypeKatexMod.default,
+        });
+      })
+      .catch(error => {
+        console.error('Failed to load KaTeX pipeline:', error);
+        if (!cancelled) {
+          // 降级：无公式增强，正文以纯文本呈现（与未启用数学语法一致）
+          setMathLoadFailed(true);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [needsMath, mathExtensions, mathLoadFailed]);
+
+  const remarkPlugins = useMemo<PluggableList>(
+    () => (mathExtensions ? [remarkGfm, mathExtensions.remarkMath] : [remarkGfm]),
+    [mathExtensions]
+  );
+  const rehypePlugins = useMemo<PluggableList>(() => {
+    const base: PluggableList = [
+      rehypeRaw,
+      rehypeHighlightMarks,
+      rehypeSanitizeMarkdown,
+      rehypeSequentialIds,
+    ];
+    return mathExtensions
+      ? [...base, [mathExtensions.rehypeKatex, { throwOnError: false, strict: false }]]
+      : base;
+  }, [mathExtensions]);
+
   // 解析 Markdown 标题，构建 TOC 树形结构
   // ID 由 rehypeSequentialIds 插件在 unified 管道内统一分配，与此处编号严格对应
   const headings = useMemo(() => {
@@ -701,16 +759,13 @@ export default function Post() {
               ) : (
                 <ArticleBodySkeleton />
               )
+            ) : needsMath && !mathExtensions && !mathLoadFailed ? (
+              // 公式插件加载中：保持骨架，避免裸露的 "$...$" 原文闪现
+              <ArticleBodySkeleton />
             ) : (
               <ReactMarkdown
-                remarkPlugins={[remarkGfm, remarkMath]}
-                rehypePlugins={[
-                  rehypeRaw,
-                  rehypeHighlightMarks,
-                  rehypeSanitizeMarkdown,
-                  rehypeSequentialIds,
-                  [rehypeKatex, { throwOnError: false, strict: false }],
-                ]}
+                remarkPlugins={remarkPlugins}
+                rehypePlugins={rehypePlugins}
                 components={{
                   pre({ children, ...props }) {
                     return <CodeBlock {...props}>{children}</CodeBlock>;
