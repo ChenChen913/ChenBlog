@@ -1,17 +1,6 @@
 import { useState, useEffect } from 'react';
 import { safeGetStorage, safeSetStorage, safeRemoveStorage } from '../utils/storage';
-
-function getBeijingHour(): number {
-  const now = new Date();
-  const beijingOffset = 8 * 60 * 60 * 1000;
-  const beijingTime = new Date(now.getTime() + beijingOffset);
-  return beijingTime.getUTCHours();
-}
-
-function getAutoTheme(): 'dark' | 'light' {
-  const hour = getBeijingHour();
-  return hour >= 20 || hour < 6 ? 'dark' : 'light';
-}
+import { getAutoTheme } from '../utils/theme-detection';
 
 export function useTheme() {
   const stored = safeGetStorage('theme-preference') as 'dark' | 'light' | null;
