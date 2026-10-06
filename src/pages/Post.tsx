@@ -20,6 +20,7 @@ import { formatDate } from '../utils/dateFormat';
 import { parseMarkdownHeadings } from '../utils/headingParser';
 import StatusView from '../components/StatusView';
 import ArticleFontSizeControl from '../components/ArticleFontSizeControl';
+import { usePageMeta } from '../hooks/usePageMeta';
 import {
   readArticleFontSizeMode,
   saveArticleFontSizeMode,
@@ -351,6 +352,16 @@ export default function Post() {
   }, [post, lang]);
 
   const formattedDate = formatDate(post?.frontmatter.date ?? '', lang === 'en' ? 'en' : 'zh');
+
+  // 🔧 SEO：文章页动态元数据（标题/描述/og:article 随文章内容更新）
+  usePageMeta({
+    title: post && !post.frontmatter.draft
+      ? `${post.frontmatter.title} | MaoChen Blog`
+      : 'MaoChen - Personal Blog',
+    description: post?.excerpt?.replace(/\.\.\.$/, '') || undefined,
+    ogType: 'article',
+    imageUrl: post?.frontmatter.coverImage,
+  });
 
   const handleCopyLink = useCallback(() => {
     if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {

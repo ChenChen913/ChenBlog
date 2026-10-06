@@ -1,9 +1,16 @@
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
 import { motion } from 'motion/react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function About() {
   const { t, lang } = useAppContext();
+
+  // 🔧 SEO：关于页动态元数据
+  usePageMeta({
+    title: `${t('nav_about')} | MaoChen Blog`,
+    description: t('about_description'),
+  });
 
   return (
     <motion.div 

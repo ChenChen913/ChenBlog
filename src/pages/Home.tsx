@@ -6,6 +6,7 @@ import { useAppContext } from '../context/AppContext';
 import { motion } from 'motion/react';
 import Pagination from '../components/Pagination';
 import { formatDate } from '../utils/dateFormat';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function Home() {
   const { t, lang } = useAppContext();
@@ -16,14 +17,25 @@ export default function Home() {
 
   const featuredPosts = posts.filter(p => p.frontmatter.featured).slice(0, 2);
 
+  // 🔧 SEO：首页动态元数据
+  usePageMeta({
+    title: lang === 'en' ? 'MaoChen - Personal Blog' : 'MaoChen - 个人博客',
+    description: t('home_subtitle'),
+    ogType: 'website',
+  });
+
+  // 🔧 修复重复内容：近期列表排除已在推荐位展示的文章
+  const featuredSlugs = new Set(featuredPosts.map(p => p.slug));
+  const recentPosts = posts.filter(p => !featuredSlugs.has(p.slug));
+
   // 计算当前页显示的文章
   const currentPosts = useMemo(() => {
     const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
     const endIndex = startIndex + POSTS_PER_PAGE;
-    return posts.slice(startIndex, endIndex);
-  }, [posts, currentPage]);
+    return recentPosts.slice(startIndex, endIndex);
+  }, [recentPosts, currentPage]);
 
-  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+  const totalPages = Math.ceil(recentPosts.length / POSTS_PER_PAGE);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

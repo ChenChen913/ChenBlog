@@ -26,11 +26,13 @@
   <meta name="author" content="MaoChen">
   <meta name="robots" content="index, follow">
   
-  <!-- Open Graph -->
+  <!-- Open Graph
+       注：og:title / og:description / og:url / og:type 由 usePageMeta 随路由动态更新，
+       这里的静态值仅作为爬虫不支持 JS 时的兑底。部署后建议替换为真实域名。 -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="MaoChen - Personal Blog">
   <meta property="og:description" content="MaoChen's personal blog - A digital garden sharing thoughts on technology, life, and everything in between.">
-  <meta property="og:url" content="https://your-domain.com/">
+  <meta property="og:url" content="/">
   <meta property="og:site_name" content="MaoChen Blog">
   <meta property="og:locale" content="zh_CN">
   
@@ -42,7 +44,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
-  <!-- Code Font: JetBrains Mono (loaded locally via @font-face in index.css) -->
+  <!-- Code Font: JetBrains Mono + LXGW WenKai (本地 woff2 子集, 见 index.css @font-face) -->
 </head>
 <body class="bg-background text-on-background dark:bg-stone-900 dark:text-stone-200 transition-colors duration-300">
   <div id="root"></div>

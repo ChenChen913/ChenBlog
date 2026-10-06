@@ -3,11 +3,18 @@ import { getAllPosts } from '../utils/markdown';
 import PostCard from '../components/PostCard';
 import { useAppContext } from '../context/AppContext';
 import { motion } from 'motion/react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function Highlights() {
   const { t } = useAppContext();
   const posts = getAllPosts();
   const highlights = posts.filter(p => p.frontmatter.gem);
+
+  // 🔧 SEO：精选页动态元数据
+  usePageMeta({
+    title: `${t('nav_highlights')} | MaoChen Blog`,
+    description: t('highlights_subtitle'),
+  });
 
   return (
     <motion.div 

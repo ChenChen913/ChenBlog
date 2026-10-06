@@ -4,14 +4,15 @@
  * This version returns tokenized lines instead of raw HTML so the UI can
  * render each source line in a shared row with its line number. That keeps
  * wrapped lines visually attached to the correct number.
+ *
+ * ⚡ Performance: uses fine-grained imports (shiki/core + dynamic per-language
+ * chunks) instead of the full `shiki` bundle. Each language grammar becomes
+ * a separate lazy chunk that is only fetched when an article actually uses
+ * that language - instead of shipping 200+ grammars (~800KB gzip) up front.
  */
 
-import {
-  createHighlighter,
-  type BundledLanguage,
-  type BundledTheme,
-  type Highlighter,
-} from 'shiki';
+import { createHighlighterCore, type HighlighterCore, type LanguageInput } from 'shiki/core';
+import { createOnigurumaEngine } from '@shikijs/engine-oniguruma';
 import { defaultThemeConfig } from './shiki-config';
 
 export interface HighlightToken {
@@ -33,36 +34,45 @@ export interface HighlightResult {
 
 type ThemeMode = 'light' | 'dark';
 
-let highlighterInstance: Highlighter | null = null;
-let highlighterPromise: Promise<Highlighter> | null = null;
+let highlighterInstance: HighlighterCore | null = null;
+let highlighterPromise: Promise<HighlighterCore> | null = null;
 
-const SUPPORTED_LANGUAGES: BundledLanguage[] = [
-  'javascript',
-  'typescript',
-  'jsx',
-  'tsx',
-  'python',
-  'java',
-  'go',
-  'rust',
-  'html',
-  'css',
-  'json',
-  'yaml',
-  'markdown',
-  'bash',
-  'sql',
-  'php',
-  'ruby',
-  'swift',
-  'kotlin',
-  'dart',
-  'c',
-  'cpp',
-  'csharp',
-];
+/**
+ * Dynamic per-language loaders. Rollup turns each import() into its own
+ * small chunk, fetched only when an article actually contains that language.
+ */
+const LANG_LOADERS: Record<string, () => Promise<{ default: unknown }>> = {
+  javascript: () => import('shiki/langs/javascript.mjs'),
+  typescript: () => import('shiki/langs/typescript.mjs'),
+  jsx: () => import('shiki/langs/jsx.mjs'),
+  tsx: () => import('shiki/langs/tsx.mjs'),
+  python: () => import('shiki/langs/python.mjs'),
+  java: () => import('shiki/langs/java.mjs'),
+  go: () => import('shiki/langs/go.mjs'),
+  rust: () => import('shiki/langs/rust.mjs'),
+  html: () => import('shiki/langs/html.mjs'),
+  css: () => import('shiki/langs/css.mjs'),
+  json: () => import('shiki/langs/json.mjs'),
+  yaml: () => import('shiki/langs/yaml.mjs'),
+  markdown: () => import('shiki/langs/markdown.mjs'),
+  bash: () => import('shiki/langs/bash.mjs'),
+  sql: () => import('shiki/langs/sql.mjs'),
+  php: () => import('shiki/langs/php.mjs'),
+  ruby: () => import('shiki/langs/ruby.mjs'),
+  swift: () => import('shiki/langs/swift.mjs'),
+  kotlin: () => import('shiki/langs/kotlin.mjs'),
+  dart: () => import('shiki/langs/dart.mjs'),
+  c: () => import('shiki/langs/c.mjs'),
+  cpp: () => import('shiki/langs/cpp.mjs'),
+  csharp: () => import('shiki/langs/csharp.mjs'),
+};
 
-export async function getHighlighter(): Promise<Highlighter> {
+const SUPPORTED_LANGUAGES = Object.keys(LANG_LOADERS);
+
+/** Languages that most articles use - preloaded with the highlighter. */
+const PRELOAD_LANGUAGES = ['javascript', 'typescript', 'tsx', 'jsx', 'css', 'html', 'json', 'bash'];
+
+export async function getHighlighter(): Promise<HighlighterCore> {
   if (highlighterInstance) {
     return highlighterInstance;
   }
@@ -71,12 +81,13 @@ export async function getHighlighter(): Promise<Highlighter> {
     return highlighterPromise;
   }
 
-  highlighterPromise = createHighlighter({
+  highlighterPromise = createHighlighterCore({
     themes: [
-      defaultThemeConfig.light.shikiTheme as BundledTheme,
-      defaultThemeConfig.dark.shikiTheme as BundledTheme,
+      import('shiki/themes/github-light.mjs'),
+      import('shiki/themes/github-dark.mjs'),
     ],
-    langs: SUPPORTED_LANGUAGES,
+    langs: PRELOAD_LANGUAGES.map(lang => LANG_LOADERS[lang]() as LanguageInput),
+    engine: createOnigurumaEngine(import('shiki/wasm')),
   })
     .then(highlighter => {
       highlighterInstance = highlighter;
@@ -89,6 +100,31 @@ export async function getHighlighter(): Promise<Highlighter> {
     });
 
   return highlighterPromise;
+}
+
+/** Lazily load a language grammar the first time an article needs it. */
+async function ensureLanguageLoaded(
+  highlighter: HighlighterCore,
+  language: string
+): Promise<boolean> {
+  if (highlighter.getLoadedLanguages().includes(language)) {
+    return true;
+  }
+
+  const loader = LANG_LOADERS[language];
+  if (!loader) {
+    return false;
+  }
+
+  try {
+    const mod = await loader();
+    const registration = (mod as { default?: unknown }).default ?? mod;
+    await highlighter.loadLanguage(registration as Parameters<HighlighterCore['loadLanguage']>[0]);
+    return true;
+  } catch (error) {
+    console.error(`Failed to load language ${language}:`, error);
+    return false;
+  }
 }
 
 function normalizeLanguage(language: string): string {
@@ -255,17 +291,16 @@ export async function getHighlightedTokens(
 
   try {
     const highlighter = await getHighlighter();
-    const loadedLanguages = highlighter.getLoadedLanguages();
 
-    if (!loadedLanguages.includes(normalizedLanguage as BundledLanguage)) {
+    if (!(await ensureLanguageLoaded(highlighter, normalizedLanguage))) {
       const fallback = toPlainTextHighlight(code, themeMode);
       highlightCache.set(cacheKey, { result: fallback, timestamp: Date.now() });
       return fallback;
     }
 
-    const themeName = defaultThemeConfig[themeMode].shikiTheme as BundledTheme;
+    const themeName = themeMode === 'light' ? 'github-light' : 'github-dark';
     const tokens = highlighter.codeToTokens(code, {
-      lang: normalizedLanguage as BundledLanguage,
+      lang: normalizedLanguage,
       theme: themeName,
     });
 

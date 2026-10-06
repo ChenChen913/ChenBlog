@@ -1,17 +1,32 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import React, { Suspense, lazy, useEffect, useLayoutEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
 import Home from './pages/Home';
-import Post from './pages/Post';
-import Categories from './pages/Categories';
-import Highlights from './pages/Highlights';
-import About from './pages/About';
 import { AppProvider } from './context/AppContext';
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
-import StatusPage from './pages/StatusPage';
 import NotFound from './pages/NotFound';
 
+/**
+ * ⚡ 路由级代码分割：非首屏页面按需加载。
+ * Post 页携带 react-markdown / remark / rehype / KaTeX / Shiki 等重型依赖，
+ * 拆分后首屏（首页）不再为这些库付费，文章页进入时才并行拉取对应 chunk。
+ */
+const Post = lazy(() => import('./pages/Post'));
+const Categories = lazy(() => import('./pages/Categories'));
+const Highlights = lazy(() => import('./pages/Highlights'));
+const About = lazy(() => import('./pages/About'));
+const StatusPage = lazy(() => import('./pages/StatusPage'));
+
 const LIST_PATHS = new Set(['/', '/categories', '/highlights']);
+
+/** 懒加载路由的加载态：极简骨架，避免布局抖动 */
+function RouteFallback() {
+  return (
+    <div className="flex items-center justify-center min-h-[60vh]" role="status" aria-label="加载中">
+      <div className="w-8 h-8 border-2 border-stone-300 dark:border-stone-600 border-t-stone-800 dark:border-t-stone-200 rounded-full animate-spin" />
+    </div>
+  );
+}
 
 function ScrollRestoration() {
   const location = useLocation();
@@ -74,15 +89,17 @@ function App() {
         <ScrollRestoration />
         <ErrorBoundary>
           <Layout>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/posts/:slug" element={<Post />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/highlights" element={<Highlights />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/status/:code" element={<StatusPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Suspense fallback={<RouteFallback />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/posts/:slug" element={<Post />} />
+                <Route path="/categories" element={<Categories />} />
+                <Route path="/highlights" element={<Highlights />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/status/:code" element={<StatusPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
           </Layout>
         </ErrorBoundary>
       </BrowserRouter>

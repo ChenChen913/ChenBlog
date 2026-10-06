@@ -3,12 +3,19 @@ import { getAllPosts, getCategories } from '../utils/markdown';
 import PostCard from '../components/PostCard';
 import { useAppContext } from '../context/AppContext';
 import { motion } from 'motion/react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function Categories() {
   const { t } = useAppContext();
   const posts = getAllPosts();
   const categories = getCategories();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  // 🔧 SEO：分类页动态元数据
+  usePageMeta({
+    title: `${t('nav_categories')} | MaoChen Blog`,
+    description: t('categories_subtitle'),
+  });
 
   const filteredPosts = activeCategory 
     ? posts.filter(p => p.frontmatter.category === activeCategory)

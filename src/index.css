@@ -7,7 +7,7 @@ html {
 
 @font-face {
   font-family: "LXGW Local WenKai";
-  src: url("/fonts/lxgw/LXGWWenKai-Medium.ttf") format("truetype");
+  src: url("/fonts/lxgw/LXGWWenKai-Medium-subset.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -15,7 +15,7 @@ html {
 
 @font-face {
   font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains/JetBrainsMono-Regular.ttf") format("truetype");
+  src: url("/fonts/jetbrains/JetBrainsMono-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -23,7 +23,7 @@ html {
 
 @font-face {
   font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains/JetBrainsMono-Bold.ttf") format("truetype");
+  src: url("/fonts/jetbrains/JetBrainsMono-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -48,19 +48,19 @@ html {
     @apply bg-white text-stone-800 dark:bg-stone-900 dark:text-stone-200 transition-colors duration-300;
   }
 
-  /* 鐒︾偣鍙鎬?- 纭繚閿洏鐢ㄦ埛鑳界湅鍒扮劍鐐?*/
+  /* 焦点可见性 - 确保键盘用户能看到焦点 */
   *:focus-visible {
     outline: 2px solid #3b82f6;
     outline-offset: 2px;
     border-radius: 2px;
   }
 
-  /* 绉婚櫎榛樿鐒︾偣,浣跨敤 focus-visible */
+  /*  移除默认焦点,使用 focus-visible  */
   *:focus {
     outline: none;
   }
 
-  /* 纭繚鎵€鏈変氦浜掑厓绱犲彲鑱氱劍 */
+  /* (repaired comment) */
   button:focus-visible,
   a:focus-visible,
   input:focus-visible,
@@ -71,7 +71,7 @@ html {
     border-radius: 4px;
   }
 
-  /* 灞忓箷闃呰鍣ㄤ笓鐢ㄥ唴瀹?*/
+  /* (乱码注释已清理) */
   .sr-only {
     position: absolute;
     width: 1px;
@@ -84,7 +84,6 @@ html {
     border-width: 0;
   }
 
-  /* 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺?     寮哄埗瑕嗙洊鏂囩珷鏍囬澶у皬 - 鏈€楂樹紭鍏堢骇
      鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺?*/
   .article-body h2 {
     font-size: var(--article-h2-size, 1.5rem) !important;
@@ -125,7 +124,6 @@ html {
     color: rgb(51 65 85) !important;
   }
 
-  /* 娣辫壊妯″紡 */
   .dark .article-body h2 {
     color: rgb(214 211 209) !important;
     border-bottom: 1px solid rgb(68 64 60 / 0.3) !important;
@@ -143,7 +141,7 @@ html {
 }
 
 /* Code block system */
-/* 鈹€鈹€ 琛屽唴浠ｇ爜锛堥潪浠ｇ爜鍧楋級 鈹€鈹€ */
+  /* (repaired comment) */
 .code-block {
   --code-block-font: "Cascadia Code", "Cascadia Mono", "JetBrains Mono", "Fira Code", Consolas, monospace;
   --code-row-line-height: 1.68;
@@ -488,7 +486,7 @@ html {
 /* TOC Styles */
 .article-page {
   display: flex;
-  align-items: flex-start;  /* 缁濆涓嶈兘鏄粯璁ゅ€?stretch */
+  align-items: flex-start;
   gap: 48px;
 }
 
@@ -496,7 +494,7 @@ html {
   width: 208px;
   flex-shrink: 0;
   position: sticky;
-  top: 88px;                /* 瀵艰埅鏍忛珮搴?+ 8px */
+  top: 88px;
   max-height: calc(100vh - 104px);
   overflow-y: auto;
   scrollbar-width: none;
@@ -628,7 +626,7 @@ html {
   @apply font-bold text-stone-900 dark:text-stone-100;
   font-family: var(--font-kai);
 }
-/* 绉婚櫎浜?.article-body > h2 鍜?.article-body > h3 鐨勫己鍒舵牱寮忥紝璁?inline 鏍峰紡鐢熸晥 */
+  /* 移除默认焦点, 使用 focus-visible */
 .article-body p { @apply mb-4; font-family: var(--font-kai); line-height: var(--article-body-line-height); }
 .article-body a { @apply text-blue-600 dark:text-blue-400 hover:underline; }
 .article-body ul { @apply list-disc pl-6 mb-4; }
@@ -644,33 +642,33 @@ html {
   margin-left: -1.5rem;
 }
 .article-body blockquote { @apply border-l-4 border-stone-300 dark:border-stone-600 pl-4 italic text-stone-600 dark:text-stone-400 mb-4; font-family: var(--font-kai); line-height: var(--article-blockquote-line-height); }
-/* 鏂囩珷鍥剧墖鍩虹鏍峰紡 - 绉诲姩浼樺厛 */
+  /* (repaired comment) */
 .article-body img {
   @apply h-auto rounded-lg my-6 cursor-zoom-in;
-  max-width: 100%; /* 馃摫 鎵嬫満绔細鍥剧墖鍗犳弧瀹藉害 */
+  max-width: 100%;
   display: block;
   margin-left: auto;
   margin-right: auto;
   transition: all 0.3s ease;
 }
 
-/* 骞虫澘璁惧 */
+  /* (repaired comment) */
 @media (min-width: 640px) {
   .article-body img {
     max-width: 80%;
   }
 }
 
-/* 妗岄潰璁惧 */
+  /* (repaired comment) */
 @media (min-width: 1024px) {
   .article-body img {
     max-width: 70%;
     max-height: 450px; /* 娣诲姞楂樺害闄愬埗 */
-    object-fit: contain; /* 淇濇寔瀹介珮姣?*/
+    object-fit: contain;
   }
 }
 
-/* 澶у睆骞曠粷瀵逛笂闄?*/
+/* (乱码注释已清理) */
 @media (min-width: 1280px) {
   .article-body img {
     max-width: 580px;
@@ -684,7 +682,7 @@ html {
   @apply rounded-lg overflow-hidden mb-4;
 }
 
-/* 鏂囨湰楂樹寒鏍峰紡 - 鏀寔 <mark> 鍜?<ins> 鏍囩 */
+  /* (repaired comment) */
 .article-body mark,
 .article-body ins {
   @apply bg-yellow-200 dark:bg-yellow-900/50 text-inherit px-1 rounded-sm;
@@ -692,10 +690,8 @@ html {
 }
 
 /* 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲
-   娑叉€佺幓鐠冪郴缁?鈥?鏍稿績璁捐璇存槑
-   渚ц竟鏍?aside 鑳屾櫙璁句负 stone-100锛?   璁╅€変腑椤圭殑鐧借壊鐜荤拑鍦ㄦ湁鑹茶儗鏅笂鎵嶈兘鏄剧幇銆?   鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲 */
 
-/* 渚ц竟鏍忔暣浣撹儗鏅?鈥斺€?蹇呴』鏈夊簳鑹诧紝鐜荤拑鏁堟灉鎵嶅彲瑙?*/
+  /* (repaired comment) */
 #desktop-sidebar {
   background: rgba(245, 242, 238, 0.85) !important;
   backdrop-filter: blur(8px);
@@ -707,7 +703,7 @@ html {
   -webkit-backdrop-filter: blur(8px);
 }
 
-/* 渚ц竟鏍忓鑸孩鍑哄鐞?*/
+/* (乱码注释已清理) */
 #sidebar-nav {
   overflow-y: auto;
   overflow-x: hidden;
@@ -731,30 +727,30 @@ html {
   background: rgba(214, 211, 209, 0.2);
 }
 
-/* 鈹€鈹€ 渚ц竟鏍忛€変腑椤癸細娑叉€佺幓鐠?鈹€鈹€ */
+  /* (repaired comment) */
 .nav-glass-active {
-  /* 杩戜箮绾櫧鐨勫崐閫忔槑 鈥斺€?鍦?stone-100 鑳屾櫙涓婁細鏄剧幇鍑虹櫧鑹茬幓鐠冭川鎰?*/
+  /* (repaired comment) */
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  /* 缁嗘弿杈癸細椤堕儴浜€佸簳閮ㄦ殫锛屾ā鎷熺幓鐠冭竟缂樻姌灏?*/
+  /* (repaired comment) */
   border-top: 1px solid rgba(255, 255, 255, 0.95);
   border-left: 1px solid rgba(255, 255, 255, 0.90);
   border-right: 1px solid rgba(210, 205, 200, 0.60);
   border-bottom: 1px solid rgba(210, 205, 200, 0.60);
   border-radius: 14px;
-  /* 涓夊眰闃村奖锛氬鍙戝厜 + 搴曢儴鎶曞奖 + 鍐呴《楂樺厜 */
+  /* 三层阴影：发光 + 底部投影 + 内顶高光 */
   box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.90),   /* 澶栭《楂樺厜 */
-    0 4px 16px rgba(0, 0, 0, 0.10),         /* 鏌斿拰鎶曞奖 */
-    0 1px 4px rgba(0, 0, 0, 0.06),          /* 璐村湴灏忛槾褰?*/
-    inset 0 1.5px 0 rgba(255, 255, 255, 1.0), /* 鍐呴《楂樺厜鏉★紙鏈€鍏抽敭锛?*/
-    inset 0 -1px 0 rgba(0, 0, 0, 0.04);     /* 鍐呭簳鏆楄竟 */
+    0 1px 1px rgba(255, 255, 255, 0.90),   /* 外顶高光 */
+    0 4px 16px rgba(0, 0, 0, 0.10),         /* 柔和投影 */
+    0 1px 4px rgba(0, 0, 0, 0.06),          /* 贴地小阴影 */
+    inset 0 1.5px 0 rgba(255, 255, 255, 1.0), /* 内顶高光条（最关键）*/
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);     /* 内底暗边 */
   position: relative;
   overflow: hidden;
 }
 
-/* ::before 浼厓绱狅細45搴︽枩鍚戝厜娉芥笎鍙橈紝妯℃嫙鐜荤拑鍐呴儴鍏夌嚎鎶樺皠 */
+  /* (repaired comment) */
 .nav-glass-active::before {
   content: '';
   position: absolute;
@@ -770,13 +766,13 @@ html {
   z-index: 0;
 }
 
-/* 纭繚 icon 鍜屾枃瀛楀湪浼厓绱犱箣涓?*/
+  /* (repaired comment) */
 .nav-glass-active > * {
   position: relative;
   z-index: 1;
 }
 
-/* 娣辫壊妯″紡閫変腑椤?*/
+  /* (repaired comment) */
 .dark .nav-glass-active {
   background: rgba(255, 255, 255, 0.11);
   backdrop-filter: blur(20px) saturate(180%);
@@ -800,7 +796,7 @@ html {
   );
 }
 
-/* 鈹€鈹€ 鍙充笂瑙掓寜閽細娑叉€佺幓鐠?鈹€鈹€ */
+/* (乱码注释已清理) */
 .btn-glass-pill {
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(20px) saturate(180%);
@@ -853,7 +849,7 @@ html {
   transform: translateY(0px);
 }
 
-/* 娣辫壊妯″紡鎸夐挳 */
+  /* (repaired comment) */
 .dark .btn-glass-pill {
   background: rgba(255, 255, 255, 0.11);
   backdrop-filter: blur(20px) saturate(180%);
@@ -887,27 +883,26 @@ html {
 }
 
 /* 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲
-   濯掍綋鏍峰紡 鈥?鍥剧墖銆佽棰戙€侀煶棰?   鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲 */
 
-/* 鈹€鈹€ 鏂囩珷鍥剧墖鏍峰紡 鈹€鈹€ */
+  /* (repaired comment) */
 .article-image {
   display: block;
   max-width: 100%;
   height: auto;
-  margin: 2rem auto; /* 澧炲姞涓婁笅闂磋窛 */
+  margin: 2rem auto; /* 增加上下间距 */
   border-radius: 8px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   cursor: zoom-in;
-  transition: all 0.3s ease; /* 寤堕暱杩囨浮鏃堕棿 */
+  transition: all 0.3s ease; /* 延长过渡时间 */
 }
 
-/* 鎮仠鏁堟灉澧炲己 */
+/*  悬停效果增强  */
 .article-image:hover {
-  transform: scale(1.02); /* 澧炲己鏀惧ぇ鏁堟灉 */
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); /* 澧炲己闃村奖 */
+  transform: scale(1.02); /* 增强放大效果 */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); /* 增强阴影 */
 }
 
-/* 鍝嶅簲寮忚ˉ鍏?*/
+  /* (repaired comment) */
 @media (min-width: 768px) {
   .article-image {
     max-width: 85%;
@@ -929,7 +924,7 @@ html {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
-/* 鈹€鈹€ Lightbox 鍏ㄥ睆閬僵 鈹€鈹€ */
+/* (乱码注释已清理) */
 .lightbox-overlay {
   position: fixed;
   inset: 0;
@@ -974,7 +969,7 @@ html {
   transform: scale(1.1);
 }
 
-/* 鈹€鈹€ 瑙嗛瀹瑰櫒鏍峰紡 鈹€鈹€ */
+  /* (repaired comment) */
 .video-container {
   width: 100%;
   border-radius: 8px;
@@ -1004,7 +999,7 @@ html {
   border-radius: 8px;
 }
 
-/* 鈹€鈹€ 闊抽鎾斁鍣細娑叉€佺幓鐠冩晥鏋?鈹€鈹€ */
+  /* (repaired comment) */
 .audio-container {
   width: 100%;
   border-radius: 12px;
@@ -1076,20 +1071,19 @@ html {
 }
 
 /* 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲
-   KaTeX 鏁板鍏紡 + 鍒嗙被椤垫恫鎬佺幓鐠?+ 鐩綍 + 鍥炲埌椤堕儴
+   KaTeX 数学公式 + 分类页动态去玻璃 + 目录 + 回到顶部
    鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲 */
 
-/* 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺?   KaTeX 鏁板鍏紡瀹屾暣鏍峰紡绯荤粺
    鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺?*/
 
-/* 鈹€鈹€ 琛屽唴鍏紡锛氫笌姝ｆ枃绛夐珮锛屼笉鎾戝紑琛岃窛 鈹€鈹€ */
+  /* (repaired comment) */
 .katex {
   font-size: 1.0em !important;
   line-height: inherit;
   color: inherit;
 }
 
-/* 鈹€鈹€ 鍧楃骇鍏紡瀹瑰櫒锛氳瑙夊崱鐗囨晥鏋?鈹€鈹€ */
+  /* (repaired comment) */
 .katex-display {
   display: block;
   margin: 0 !important;
@@ -1100,7 +1094,7 @@ html {
   color: inherit;
 }
 
-/* 鍧楃骇鍏紡鍐呯殑 katex 鍏冪礌瀛楀彿鐣ュぇ浜庤鍐?*/
+  /* (repaired comment) */
 .katex-display > .katex {
   font-size: 1.15em !important;
   display: inline-block;
@@ -1108,8 +1102,7 @@ html {
 }
 
 /*
-  淇闂2锛?  褰?<p> 鍐呭彧鍖呭惈涓€涓?.katex-display 鏃讹紝
-  娓呴浂 <p> 鐨勪笂涓?margin锛岄槻姝㈠潡绾у叕寮忎笂涓嬩骇鐢熷弻鍊嶇┖鐧姐€?*/
+  修复问题2:  当 <p> 内只包含一个 .katex-display 时，
 .article-body p:has(> .katex-display) {
   margin-top: 0;
   margin-bottom: 0;
@@ -1117,7 +1110,6 @@ html {
 }
 
 /*
-  淇闂3锛?  鍧楃骇鍏紡鈥斺€旀棤鑳屾櫙鑹层€佷粎淇濈暀閫傚害闂磋窛銆?*/
 .article-body .katex-display {
   margin: 24px 0 !important;
   padding: 0;
@@ -1125,7 +1117,6 @@ html {
 }
 
 /*
-  淇闂1锛氭繁鑹叉ā寮忓叕寮忛鑹?*/
 .dark .katex {
   color: #e7e5e4 !important;
 }
@@ -1143,7 +1134,7 @@ html {
   background: #e7e5e4;
 }
 
-/* 鈹€鈹€ 鑷畾涔夋粴鍔ㄦ潯锛堝潡绾у叕寮忚秴瀹芥椂锛?鈹€鈹€ */
+  /* (repaired comment) */
 .katex-display::-webkit-scrollbar {
   height: 4px;
 }
@@ -1158,7 +1149,7 @@ html {
   background: rgba(168, 162, 158, 0.30);
 }
 
-/* 鈹€鈹€ 鍒嗙被椤电瓫閫夋寜閽細娑叉€佺幓鐠冿紙閫変腑鎬侊級 鈹€鈹€ */
+  /* (repaired comment) */
 .cat-glass-active {
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(16px) saturate(180%);
@@ -1205,7 +1196,7 @@ html {
   color: #f5f5f4;
 }
 
-/* 鈹€鈹€ 鍒嗙被椤电瓫閫夋寜閽細鏅€氭€侊紙闈為€変腑锛?鈹€鈹€ */
+  /* (repaired comment) */
 .cat-glass-normal {
   background: rgba(245, 242, 238, 0.70);
   backdrop-filter: blur(10px);
@@ -1234,12 +1225,12 @@ html {
 }
 
 /* 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲
-   鏂囩珷鍙充晶鐩綍锛圱OC锛?   缁撴瀯锛?     .toc-shell   澶栧眰鐜荤拑瀹瑰櫒  position:fixed, overflow:hidden
+   文章右侧目录（TOC）   结构:     .toc-shell   外层玻璃容器  position:fixed, overflow:hidden
      .toc-scroll  鍐呭眰婊氬姩鍖?   overflow-y:auto
      .toc-pill    婵€娲婚珮浜兌鍥? position:absolute, 鏃犲祵濂梑ackdrop
    鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲 */
 
-/* 澶栧眰锛氱幓鐠冨澹?鈥斺€?鍙礋璐ｈ瑙夛紝overflow:hidden 淇濊瘉鍦嗚 */
+  /* (repaired comment) */
 .toc-shell {
   display: none;
   position: fixed;
@@ -1249,7 +1240,7 @@ html {
   max-height: calc(100vh - 110px);
   z-index: 50;
 
-  /* 涓庝晶杈规爮鍚屾鐜荤拑鑳屾櫙 */
+  /* (repaired comment) */
   background: rgba(245, 242, 238, 0.90);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -1264,7 +1255,7 @@ html {
     0 2px 8px  rgba(0, 0, 0, 0.06),
     inset 0  1.5px 0 rgba(255, 255, 255, 1.00),
     inset 0 -1px  0 rgba(0,   0,   0,   0.04);
-  /* overflow:hidden 纭繚鍏夋辰灞傚拰鍦嗚姝ｇ‘瑁佸垏锛屼笉鑳芥湁 overflow-y:auto */
+  /* (repaired comment) */
   overflow: hidden;
 }
 
@@ -1272,7 +1263,7 @@ html {
   .toc-shell { display: block; }
 }
 
-/* 鍏夋辰灞傦細缁濆瀹氫綅锛屼笉鑴辩瀹瑰櫒 */
+  /* (repaired comment) */
 .toc-shell::before {
   content: '';
   position: absolute;
@@ -1309,7 +1300,7 @@ html {
   );
 }
 
-/* 鍐呭眰锛氱嫭绔嬫粴鍔ㄥ尯锛屽湪鍏夋辰灞備箣涓?*/
+  /* (repaired comment) */
 .toc-scroll {
   position: relative;
   z-index: 1;
@@ -1320,7 +1311,7 @@ html {
   scrollbar-color: rgba(168, 162, 158, 0.35) transparent;
   padding: 14px 12px;
 }
-/* 娑叉€佺幓鐠冩粴鍔ㄦ潯 */
+/* (乱码注释已清理) */
 .toc-scroll::-webkit-scrollbar { width: 5px; }
 .toc-scroll::-webkit-scrollbar-track { background: transparent; }
 .toc-scroll::-webkit-scrollbar-thumb {
@@ -1342,7 +1333,7 @@ html {
   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
 
-/* 鐩綍鏍囬琛岋細鍥哄畾鍦ㄩ《閮紝涓嶉殢鐩綍婊氬姩 */
+  /* (repaired comment) */
 .toc-title-row {
   position: relative;
   z-index: 1;
@@ -1352,7 +1343,7 @@ html {
   padding: 14px 12px 0 16px;
 }
 
-/* 鐩綍鏍囬鏂囧瓧 */
+  /* (repaired comment) */
 .toc-title {
   font-size: 0.8rem;
   font-weight: 900;
@@ -1363,7 +1354,7 @@ html {
 }
 .dark .toc-title { color: rgba(168, 162, 158, 0.65); }
 
-/* 鏀惰捣鎸夐挳锛歨over 鏍囬鏃舵樉绀?*/
+  /* (repaired comment) */
 .toc-collapse-btn {
   font-size: 0.65rem;
   font-weight: 500;
@@ -1386,7 +1377,7 @@ html {
   color: rgba(214, 211, 209, 1) !important;
 }
 
-/* 鏉＄洰鎸夐挳 */
+  /* (repaired comment) */
 .toc-item {
   position: relative;
   z-index: 1;
@@ -1416,7 +1407,7 @@ html {
 }
 .toc-item:not(.toc-item--active):hover { color: rgb(68, 64, 60); }
 
-/* 椤剁骇鏍囬锛堥潪瀛愬垪琛級锛氶粦浣撳姞绮楅啋鐩?*/
+  /* (repaired comment) */
 .toc-scroll > ul > li > div > .toc-item:not(.toc-item--h3) {
   font-weight: 800;
   font-size: 0.82rem;
@@ -1430,7 +1421,7 @@ html {
 .dark .toc-item--active { color: rgb(231, 229, 228); }
 .dark .toc-item:not(.toc-item--active):hover { color: rgb(214, 211, 209); }
 
-/* 婵€娲婚珮浜兌鍥?   鈿狅笍 涓嶅姞 backdrop-filter锛氱埗瀹瑰櫒 .toc-shell 宸叉湁 blur锛?      宓屽 backdrop-filter 浼氬鑷村弻閲嶆ā绯婂紓甯革紝鏀圭敤绾櫧鍗婇€忔槑 */
+  /* (repaired comment) */
 .toc-pill {
   position: absolute;
   inset: 0 -8px;
@@ -1450,7 +1441,7 @@ html {
     inset 0  1.5px 0 rgba(255, 255, 255, 1.00),
     inset 0 -1px  0 rgba(0,   0,   0,   0.04);
 }
-/* 鍏夋辰娓愬彉 */
+  /* (repaired comment) */
 .toc-pill::before {
   content: '';
   position: absolute;
@@ -1486,10 +1477,10 @@ html {
   );
 }
 
-/* H3 瀛愬垪琛ㄧ缉杩?*/
+/* (乱码注释已清理) */
 .toc-sub { padding-left: 14px; }
 
-/* 鈹€鈹€ 鏀惰捣鍚庣殑鏌虫潯 鈹€鈹€ */
+/* (乱码注释已清理) */
 .toc-shell--collapsed {
   border-radius: 12px;
   padding: 0 !important;
@@ -1500,7 +1491,7 @@ html {
   display: none;
 }
 
-/* 鏌虫潯鎸夐挳 */
+  /* (repaired comment) */
 .toc-strip {
   position: relative;
   z-index: 1;
@@ -1536,7 +1527,7 @@ html {
   color: rgba(214, 211, 209, 0.85);
 }
 
-/* 鈹€鈹€ 鍥炲埌椤堕儴 + Back 鎸夐挳 鈹€鈹€ */
+  /* (repaired comment) */
 .back-btn-glass {
   display: inline-flex;
   align-items: center;
@@ -1604,7 +1595,7 @@ html {
   color: #f5f5f4;
 }
 
-/* 鏂囩珷椤垫偓娴瓸ack鎸夐挳 */
+  /* (repaired comment) */
 .post-back-btn {
   display: none;
 }
@@ -1619,7 +1610,7 @@ html {
   }
 }
 
-/* 鈹€鈹€ 鎵嬫満椤堕儴瀵艰埅鏍忥細娑叉€佺幓鐠冩晥鏋?鈹€鈹€ */
+  /* (repaired comment) */
 .mobile-topnav {
   background: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(60px) saturate(220%) brightness(1.08);
@@ -1636,7 +1627,7 @@ html {
     inset 0 -0.5px 0 rgba(255, 255, 255, 0.06),
     0 1px 30px rgba(0, 0, 0, 0.3);
 }
-/* 椤堕儴瀵艰埅鏍忔寜閽細鐜荤拑璐ㄦ劅 */
+  /* (repaired comment) */
 .mobile-topnav-btn {
   width: 2.25rem;
   height: 2.25rem;
@@ -1668,7 +1659,7 @@ html {
   background: rgba(255, 255, 255, 0.14);
 }
 
-/* 鈹€鈹€ 鎵嬫満绔枃绔犳搷浣滄寜閽?鈹€鈹€ */
+/* (乱码注释已清理) */
 .mobile-action-btn {
   color: rgba(28, 25, 23, 0.85);
   background: rgba(255, 255, 255, 0.6);
@@ -1698,7 +1689,7 @@ html {
   background: rgba(255, 255, 255, 0.16);
 }
 
-/* 鈹€鈹€ 鎵嬫満绔洰褰曢潰鏉匡細娑叉€佺幓鐠?鈹€鈹€ */
+  /* (repaired comment) */
 .mobile-toc-panel {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(50px) saturate(200%) brightness(1.05);
@@ -1742,7 +1733,7 @@ html {
   border-radius: 10px;
 }
 
-/* 鈹€鈹€ 鎵嬫満搴曢儴瀵艰埅鏍忥細鑻规灉娑叉€佺幓鐠?+ 姘存淮鎶樺皠鏁堟灉 鈹€鈹€ */
+  /* (repaired comment) */
 .mobile-bottomnav {
   background: rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(60px) saturate(220%) brightness(1.08);
@@ -1760,7 +1751,7 @@ html {
     0 -1px 30px rgba(0, 0, 0, 0.4);
 }
 
-/* 娲昏穬椤硅兌鍥婏細姘存淮鐜荤拑 */
+/* 活跃项胶囊：水滴玻璃 */
 .mobile-nav-pill {
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(30px) saturate(200%) brightness(1.15);
@@ -1777,7 +1768,7 @@ html {
   pointer-events: none;
   overflow: hidden;
 }
-/* 姘存淮楂樺厜锛氶《閮ㄥ己鎶樺皠 */
+/*  水滴高光：顶部强折射  */
 .mobile-nav-pill::before {
   content: '';
   position: absolute;
@@ -1792,7 +1783,7 @@ html {
   border-radius: inherit;
   pointer-events: none;
 }
-/* 姘存淮寮у舰鍙嶅厜 */
+  /* (repaired comment) */
 .mobile-nav-pill::after {
   content: '';
   position: absolute;
@@ -1837,14 +1828,14 @@ html {
   );
 }
 
-/* 纭繚鎵嬫満椤甸潰鍐呭涓嶈搴曢儴瀵艰埅閬尅 */
+  /* (repaired comment) */
 @media (max-width: 767px) {
   #main-content {
     padding-bottom: 80px !important;
   }
 }
 
-/* 鈹€鈹€ 鍥炲埌椤堕儴鎸夐挳锛氬渾褰㈡恫鎬佺幓鐠冩晥鏋?鈹€鈹€ */
+  /* (repaired comment) */
 .scroll-to-top-btn {
   position: fixed;
   z-index: 40;
@@ -1906,7 +1897,7 @@ html {
   color: #f5f5f4;
 }
 
-/* 鎵嬫満绔洖鍒伴《閮ㄦ寜閽綅缃皟鏁?*/
+  /* (repaired comment) */
 @media (max-width: 767px) {
   .scroll-to-top-btn {
     bottom: 80px;
@@ -1916,7 +1907,7 @@ html {
   }
 }
 
-/* 鈹€鈹€ 棣栭〉鏍囬褰╄櫣璇嶅姩鐢?鈹€鈹€ */
+  /* (repaired comment) */
 .rainbow-word {
   background: linear-gradient(
     90deg,
