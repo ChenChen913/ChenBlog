@@ -91,6 +91,20 @@ def hello(name: str) -> None:
 hello("World")
 ```
 
+```python
+# 长行换行测试：这是一行非常非常非常非常非常非常非常非常非常长的注释，
+# 用来验证代码块的长行自动换行效果，不应该出现横向滚动条
+import numpy as np
+
+def gaussian(x, mu=0, sigma=1):
+    """标准高斯函数"""
+    return (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
+
+x_values = np.linspace(-4, 4, 100)
+y_values = gaussian(x_values)
+print(y_values)
+```
+
 ## 6. 引用块
 
 > 这是一段引用文本。

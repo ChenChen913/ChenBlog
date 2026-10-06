@@ -29,9 +29,10 @@ npm run dev
 title: '文章标题'
 title_en: 'Article Title' # 可选，英文标题
 date: '2025-01-15'
-category: 'tech' # tech | life | reading
+category: 'tech' # tech | life | reading | product
 tags: ['React', 'TypeScript']
-featured: false # 可选，是否精选
+featured: false # 可选，精选（时间轴上的金色菱形轴点）
+weekly: false # 可选，周刊文章（进入 /weekly 周刊页）
 draft: false # 可选，是否草稿
 coverImage: 'https://...' # 可选，封面图片
 ---
@@ -41,24 +42,35 @@ coverImage: 'https://...' # 可选，封面图片
 
 ### Frontmatter 字段说明
 
-| 字段         | 必填 | 类型     | 说明                              |
-| ------------ | ---- | -------- | --------------------------------- |
-| `title`      | ✅   | string   | 文章标题（中文）                  |
-| `title_en`   | ❌   | string   | 文章标题（英文）                  |
-| `date`       | ✅   | string   | 发布日期，格式 `YYYY-MM-DD`       |
-| `category`   | ✅   | string   | 分类：`tech` / `life` / `reading` |
-| `tags`       | ✅   | string[] | 标签数组                          |
-| `featured`   | ❌   | boolean  | 是否精选文章                      |
-| `draft`      | ❌   | boolean  | 是否草稿（草稿不会在列表显示）    |
-| `coverImage` | ❌   | string   | 封面图片 URL                      |
+| 字段         | 必填 | 类型     | 说明                                        |
+| ------------ | ---- | -------- | ------------------------------------------- |
+| `title`      | ✅   | string   | 文章标题（中文）                            |
+| `title_en`   | ❌   | string   | 文章标题（英文）                            |
+| `date`       | ✅   | string   | 发布日期，格式 `YYYY-MM-DD`                 |
+| `category`   | ✅   | string   | 分类：`tech` / `life` / `reading` / `product` |
+| `tags`       | ✅   | string[] | 标签数组                                    |
+| `featured`   | ❌   | boolean  | 精选文章：时间轴上显示为金色菱形轴点，分类页可 ◆ 过滤 |
+| `weekly`     | ❌   | boolean  | 周刊文章：进入 /weekly 周刊页，与首页混排无标识 |
+| `draft`      | ❌   | boolean  | 是否草稿（草稿不会在列表显示）              |
+| `coverImage` | ❌   | string   | 封面图片 URL                                |
 
 ### 草稿功能
 
 设置 `draft: true` 的文章：
 
-- 不会出现在首页、分类页、精选页
+- 不会出现在首页、周刊页、分类页
 - 可以通过直接访问 URL 查看
 - 访问草稿时会显示提示信息
+
+### 周刊（/weekly）
+
+写作 `weekly: true` 的文章会进入独立的周刊页：
+
+- 顶部是一条 28px 高的周历条（52/53 格），着色格代表已发文的周，可点击跳转到对应周分组；滚动时周历条吸顶固定，当前浏览的周自动高亮联动；跨年内容可按年份切换
+- 下方按 ISO 8601 周号分组：一周一篇直达文章，多篇则显示周组头（日期区间 + 周序），空周不渲染
+- 周刊文章同时也在首页时间轴混排，无任何额外标识
+- 文章页底部有上一周 / 下一周互链
+- 主题自动切换：北京时间 20:00–06:00 暗色，其余亮色；手动切换优先
 
 ### Markdown 支持
 
@@ -113,7 +125,7 @@ npm run preview    # 本地预览 dist
 ## 性能设计
 
 - **文章数据双通道**：列表页只读构建期生成的轻量元数据索引（`virtual:posts-index`，几 KB）；正文按需加载独立 chunk，首页零正文流量
-- **hover 预取**：文章卡片与上/下篇链接在 hover / 键盘聚焦时提前拉取正文 chunk，点开即达；省流模式与 slow-2g 自动跳过
+- **hover 预取 + 路由预热**：文章卡片与上/下篇链接在 hover / 键盘聚焦时提前拉取正文 chunk；空闲时段（requestIdleCallback）自动预热主要路由 chunk，首次点击文章即达；省流模式与 slow-2g 自动跳过
 - **字体 unicode-range 分片**：LXGW 楷体拆为 latin(60KB) / 常用字(881KB) / 次常用字(4.4MB) 三片，文章页典型流量 5.1MB → 941KB；新增文章引入新字后运行 `python3 scripts/font-split.py` 重建（需 fontTools + brotli，源字体在 `scripts/font-src/`）
 - **路由级代码分割**：非首屏页面与 Shiki 语法包均按需加载
 - **高亮零 wasm**：Shiki 使用 JavaScript 正则引擎（forgiving 模式），彻底移除 oniguruma wasm（155KB gzip）依赖，CSP 同步收紧
@@ -131,9 +143,9 @@ npm run preview    # 本地预览 dist
 
 推送到 main 或发起 PR 时自动运行（`.github/workflows/ci.yml`）：
 
-1. **Lint & Unit**：tsc 类型检查 + ESLint 门禁 + vitest 94 项单测
+1. **Lint & Unit**：tsc 类型检查 + ESLint 门禁 + vitest 150+ 项单测
 2. **Build & Prerender**：完整构建 + 产物存在性断言，dist 快照上传为 artifact
-3. **E2E**：Playwright 桌面 + 移动双视口 27 项用例，失败时上传报告
+3. **E2E**：Playwright 桌面 + 移动双视口 70+ 项用例（含时间轴几何对齐、周历交互、双主题代码块对比度回归锁），失败时上传报告
 
 ## 项目结构
 
@@ -145,25 +157,37 @@ scripts/
 └── font-split.py           # 字体 unicode-range 分片（可重复执行）
 src/
 ├── components/          # 组件
-│   ├── FloatingActions.tsx   # 右上角浮动按钮
 │   ├── Layout.tsx            # 页面布局
+│   ├── SideBar.tsx           # 侧边栏（导航/搜索入口/社交链接）
+│   ├── TopNav.tsx            # 手机顶部导航
 │   ├── MobileBottomBar.tsx   # 手机底部导航
-│   ├── PostCard.tsx          # 文章卡片
-│   ├── ScrollToTop.tsx       # 回到顶部按钮
-│   ├── SearchDialog.tsx      # 站内搜索弹窗（⌘K）
+│   ├── PostTimeline.tsx      # 首页时间轴文章列表
+│   ├── PostCard.tsx          # 文章卡片（分类页等）
+│   ├── PostNavigation.tsx    # 上一篇/下一篇
+│   ├── RelatedPosts.tsx      # 相关文章推荐
+│   ├── WeeklyNavigation.tsx  # 周刊文章上周/下周互链
+│   ├── TableOfContents.tsx   # 文章目录（滚动联动高亮）
+│   ├── CodeBlock.tsx         # 代码块（Shiki 高亮/行号/复制）
+│   ├── SearchDialog.tsx      # 站内搜索弹窗（⌘K，液态玻璃）
 │   ├── ReadingProgress.tsx   # 阅读进度条
+│   ├── ArticleFontSizeControl.tsx # 阅读字号控制
+│   ├── Lightbox.tsx          # 图片点击放大
+│   ├── FloatingActions.tsx   # 浮动操作按钮
+│   ├── ScrollToTop.tsx       # 回到顶部
+│   ├── SkipLink.tsx          # 无障碍跳转链接
+│   ├── NetworkStatusBanner.tsx # 离线提示
+│   ├── ErrorBoundary.tsx     # 渲染错误边界
+│   ├── StatusView.tsx        # 状态视图（404/错误）
 │   ├── JsonLd.tsx            # JSON-LD 结构化数据
 │   ├── Comments.tsx          # giscus 评论（env 门控）
-│   ├── SideBar.tsx           # 侧边栏
-│   ├── TableOfContents.tsx   # 文章目录
-│   └── TopNav.tsx            # 手机顶部导航
+│   └── Footer.tsx            # 页脚
+├── pages/               # Home / Weekly / Categories / Post / About / NotFound / StatusPage
 ├── context/             # Context
 ├── hooks/               # usePageMeta / useTheme / useLanguage 等
 ├── i18n/                # 国际化
-├── pages/               # 页面
 ├── posts/               # Markdown 文章
-├── utils/               # 工具函数（search.ts 站内搜索等）
-└── index.css            # 全局样式
+├── utils/               # 工具函数（search.ts 站内搜索、weekly.ts 周号计算、route-prefetch.ts 路由预热等）
+└── index.css            # 全局样式（含时间轴/周刊页/液态玻璃）
 ```
 
 ## 技术栈
