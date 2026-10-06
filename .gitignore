@@ -4,6 +4,11 @@
 # Dependencies
 node_modules/
 
+# Environment files (only .env.example is tracked)
+.env
+.env.local
+.env.*.local
+
 # Build output
 dist/
 
@@ -30,6 +35,10 @@ backups/
 *.swp
 *.swo
 *~
+
+# AI 助手本地配置（个人环境，不入库）
+.claude/
+.serena/
 
 # OS
 .DS_Store
