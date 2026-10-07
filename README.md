@@ -207,7 +207,9 @@ coverImage: 'https://...' # 可选，封面图片
 │   ├── i18n/                   # 中英文案
 │   ├── posts/                  # Markdown 文章（内容即数据）
 │   ├── utils/                  # search / weekly / route-prefetch / security 等
-│   └── index.css               # 全局样式（时间轴/周刊/液态玻璃/专注模式主题）
+│   ├── index.css               # 样式入口（@import 串联，~44 行）
+│   └── styles/                 # 按功能区块拆分：base / code-block / article /
+│                               # components / overlays / timeline / reading / fallback
 ├── tests/e2e/                  # Playwright 用例（桌面+移动双视口）
 ├── .github/workflows/ci.yml    # CI：Lint&Unit → Build → E2E
 ├── vercel.json                 # Vercel 配置（SPA 回退 + 安全头 + 缓存）

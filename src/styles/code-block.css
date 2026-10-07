@@ -1,0 +1,372 @@
+/* ============================================================
+ * code-block.css —— 代码块系统（原 index.css B 区）
+ * .code-block* 全系列（Shiki 主题变量 --code-block-bg/fg）、
+ * @keyframes pulse 骨架动画、≤640px 移动适配
+ * ============================================================ */
+
+/* Code block system */
+/* (repaired comment) */
+.code-block {
+  --code-block-font:
+    'Cascadia Code', 'Cascadia Mono', 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  --code-row-line-height: 1.68;
+  /* 行号与代码同字号（见 .code-block__line-number），4 位行号（1000+ 行）
+     需要更宽的列：0.92rem 字号下 4 位 tabular 数字约 35.3px + 左右 padding 29.6px */
+  --code-line-number-width: 4.15rem;
+  border: 1px solid rgba(120, 113, 108, 0.18);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fbfaf8;
+  box-shadow: 0 8px 24px rgba(28, 25, 23, 0.06);
+}
+
+.dark .code-block {
+  border-color: rgba(214, 211, 209, 0.12);
+  background: #11100f;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+}
+
+.code-block__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.56rem;
+  min-height: 2.1rem;
+  padding: 0.26rem 0.62rem;
+  border-bottom: 1px solid rgba(120, 113, 108, 0.14);
+  background: #f4f2ee;
+}
+
+.dark .code-block__header {
+  border-bottom-color: rgba(214, 211, 209, 0.1);
+  background: #1c1917;
+}
+
+.code-block__header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.54rem;
+  min-width: 0;
+}
+
+.code-block__window-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.code-block__window-dot {
+  width: 0.46rem;
+  height: 0.46rem;
+  border-radius: 9999px;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35);
+}
+
+.code-block__window-dot--red {
+  background: #f87171;
+}
+
+.code-block__window-dot--yellow {
+  background: #fbbf24;
+}
+
+.code-block__window-dot--green {
+  background: #4ade80;
+}
+
+.code-block__language {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  color: #57534e;
+  font-family: var(--code-block-font);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dark .code-block__language {
+  color: #d6d3d1;
+}
+
+.code-block__copy-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  flex-shrink: 0;
+  min-height: 1.45rem;
+  padding: 0.16rem 0.42rem;
+  border: 1px solid rgba(120, 113, 108, 0.16);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.62);
+  color: #57534e;
+  font-family: var(--code-block-font);
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    color 0.16s ease,
+    transform 0.16s ease;
+}
+
+.code-block__copy-button:hover {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(87, 83, 78, 0.26);
+  color: #1c1917;
+  transform: translateY(-1px);
+}
+
+.code-block__copy-button:active {
+  transform: translateY(0);
+}
+
+.dark .code-block__copy-button {
+  border-color: rgba(214, 211, 209, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: #d6d3d1;
+}
+
+.dark .code-block__copy-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fafaf9;
+}
+
+.code-block__copy-icon--success {
+  color: #16a34a;
+}
+
+.code-block__copy-icon--error {
+  color: #dc2626;
+}
+
+.dark .code-block__copy-icon--success {
+  color: #4ade80;
+}
+
+.dark .code-block__copy-icon--error {
+  color: #f87171;
+}
+
+.code-block__status-text {
+  color: #64748b;
+  font-family: var(--code-block-font);
+  font-size: 0.75rem;
+}
+
+.dark .code-block__status-text {
+  color: #a8a29e;
+}
+
+.code-block__viewport {
+  overflow: auto;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(120, 113, 108, 0.08) 0 var(--code-line-number-width),
+      transparent var(--code-line-number-width)
+    ),
+    var(--code-block-bg, #fbfaf8);
+}
+
+.dark .code-block__viewport {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(214, 211, 209, 0.05) 0 var(--code-line-number-width),
+      transparent var(--code-line-number-width)
+    ),
+    var(--code-block-bg, #09090b);
+}
+
+.code-block__rows {
+  position: relative;
+  min-width: 0;
+  padding: 0.72rem 0;
+}
+
+.code-block__rows::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 var(--code-line-number-width);
+  width: 1px;
+  background: rgba(148, 163, 184, 0.18);
+  pointer-events: none;
+}
+
+.dark .code-block__rows::before {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.code-block__row {
+  display: grid;
+  grid-template-columns: var(--code-line-number-width) minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.code-block__line-number,
+.code-block__line-content {
+  display: flex;
+  align-items: flex-start;
+  min-height: calc(var(--article-code-size, 0.92rem) * var(--code-row-line-height));
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.code-block__line-number {
+  padding-left: 1rem;
+  padding-right: 0.85rem;
+  color: #57534e;
+  font-family: var(--code-block-font);
+  /* 与 .code-block__code 完全同字号同行高：不同字号（原 0.82rem vs 0.92rem）
+     会导致半行距差异，行号文字比代码文字偏高约 1.3px，千行代码块中肉眼可见。
+     同字号 + 同字体 + 同行高 = 行框像素级一致，基线严格对齐 */
+  font-size: var(--article-code-size, 0.92rem);
+  line-height: var(--code-row-line-height);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  user-select: none;
+}
+
+.dark .code-block__line-number {
+  color: #a8a29e;
+}
+
+.code-block__line-content {
+  min-width: 0;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.code-block__code {
+  display: block;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  color: var(--code-block-fg, #0f172a);
+  font-family: var(--code-block-font);
+  font-size: var(--article-code-size, 0.92rem);
+  line-height: var(--code-row-line-height);
+}
+
+.code-block__semantic {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: pre;
+  border: 0;
+}
+
+.code-block__code--nowrap {
+  white-space: pre;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.code-block__token {
+  white-space: inherit;
+}
+
+.code-block__empty-line {
+  display: inline-block;
+  min-height: calc(1em * var(--code-row-line-height));
+}
+
+.code-block__code--plain,
+.code-block__skeleton {
+  font-family: var(--code-block-font);
+}
+
+.code-block__skeleton {
+  height: 1rem;
+  margin-top: 0.28rem;
+  margin-bottom: 0.28rem;
+  border-radius: 9999px;
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.14),
+    rgba(226, 232, 240, 0.45),
+    rgba(148, 163, 184, 0.14)
+  );
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.dark .code-block__skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(82, 82, 91, 0.35),
+    rgba(113, 113, 122, 0.46),
+    rgba(82, 82, 91, 0.35)
+  );
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.58;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .code-block__header {
+    padding: 0.28rem 0.58rem;
+  }
+
+  .code-block__language {
+    font-size: 0.68rem;
+  }
+
+  .code-block__copy-button {
+    padding: 0.18rem 0.4rem;
+    font-size: 0.68rem;
+  }
+
+  .code-block__viewport {
+    --code-line-number-width: 3.7rem;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(120, 113, 108, 0.08) 0 var(--code-line-number-width),
+        transparent var(--code-line-number-width)
+      ),
+      var(--code-block-bg, #fbfaf8);
+  }
+
+  .dark .code-block__viewport {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(214, 211, 209, 0.05) 0 var(--code-line-number-width),
+        transparent var(--code-line-number-width)
+      ),
+      var(--code-block-bg, #09090b);
+  }
+
+  .code-block__row {
+    grid-template-columns: var(--code-line-number-width) minmax(0, 1fr);
+  }
+
+  .code-block__line-number {
+    padding-left: 0.65rem;
+    padding-right: 0.75rem;
+  }
+
+  /* 移动端代码字号下调时，行号必须同步下调（保持像素级对齐） */
+  .article-body:not([data-article-font-size='large']) .code-block__code,
+  .article-body:not([data-article-font-size='large']) .code-block__line-number {
+    font-size: 0.84rem;
+  }
+}

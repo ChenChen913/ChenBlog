@@ -1,0 +1,140 @@
+/* ============================================================
+ * base.css —— 全局基础（拆分自 index.css，保持原有规则顺序）
+ * 内容：html 全局、@font-face（JetBrains Mono）、@theme 设计 token、
+ *      @custom-variant dark、@layer base（reset / focus-visible /
+ *      sr-only / .article-body 标题层级）
+ * ⚠ @layer base 在 reading.css 末尾还有第二个块（层叠收口），
+ *   两块相对顺序不可颠倒；本文件必须是被 import 的第一个样式文件。
+ * ============================================================ */
+
+html {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/jetbrains/JetBrainsMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/jetbrains/JetBrainsMono-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+  --font-kai: 'LXGW Local WenKai', 'Noto Sans SC', system-ui, sans-serif;
+
+  --color-primary: #1a1a1a;
+  --color-primary-dark: #f5f5f5;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-white text-stone-800 dark:bg-stone-900 dark:text-stone-200 transition-colors duration-300;
+  }
+
+  /* 焦点可见性 - 确保键盘用户能看到焦点 */
+  *:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /*  移除默认焦点,使用 focus-visible  */
+  *:focus {
+    outline: none;
+  }
+
+  /* (repaired comment) */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* (乱码注释已清理) */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* 文章正文标题层级(与站内标题体系一致) */
+  .article-body h2 {
+    font-size: var(--article-h2-size, 1.5rem) !important;
+    line-height: 1.4 !important;
+    font-weight: 700 !important;
+    margin-top: 2rem !important;
+    margin-bottom: 1rem !important;
+    padding-bottom: 0.5rem !important;
+    border-bottom: 1px solid rgb(228 228 231) !important;
+    color: rgb(15 23 42) !important;
+  }
+
+  .article-body h3 {
+    font-size: var(--article-h3-size, 1.375rem) !important;
+    line-height: 1.4 !important;
+    font-weight: 700 !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.75rem !important;
+    color: rgb(15 23 42) !important;
+  }
+
+  .article-body h4 {
+    font-size: calc(var(--article-h3-size, 1.375rem) * 0.9) !important;
+    line-height: 1.45 !important;
+    font-weight: 700 !important;
+    margin-top: 1.25rem !important;
+    margin-bottom: 0.65rem !important;
+    color: rgb(30 41 59) !important;
+  }
+
+  .article-body h5,
+  .article-body h6 {
+    font-size: calc(var(--article-body-size, 1.25rem) * 0.9) !important;
+    line-height: 1.45 !important;
+    font-weight: 700 !important;
+    margin-top: 1rem !important;
+    margin-bottom: 0.5rem !important;
+    color: rgb(51 65 85) !important;
+  }
+
+  .dark .article-body h2 {
+    color: rgb(214 211 209) !important;
+    border-bottom: 1px solid rgb(68 64 60 / 0.3) !important;
+  }
+
+  .dark .article-body h3 {
+    color: rgb(214 211 209) !important;
+  }
+
+  .dark .article-body h4,
+  .dark .article-body h5,
+  .dark .article-body h6 {
+    color: rgb(214 211 209) !important;
+  }
+}

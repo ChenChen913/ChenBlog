@@ -1,0 +1,1322 @@
+/* ============================================================
+ * components.css —— 全站组件（原 index.css C 区）
+ * 桌面侧栏 / nav 玻璃件 / btn-glass-pill / article-image /
+ * lightbox / video / audio / KaTeX / cat-glass / TOC 全家桶 /
+ * back-btn / 移动端导航 / scroll-to-top / rainbow-word
+ * ⚠ 玻璃类按出现位置留在本文件与 reading/fallback 中，
+ *   不做独立 glass.css —— 抽取会重排层叠顺序（历史回归点）。
+ * ============================================================ */
+
+/* 桌面侧栏（sidebar）与站内导航玻璃件 */
+
+#desktop-sidebar {
+  background: rgba(245, 242, 238, 0.85) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.dark #desktop-sidebar {
+  background: rgba(28, 25, 23, 0.85) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* (乱码注释已清理) */
+#sidebar-nav {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 113, 108, 0.3) transparent;
+}
+#sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+#sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+#sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(120, 113, 108, 0.3);
+  border-radius: 2px;
+}
+.dark #sidebar-nav {
+  scrollbar-color: rgba(214, 211, 209, 0.2) transparent;
+}
+.dark #sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(214, 211, 209, 0.2);
+}
+
+/* (repaired comment) */
+.nav-glass-active {
+  /* (repaired comment) */
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  /* (repaired comment) */
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(210, 205, 200, 0.6);
+  border-bottom: 1px solid rgba(210, 205, 200, 0.6);
+  border-radius: 14px;
+  /* 三层阴影：发光 + 底部投影 + 内顶高光 */
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    /* 外顶高光 */ 0 4px 16px rgba(0, 0, 0, 0.1),
+    /* 柔和投影 */ 0 1px 4px rgba(0, 0, 0, 0.06),
+    /* 贴地小阴影 */ inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    /* 内顶高光条（最关键）*/ inset 0 -1px 0 rgba(0, 0, 0, 0.04); /* 内底暗边 */
+  position: relative;
+  overflow: hidden;
+}
+
+/* (repaired comment) */
+.nav-glass-active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.1) 40%,
+    rgba(255, 255, 255, 0.22) 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* (repaired comment) */
+.nav-glass-active > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* (repaired comment) */
+.dark .nav-glass-active {
+  background: rgba(255, 255, 255, 0.11);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  border-left: 1px solid rgba(255, 255, 255, 0.22);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.35),
+    0 1px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+.dark .nav-glass-active::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.02) 40%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+}
+
+/* (乱码注释已清理) */
+.btn-glass-pill {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(210, 205, 200, 0.6);
+  border-bottom: 1px solid rgba(210, 205, 200, 0.6);
+  border-radius: 12px;
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    0 1px 4px rgba(0, 0, 0, 0.06),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.18s ease;
+  cursor: pointer;
+}
+.btn-glass-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.1) 40%,
+    rgba(255, 255, 255, 0.22) 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+}
+.btn-glass-pill > * {
+  position: relative;
+  z-index: 1;
+}
+.btn-glass-pill:hover {
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 2px 2px rgba(255, 255, 255, 0.95),
+    0 6px 20px rgba(0, 0, 0, 0.13),
+    0 2px 6px rgba(0, 0, 0, 0.07),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+}
+.btn-glass-pill:active {
+  transform: translateY(0px);
+}
+
+/* (repaired comment) */
+.dark .btn-glass-pill {
+  background: rgba(255, 255, 255, 0.11);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  border-left: 1px solid rgba(255, 255, 255, 0.22);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.35),
+    0 1px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+.dark .btn-glass-pill::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.02) 40%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+}
+.dark .btn-glass-pill:hover {
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.45),
+    0 2px 6px rgba(0, 0, 0, 0.25),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+  transform: translateY(-1px);
+}
+
+/* 文章配图与灯箱（lightbox） */
+
+.article-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 2rem auto; /* 增加上下间距 */
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  cursor: zoom-in;
+  transition: all 0.3s ease; /* 延长过渡时间 */
+}
+
+/*  悬停效果增强  */
+.article-image:hover {
+  transform: scale(1.02); /* 增强放大效果 */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); /* 增强阴影 */
+}
+
+/* (repaired comment) */
+@media (min-width: 768px) {
+  .article-image {
+    max-width: 85%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .article-image {
+    max-width: 75%;
+    max-height: 480px;
+  }
+}
+
+.dark .article-image {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+
+.dark .article-image:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* (乱码注释已清理) */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: zoom-out;
+}
+
+.lightbox-image {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+  z-index: 10;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+/* (repaired comment) */
+.video-container {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.dark .video-container {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+}
+
+.video-iframe,
+.video-native {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+}
+
+/* (repaired comment) */
+.audio-container {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(210, 205, 200, 0.6);
+  border-bottom: 1px solid rgba(210, 205, 200, 0.6);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    0 1px 4px rgba(0, 0, 0, 0.06),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  position: relative;
+}
+
+.audio-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.1) 40%,
+    rgba(255, 255, 255, 0.22) 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.audio-player {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 48px;
+  border-radius: 12px;
+  background: transparent;
+}
+
+.audio-player::-webkit-media-controls-panel {
+  background: transparent;
+}
+
+.dark .audio-container {
+  background: rgba(255, 255, 255, 0.11);
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  border-left: 1px solid rgba(255, 255, 255, 0.22);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.35),
+    0 1px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+.dark .audio-container::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.02) 40%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+}
+
+/* ─────────────────────────────────────
+   KaTeX 数学公式 + 分类页动态去玻璃 + 目录 + 回到顶部
+   ───────────────────────────────────── */
+
+/* (repaired comment) */
+.katex {
+  font-size: 1em !important;
+  line-height: inherit;
+  color: inherit;
+}
+
+/* (repaired comment) */
+.katex-display {
+  display: block;
+  margin: 0 !important;
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  text-align: center;
+  color: inherit;
+}
+
+/* (repaired comment) */
+.katex-display > .katex {
+  font-size: 1.15em !important;
+  display: inline-block;
+  text-align: left;
+}
+
+/* 修复问题2：当 <p> 内只包含一个 .katex-display 时，消除段落额外行高 */
+.article-body p:has(> .katex-display) {
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1;
+}
+
+.article-body .katex-display {
+  margin: 24px 0 !important;
+  padding: 0;
+  overflow-x: auto;
+}
+
+/* 暗色模式 KaTeX 配色（原规则曾被未闭合注释意外吞掉，已修复） */
+.dark .katex {
+  color: #e7e5e4 !important;
+}
+.dark .katex * {
+  border-color: currentColor;
+}
+.dark .katex .katex-html {
+  color: #e7e5e4;
+}
+.dark .katex .frac-line,
+.dark .katex .sqrt > .sqrt-sign,
+.dark .katex .overline .overline-line,
+.dark .katex .underline .underline-line {
+  border-color: #e7e5e4;
+  background: #e7e5e4;
+}
+
+/* (repaired comment) */
+.katex-display::-webkit-scrollbar {
+  height: 4px;
+}
+.katex-display::-webkit-scrollbar-track {
+  background: transparent;
+}
+.katex-display::-webkit-scrollbar-thumb {
+  background: rgba(120, 113, 108, 0.3);
+  border-radius: 2px;
+}
+.dark .katex-display::-webkit-scrollbar-thumb {
+  background: rgba(168, 162, 158, 0.3);
+}
+
+/* (repaired comment) */
+.cat-glass-active {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(210, 205, 200, 0.6);
+  border-bottom: 1px solid rgba(210, 205, 200, 0.6);
+  border-radius: 12px;
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  color: #1c1917;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+.cat-glass-active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+.dark .cat-glass-active {
+  background: rgba(255, 255, 255, 0.11);
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  border-left: 1px solid rgba(255, 255, 255, 0.22);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.35),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+  color: #f5f5f4;
+}
+
+/* (repaired comment) */
+.cat-glass-normal {
+  background: rgba(245, 242, 238, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(210, 205, 200, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  color: #57534e;
+  font-weight: 500;
+  transition: all 0.18s ease;
+}
+.cat-glass-normal:hover {
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(210, 205, 200, 0.8);
+  color: #1c1917;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.dark .cat-glass-normal {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #a8a29e;
+}
+.dark .cat-glass-normal:hover {
+  background: rgba(255, 255, 255, 0.13);
+  color: #f5f5f4;
+}
+
+/* ─────────────────────────────────────
+   文章右侧目录（TOC）
+   结构：.toc-shell  外层玻璃容器  position:fixed, overflow:hidden
+         .toc-scroll 内层滚动区    overflow-y:auto
+         .toc-pill   激活态高亮 pill  position:absolute, 不嵌套 backdrop
+   ───────────────────────────────────── */
+
+/* (repaired comment) */
+.toc-shell {
+  display: none;
+  position: fixed;
+  top: 88px;
+  right: 20px;
+  width: 204px;
+  max-height: calc(100vh - 110px);
+  z-index: 50;
+
+  /* (repaired comment) */
+  background: rgba(245, 242, 238, 0.9);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(210, 205, 200, 0.55);
+  border-bottom: 1px solid rgba(210, 205, 200, 0.55);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  /* (repaired comment) */
+  overflow: hidden;
+}
+
+@media (min-width: 1280px) {
+  .toc-shell {
+    display: block;
+  }
+}
+
+/* (repaired comment) */
+.toc-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.06) 45%,
+    rgba(255, 255, 255, 0.18) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark .toc-shell {
+  background: rgba(28, 25, 23, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  border-left: 1px solid rgba(255, 255, 255, 0.16);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    0 2px 8px rgba(0, 0, 0, 0.28),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+.dark .toc-shell::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.01) 45%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+}
+
+/* (repaired comment) */
+.toc-scroll {
+  position: relative;
+  z-index: 1;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(168, 162, 158, 0.35) transparent;
+  padding: 14px 12px;
+}
+/* (乱码注释已清理) */
+.toc-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.toc-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.toc-scroll::-webkit-scrollbar-thumb {
+  background: rgba(168, 162, 158, 0.35);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.toc-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 162, 158, 0.55);
+}
+.dark .toc-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.dark .toc-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.dark .toc-scroll {
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+/* (repaired comment) */
+.toc-title-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 12px 0 16px;
+}
+
+/* (repaired comment) */
+.toc-title {
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(120, 113, 108, 0.75);
+  user-select: none;
+}
+.dark .toc-title {
+  color: rgba(168, 162, 158, 0.65);
+}
+
+/* (repaired comment) */
+.toc-collapse-btn {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: rgba(120, 113, 108, 0);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+.toc-title-row:hover .toc-collapse-btn {
+  color: rgba(120, 113, 108, 0.85);
+}
+.toc-collapse-btn:hover {
+  color: rgba(120, 113, 108, 1) !important;
+}
+.dark .toc-title-row:hover .toc-collapse-btn {
+  color: rgba(168, 162, 158, 0.8);
+}
+.dark .toc-collapse-btn:hover {
+  color: rgba(214, 211, 209, 1) !important;
+}
+
+/* (repaired comment) */
+.toc-item {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(120, 113, 108, 0.85);
+  transition: color 0.15s ease;
+  outline: none;
+}
+.toc-item--h3 {
+  padding-left: 0;
+  font-size: 0.7rem;
+}
+.toc-item--active {
+  color: rgb(28, 25, 23);
+  font-weight: 600;
+}
+.toc-item:not(.toc-item--active):hover {
+  color: rgb(68, 64, 60);
+}
+
+/* (repaired comment) */
+.toc-scroll > ul > li > div > .toc-item:not(.toc-item--h3) {
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: rgba(41, 37, 36, 0.9);
+}
+.dark .toc-scroll > ul > li > div > .toc-item:not(.toc-item--h3) {
+  color: rgba(214, 211, 209, 0.9);
+}
+
+.dark .toc-item {
+  color: rgba(168, 162, 158, 0.7);
+}
+.dark .toc-item--active {
+  color: rgb(231, 229, 228);
+}
+.dark .toc-item:not(.toc-item--active):hover {
+  color: rgb(214, 211, 209);
+}
+
+/* (repaired comment) */
+.toc-pill {
+  position: absolute;
+  inset: 0 -8px;
+  border-radius: 10px;
+  pointer-events: none;
+  z-index: 0;
+
+  background: rgba(255, 255, 255, 0.82);
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(210, 205, 200, 0.55);
+  border-bottom: 1px solid rgba(210, 205, 200, 0.55);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 3px 10px rgba(0, 0, 0, 0.09),
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+}
+/* (repaired comment) */
+.toc-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.1) 45%,
+    rgba(255, 255, 255, 0.25) 100%
+  );
+  pointer-events: none;
+}
+
+.dark .toc-pill {
+  background: rgba(255, 255, 255, 0.13);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-left: 1px solid rgba(255, 255, 255, 0.22);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.35),
+    0 1px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+.dark .toc-pill::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.02) 45%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+}
+
+/* (乱码注释已清理) */
+.toc-sub {
+  padding-left: 14px;
+}
+
+/* (乱码注释已清理) */
+.toc-shell--collapsed {
+  border-radius: 12px;
+  padding: 0 !important;
+  overflow: hidden;
+  max-height: calc(100vh - 110px);
+}
+.toc-shell--collapsed::before {
+  display: none;
+}
+
+/* (repaired comment) */
+.toc-strip {
+  position: relative;
+  z-index: 1;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 80px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+}
+.toc-shell--collapsed .toc-strip {
+  display: flex;
+}
+.toc-strip-text {
+  writing-mode: vertical-rl;
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  color: rgba(120, 113, 108, 0.55);
+  user-select: none;
+}
+.toc-strip:hover .toc-strip-text {
+  color: rgba(120, 113, 108, 0.9);
+}
+.dark .toc-strip-text {
+  color: rgba(168, 162, 158, 0.45);
+}
+.dark .toc-strip:hover .toc-strip-text {
+  color: rgba(214, 211, 209, 0.85);
+}
+
+/* (repaired comment) */
+.back-btn-glass {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(210, 205, 200, 0.6);
+  border-bottom: 1px solid rgba(210, 205, 200, 0.6);
+  border-radius: 12px;
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  color: #57534e;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.18s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+.back-btn-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+.back-btn-glass > * {
+  position: relative;
+  z-index: 1;
+}
+.back-btn-glass:hover {
+  background: rgba(255, 255, 255, 0.92);
+  color: #1c1917;
+  box-shadow:
+    0 2px 2px rgba(255, 255, 255, 0.95),
+    0 6px 20px rgba(0, 0, 0, 0.12),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+}
+.dark .back-btn-glass {
+  background: rgba(255, 255, 255, 0.09);
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.25);
+  color: #a8a29e;
+}
+.dark .back-btn-glass:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #f5f5f4;
+}
+
+/* (repaired comment) */
+.post-back-btn {
+  display: none;
+}
+@media (min-width: 768px) {
+  .post-back-btn {
+    display: inline-flex;
+    position: fixed;
+    top: 96px;
+    left: max(1rem, calc(50vw - 28rem));
+    z-index: 35;
+    margin: 0;
+  }
+}
+
+/* (repaired comment) */
+.mobile-topnav {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(60px) saturate(220%) brightness(1.08);
+  -webkit-backdrop-filter: blur(60px) saturate(220%) brightness(1.08);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    inset 0 -0.5px 0 rgba(255, 255, 255, 0.8),
+    0 1px 30px rgba(0, 0, 0, 0.04);
+}
+.dark .mobile-topnav {
+  background: rgba(15, 15, 15, 0.65);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 -0.5px 0 rgba(255, 255, 255, 0.06),
+    0 1px 30px rgba(0, 0, 0, 0.3);
+}
+/* (repaired comment) */
+.mobile-topnav-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  color: rgba(120, 113, 108, 0.85);
+  background: rgba(255, 255, 255, 0.5);
+  border: 0.5px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    0 0.5px 2px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s;
+}
+.mobile-topnav-btn:active {
+  background: rgba(255, 255, 255, 0.7);
+  transform: scale(0.95);
+}
+.dark .mobile-topnav-btn {
+  color: rgba(168, 162, 158, 0.8);
+  background: rgba(255, 255, 255, 0.08);
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 0.5px 2px rgba(0, 0, 0, 0.2);
+}
+.dark .mobile-topnav-btn:active {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* (乱码注释已清理) */
+.mobile-action-btn {
+  color: rgba(28, 25, 23, 0.85);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 0.5px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 0.5px 1px rgba(255, 255, 255, 1),
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  transition: all 0.15s ease;
+}
+.mobile-action-btn:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.8);
+}
+.dark .mobile-action-btn {
+  color: rgba(214, 211, 209, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+  border: 0.5px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 0.5px 1px rgba(255, 255, 255, 0.1),
+    0 2px 10px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+}
+.dark .mobile-action-btn:active {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* (repaired comment) */
+.mobile-toc-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(50px) saturate(200%) brightness(1.05);
+  -webkit-backdrop-filter: blur(50px) saturate(200%) brightness(1.05);
+  border-top: 0.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px 20px 0 0;
+  box-shadow:
+    0 -0.5px 0 rgba(255, 255, 255, 0.8),
+    0 -4px 30px rgba(0, 0, 0, 0.08);
+  max-height: 70vh;
+}
+.dark .mobile-toc-panel {
+  background: rgba(25, 25, 25, 0.75);
+  border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 -0.5px 0 rgba(255, 255, 255, 0.06),
+    0 -4px 30px rgba(0, 0, 0, 0.4);
+}
+.mobile-toc-item {
+  color: rgba(68, 64, 60, 0.75);
+}
+.mobile-toc-item:active {
+  background: rgba(0, 0, 0, 0.04);
+  color: rgba(28, 25, 23, 0.95);
+}
+.dark .mobile-toc-item {
+  color: rgba(168, 162, 158, 0.75);
+}
+.dark .mobile-toc-item:active {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(214, 211, 209, 0.95);
+}
+/* scroll-spy 高亮：跟随阅读位置的当前章节（与桌面右侧 TOC 同款语义） */
+.mobile-toc-item--active {
+  background: rgba(120, 113, 108, 0.13);
+  color: #1c1917;
+  box-shadow: inset 3px 0 0 #78716c;
+}
+.dark .mobile-toc-item--active {
+  background: rgba(255, 255, 255, 0.09);
+  color: #f5f5f4;
+  box-shadow: inset 3px 0 0 #a8a29e;
+}
+.mobile-toc-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(168, 162, 158, 0.3) transparent;
+}
+.mobile-toc-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.mobile-toc-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.mobile-toc-scroll::-webkit-scrollbar-thumb {
+  background: rgba(168, 162, 158, 0.3);
+  border-radius: 10px;
+}
+
+/* (repaired comment) */
+.mobile-bottomnav {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(60px) saturate(220%) brightness(1.08);
+  -webkit-backdrop-filter: blur(60px) saturate(220%) brightness(1.08);
+  border-top: 0.5px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 -0.5px 0 rgba(255, 255, 255, 0.8),
+    0 -1px 30px rgba(0, 0, 0, 0.04);
+}
+.dark .mobile-bottomnav {
+  background: rgba(15, 15, 15, 0.45);
+  border-top: 0.5px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 -0.5px 0 rgba(255, 255, 255, 0.1),
+    0 -1px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* 活跃项胶囊：水滴玻璃 */
+.mobile-nav-pill {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(30px) saturate(200%) brightness(1.15);
+  -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(1.15);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 9999px;
+  box-shadow:
+    0 0.5px 1px rgba(255, 255, 255, 1),
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 8px 30px rgba(0, 0, 0, 0.06),
+    0 0 20px rgba(120, 160, 255, 0.08),
+    inset 0 2px 4px rgba(255, 255, 255, 1),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.04);
+  pointer-events: none;
+  overflow: hidden;
+}
+/*  水滴高光：顶部强折射  */
+.mobile-nav-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 45%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+/* (repaired comment) */
+.mobile-nav-pill::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: 8%;
+  width: 84%;
+  height: 75%;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(255, 255, 255, 0.75) 0%,
+    rgba(255, 255, 255, 0.2) 35%,
+    rgba(255, 255, 255, 0) 65%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+.dark .mobile-nav-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 0.5px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 0.5px 1px rgba(255, 255, 255, 0.15),
+    0 1px 8px rgba(0, 0, 0, 0.25),
+    0 4px 20px rgba(0, 0, 0, 0.15),
+    inset 0 2px 3px rgba(255, 255, 255, 0.25),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.12);
+}
+.dark .mobile-nav-pill::before {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.06) 30%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+}
+.dark .mobile-nav-pill::after {
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    rgba(255, 255, 255, 0) 70%
+  );
+}
+
+/* (repaired comment) */
+@media (max-width: 767px) {
+  #main-content {
+    padding-bottom: 80px !important;
+  }
+}
+
+/* (repaired comment) */
+.scroll-to-top-btn {
+  position: fixed;
+  z-index: 40;
+  bottom: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: none;
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  color: #57534e;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+.scroll-to-top-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+.scroll-to-top-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
+  box-shadow:
+    0 2px 2px rgba(255, 255, 255, 0.95),
+    0 8px 24px rgba(0, 0, 0, 0.15),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+}
+.scroll-to-top-btn:active {
+  transform: translateY(0);
+}
+.dark .scroll-to-top-btn {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.35),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.28);
+  color: #d6d3d1;
+}
+.dark .scroll-to-top-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #f5f5f4;
+}
+
+/* (repaired comment) */
+@media (max-width: 767px) {
+  .scroll-to-top-btn {
+    bottom: 80px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* (repaired comment) */
+.rainbow-word {
+  background: linear-gradient(
+    90deg,
+    #ff6b6b,
+    #ff9f43,
+    #ffd32a,
+    #2ecc71,
+    #54a0ff,
+    #a55eea,
+    #fd79a8,
+    #ff6b6b
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: rainbow-flow 4s linear infinite;
+  font-weight: inherit;
+  display: inline-block;
+  padding-bottom: 0.05em;
+}
+
+.dark .rainbow-word {
+  background: linear-gradient(
+    90deg,
+    #ff7675,
+    #fdcb6e,
+    #ffeaa7,
+    #55efc4,
+    #74b9ff,
+    #b2beff,
+    #fd79a8,
+    #ff7675
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow-flow 4s linear infinite;
+}
+
+@keyframes rainbow-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 250% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rainbow-word {
+    animation: none;
+    background-position: 0% 50%;
+  }
+  .dark .rainbow-word {
+    animation: none;
+    background-position: 0% 50%;
+  }
+}

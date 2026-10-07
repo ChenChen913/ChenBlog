@@ -39,7 +39,7 @@
 | 层     | 技术                                                   | 备注                                                                                                  |
 | ------ | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
 | 运行时 | **Node.js ≥ 20**                                       | 构建脚本与 Vite 6 基线，低版本会报语法错                                                              |
-| UI     | React 19 · react-router-dom 7 · Tailwind CSS 4         | Tailwind 4 用 `@tailwindcss/vite` 插件，**无 tailwind.config.js**（CSS-first 配置在 `src/index.css`） |
+| UI     | React 19 · react-router-dom 7 · Tailwind CSS 4         | Tailwind 4 用 `@tailwindcss/vite` 插件，**无 tailwind.config.js**（CSS-first 配置在 `src/styles/base.css` 的 `@theme`，入口串联在 `src/index.css`） |
 | 动效   | motion（原 framer-motion）12                           | ⚠️ 见 4.6 transform 劫持坑                                                                            |
 | 内容   | react-markdown 10 + remark-gfm/math + rehype-katex/raw | rehype-raw 启用，但经过自研安全管道（见 2.4）                                                         |
 | 高亮   | Shiki 4，`shiki/core` 细粒度 + 语言动态 import         | JS 正则引擎（无 oniguruma wasm），CSP 因此可收紧                                                      |
@@ -87,14 +87,23 @@ src/
 ├── hooks/               # usePageMeta（SEO）/ useTheme / useLanguage / useReadingMode
 ├── components/          # 20+ 组件；reading/ 子目录是专注模式组件族
 ├── utils/               # security.ts（URL 白名单）/ search.ts / weekly.ts / shiki-highlighter.ts 等
-└── index.css            # 全局样式：液态玻璃、时间轴、周刊、专注模式 4 套阅读背景主题
+├── index.css            # 样式入口：仅 @import 串联 + 目录注释（勿写组件规则）
+└── styles/              # 按原 index.css 连续区块纵切拆分（顺序即层叠，勿重排 import）
+    ├── base.css         # @theme token / @font-face / reset / focus-visible / @layer base（第一块）
+    ├── code-block.css   # 代码块系统（.code-block*，Shiki 变量）
+    ├── article.css      # 文章页 chrome 与 .article-body 排版
+    ├── components.css   # 全站组件（侧栏/玻璃件/灯箱/媒体/KaTeX/TOC/移动导航等）
+    ├── overlays.css     # 站内搜索弹窗 + 阅读进度条
+    ├── timeline.css     # 档案时间轴 + 写作热力墙
+    ├── reading.css      # 专注阅读模式（14 编号小节，层叠敏感区）
+    └── fallback.css     # 无 backdrop-filter 兑底（必须最末）
 ```
 
 **专注阅读模式（交互最复杂的子系统）：**
 
 - 入口：文章页「专注阅读」按钮或 `?focus=1`；退出：胶囊 `×` 或 `Esc`（**两条路径都走 `useReadingMode` 的 `onExit` 回调统一触发 toast**——改退出逻辑时不要绕过它）
 - 4 套阅读背景：`auto`（跟随站点主题）/ `paper` 纸白 / `sepia` 暖米 / `night` 暖黑，落在 `[data-reading-theme]` 属性上
-- 涉及文件：`hooks/useReadingMode.ts`、`components/reading/*`、`index.css` 第 12–14 节（强主题覆盖——**层叠顺序敏感**，见 4.7）
+- 涉及文件：`hooks/useReadingMode.ts`、`components/reading/*`、`src/styles/reading.css` 第 12–14 编号小节（强主题覆盖——**层叠顺序敏感**，见 4.7）
 
 ### 2.3 安全体系（改动前必读）
 
@@ -111,7 +120,7 @@ src/
 ```bash
 npm run lint          # tsc --noEmit，必须 0 错误
 npm run lint:eslint   # 0 errors / ~60 warnings（测试文件存量 any，渐进治理中，勿新增）
-npm run test:run      # vitest，~172 用例必须全绿
+npm run test:run      # vitest，~184 用例必须全绿
 npm run test:e2e      # Playwright 83+ 用例（首跑偶发 scroll-restoration 抖动，复跑即可）
 npm run build         # build + prerender：末尾输出 16 条路由的预渲染成功/失败计数，
                       # 必须全部成功；产物存在性断言（10 项 test -f / grep -q）
@@ -120,7 +129,7 @@ npm run build         # build + prerender：末尾输出 16 条路由的预渲�
 
 E2E 依赖三篇**内置测试文章**（勿删）：`markdown-syntax-test.md`（reading-mode/navigation 用例的载体）、`codeblock-stress-test.md`、`test-duplicate-headings.md`；`文章模板.md` 是写作模板。均为 `draft: true`（syntax-test 除外——它需要出现在列表里供 e2e 断言）。
 
-CI（checks job）另有 **CSS 债务预算棘轮**：`src/index.css` 占位注释 ≤57、`!important` ≤50、`z-index` ≤36、总行数 ≤4935，只减不增；偿还债务（拆分/token 化）后应同步下调阈值，确需上调须在 PR 里说明理由。
+CI（checks job）另有 **CSS 债务预算棘轮**：`src/index.css + src/styles/*.css` 合计占位注释 ≤55、`!important` ≤49、`z-index` ≤36、总行数 ≤4997，只减不增；偿还债务（token 化等）后应同步下调阈值，确需上调须在 PR 里说明理由。
 
 ---
 
@@ -227,9 +236,11 @@ python3 scripts/font-split.py   # 幂等，可重复执行；源字体在 script
 
 motion 组件上任何 `y`/`scale` 等动画属性会**整体覆盖** CSS 的 `translateX(-50%)` 居中。需要居中+动画时，把居中也交给 motion：`animate={{ x: '-50%', y: 0 }}`。（历史案例：退出 toast 的 CSS 居中被动画覆盖导致水平错位。）
 
-### 4.7 index.css 层叠反转（暗色 + 强阅读主题的样式覆盖）
+### 4.7 样式层叠反转（暗色 + 强阅读主题的样式覆盖）
 
-`.dark .article-body h2 { color: X !important }` 写在 `@layer base` 里时，**important 层间反转**使其优先于 unlayered/ utilities 的 `dark:!text-*`。专注模式的 paper/sepia/night 强主题覆盖必须写在**同一 layer 且更高 specificity**，且要覆盖**子元素**（元素级规则赢过容器继承）。改 `index.css` 第 12–14 节前后务必跑暗色×全背景矩阵。
+`.dark .article-body h2 { color: X !important }` 写在 `@layer base` 里时（现 `src/styles/base.css`），**important 层间反转**使其优先于 unlayered/utilities 的 `dark:!text-*`。专注模式的 paper/sepia/night 强主题覆盖必须写在**同一 layer 且更高 specificity**，且要覆盖**子元素**（元素级规则赢过容器继承）。改 `src/styles/reading.css` 第 12–14 编号小节前后务必跑暗色×全背景矩阵。
+
+另：拆分后 `@layer base` 有两块（`base.css` 与 `reading.css` 第 14 节），同名层按出现顺序合并——**import 顺序不可调换**；`fallback.css` 必须保持最末。
 
 ### 4.8 手机端布局断点
 
@@ -243,12 +254,13 @@ motion 组件上任何 `y`/`scale` 等动画属性会**整体覆盖** CSS 的 `t
 - Shiki 语言 loader 是动态 import：dev server 重启后旧页面会报 `Failed to fetch dynamically imported module`（旧 hash 残留），reload 即愈，非 bug
 - 搜索索引打开弹窗时才并行加载（~200KB），相关断言要等 networkidle
 
-### 4.10 index.css 的 G 区兜底与 CSS 债务路线图
+### 4.10 CSS 架构：styles/ 拆分、G 区兜底与债务路线图
 
-- **G 区（文件末尾 `@supports not` 块）**：不支持 backdrop-filter 的浏览器（旧 Android WebView / 老 Firefox）靠它把低透明玻璃提到实色保可读。新增玻璃容器若亮色透明度 ≤0.75 或为暗色白玻璃（0.07–0.16 白），必须同步在 G 区补兜底（头部「新增样式约定」亦有约定）。该块必须保持在文件**最末**（unlayered，靠源顺序压过同特异性原规则），不要往前插、也不要改写块内选择器的写法。
+- **styles/ 拆分约束（2026-10 已完成）**：按原 index.css 连续区块纵切、规则顺序零重排，拆分前后编译产物逐字节一致（验证法：拆分前 build 存产物 → 拆分后 build → diff，hash 未变即零副作用）。约束：① `index.css` 只做 @import 串联，顺序即层叠不可调换（`fallback.css` 最末、`reading.css` 在 `components.css` 之后）；② 不设独立 `mobile.css`/`glass.css`——30+ 处断点与玻璃类散布各区块，与相邻规则有覆盖顺序依赖，抽出必重排；③ 新样式写到对应主题文件，勿再堆回 index.css。
+- **G 区（`src/styles/fallback.css`，`@supports not` 块）**：不支持 backdrop-filter 的浏览器（旧 Android WebView / 老 Firefox）靠它把低透明玻璃提到实色保可读。新增玻璃容器若亮色透明度 ≤0.75 或为暗色白玻璃（0.07–0.16 白），必须同步在 G 区补兜底（各文件头注释亦有约定）。该文件必须保持在 @import 链**最末**（unlayered，靠源顺序压过同特异性原规则），不要往前插、也不要改写块内选择器的写法。
 - **债务路线图**（源自外部评审 D1/D7，按评审自身纪律分批执行，勿一次性大爆炸重写）：
-  1. 已完成：A–G 分节目录、新增样式约定、CI 预算棘轮、G 区兜底、vendor-react 分包
-  2. 待做（上线后分批、每批独立 PR）：index.css 物理拆分为 `src/styles/` 多文件——内容整块原样搬，保持 layer 归属与选择器优先级，每迁一节跑全量验证，拆分前后 CSS 总体积应持平（±2%）；z-index 16 档归并为语义档位——须先逐对验证 Toast / 搜索弹窗 / Lightbox / 专注工具栏 / TOC 的叠放关系，档位映射不得改变现有实际层级
+  1. 已完成：A–G 分节目录、新增样式约定、CI 预算棘轮、G 区兜底、vendor-react 分包、**物理拆分为 src/styles/ 八文件（产物 diff 零差异）**
+  2. 待做（上线后分批、每批独立 PR）：z-index 16 档归并为语义档位——须先逐对验证 Toast / 搜索弹窗 / Lightbox / 专注工具栏 / TOC 的叠放关系，档位映射不得改变现有实际层级
   3. 随后：`@layer base` 内 !important 偿还（同层提高 specificity 替代，**不可**叠加新 important 对冲——4.7 的层间反转教训）；约 250 处硬编码色 token 化
 - **vendor 分包**：`vite.config.ts` 用对象式 `manualChunks` 精确列 react / react-dom / react-router-dom 三件套；**严禁**改成函数式 `id.includes('react')` 粗匹配——会把 react-markdown 渲染链（约 500KB）吸进 vendor chunk，反伤首屏。shiki / katex 已按需分包不归并，motion 跨组件共享留在默认分包。
 

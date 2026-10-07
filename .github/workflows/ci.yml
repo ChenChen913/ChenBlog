@@ -35,21 +35,22 @@ jobs:
       - name: Unit tests (vitest)
         run: npm run test:run
 
-      # CSS 债务预算：只减不增。阈值 = 2026-10 兜底块合入后的实测基线
-      # （57 占位 / 50 important / 36 z-index / 4935 行）。偿还债务后应
+      # CSS 债务预算：只减不增。阈值 = 2026-10 index.css 拆分为
+      # src/index.css + src/styles/* 后的实测基线（55 占位 / 49 important /
+      # 36 z-index / 4997 行，index.css 与 styles/ 合计）。偿还债务后应
       # 同步下调阈值；确需上调须在 PR 中说明理由。
       - name: CSS budget check (ratchet)
         run: |
-          CSS=src/index.css
-          PLACEHOLDERS=$(grep -cE '/\* \((repaired comment|乱码注释已清理)\) \*/' "$CSS" || true)
-          IMPORTANTS=$(grep -o '!important' "$CSS" | wc -l)
-          ZINDEX=$(grep -o 'z-index:' "$CSS" | wc -l)
-          LINES=$(wc -l < "$CSS")
+          CSS_FILES="src/index.css src/styles/*.css"
+          PLACEHOLDERS=$(grep -hE '/\* \((repaired comment|乱码注释已清理)\) \*/' $CSS_FILES | wc -l)
+          IMPORTANTS=$(cat $CSS_FILES | grep -o '!important' | wc -l)
+          ZINDEX=$(cat $CSS_FILES | grep -o 'z-index:' | wc -l)
+          LINES=$(cat $CSS_FILES | wc -l)
           echo "css placeholders=$PLACEHOLDERS importants=$IMPORTANTS z-index=$ZINDEX lines=$LINES"
-          test "$PLACEHOLDERS" -le 57
-          test "$IMPORTANTS" -le 50
+          test "$PLACEHOLDERS" -le 55
+          test "$IMPORTANTS" -le 49
           test "$ZINDEX" -le 36
-          test "$LINES" -le 4935
+          test "$LINES" -le 4997
 
   # 生产构建 + 预渲染产物校验
   build:

@@ -1,0 +1,135 @@
+/* ============================================================
+ * fallback.css —— 无 backdrop-filter 浏览器的可读性兜底（原 G 区）
+ * @supports not：把低透明玻璃提到实色，保证无 blur 浏览器可读。
+ * ⚠ 必须保持在 @import 链最末（覆盖前面所有玻璃声明）。
+ * 新增玻璃容器若透明度亮色 ≤0.75 或为暗色白玻璃（0.07–0.16），
+ * 须同步在本文件补 @supports not 兜底。
+ * ============================================================ */
+
+/* ---------- G. 无 backdrop-filter 浏览器的可读性兜底 ----------
+   手法：增量兜底而非改写既有规则。支持 backdrop-filter 的浏览器不进入
+   本块，渲染与此前完全一致；不支持的浏览器（旧 Android WebView、老
+   Firefox 等）进入本块，把过透明的玻璃背景提到高不透明度实色，保证
+   导航 / 搜索 / 工具层的文字可读。
+   取舍：只覆盖承载文字或图标的低透明玻璃——亮色 ≤0.75、暗色白玻璃
+   0.07–0.16；纯装饰性模糊（行标尺、时间轴悬停光环、Lightbox 0.92
+   暗化背板、0.9+ 高不透明面板/吐司）不设兜底，缺失不伤可用性。
+   约束：本块必须保持在文件末尾（unlayered，靠源顺序压过同特异性的
+   原规则）；暗色兜底沿用站点暗玻璃家族基色 rgb(28 25 23)。 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  /* 亮色：中低透明玻璃提到高不透明 */
+  .btn-glass-pill {
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .audio-container {
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .cat-glass-normal {
+    background: rgba(245, 242, 238, 0.9);
+  }
+  .back-btn-glass {
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .mobile-topnav {
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .mobile-action-btn {
+    background: rgba(255, 255, 255, 0.9);
+  }
+  .mobile-toc-panel {
+    background: rgba(255, 255, 255, 0.96);
+  }
+  .mobile-bottomnav {
+    background: rgba(255, 255, 255, 0.94);
+  }
+  .mobile-nav-pill {
+    background: rgba(255, 255, 255, 0.8);
+  }
+  .search-glass-panel {
+    background: rgba(255, 255, 255, 0.97);
+  }
+  .wk-strip {
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .wk-navbtn {
+    background: rgba(255, 255, 255, 0.9);
+  }
+  .focus-reading-btn {
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .reading-capsule {
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  /* 暗色：白玻璃（0.07–0.16 白）换成实色暗底，悬停态同步加深一档 */
+  .dark .nav-glass-active {
+    background: rgba(28, 25, 23, 0.88);
+  }
+  .dark .btn-glass-pill {
+    background: rgba(28, 25, 23, 0.85);
+  }
+  .dark .btn-glass-pill:hover {
+    background: rgba(28, 25, 23, 0.92);
+  }
+  .dark .audio-container {
+    background: rgba(28, 25, 23, 0.85);
+  }
+  .dark .cat-glass-active {
+    background: rgba(28, 25, 23, 0.88);
+  }
+  .dark .cat-glass-normal {
+    background: rgba(28, 25, 23, 0.9);
+  }
+  .dark .cat-glass-normal:hover {
+    background: rgba(28, 25, 23, 0.95);
+  }
+  .dark .back-btn-glass {
+    background: rgba(28, 25, 23, 0.85);
+  }
+  .dark .back-btn-glass:hover {
+    background: rgba(28, 25, 23, 0.92);
+  }
+  .dark .scroll-to-top-btn {
+    background: rgba(28, 25, 23, 0.88);
+  }
+  .dark .scroll-to-top-btn:hover {
+    background: rgba(28, 25, 23, 0.95);
+  }
+  .dark .mobile-topnav {
+    background: rgba(15, 15, 15, 0.94);
+  }
+  .dark .mobile-action-btn {
+    background: rgba(28, 25, 23, 0.85);
+  }
+  .dark .mobile-action-btn:active {
+    background: rgba(28, 25, 23, 0.92);
+  }
+  .dark .mobile-toc-panel {
+    background: rgba(25, 25, 25, 0.96);
+  }
+  .dark .mobile-bottomnav {
+    background: rgba(15, 15, 15, 0.95);
+  }
+  .dark .mobile-nav-pill {
+    /* stone-800：比底栏基色亮一档，保住「活跃胶囊 vs 底栏」的层次 */
+    background: rgba(41, 37, 34, 0.95);
+  }
+  .dark .search-glass-panel {
+    background: rgba(28, 25, 23, 0.92);
+  }
+  .dark .wk-strip {
+    background: rgba(28, 25, 23, 0.9);
+  }
+  .dark .wk-navbtn {
+    background: rgba(28, 25, 23, 0.88);
+  }
+  .dark .wk-navbtn:hover {
+    background: rgba(28, 25, 23, 0.95);
+  }
+  .dark .focus-reading-btn {
+    background: rgba(28, 25, 23, 0.88);
+  }
+  .dark .focus-reading-btn:hover {
+    background: rgba(28, 25, 23, 0.95);
+  }
+}
