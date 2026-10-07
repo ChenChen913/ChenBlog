@@ -48,7 +48,7 @@ export default function ReadingProgress() {
     <div
       id="reading-progress-track"
       aria-hidden
-      className="fixed top-0 left-0 right-0 z-[55] h-[2.5px] pointer-events-none"
+      className="fixed top-0 left-0 right-0 z-[var(--z-progress)] h-[2.5px] pointer-events-none"
     >
       <div
         id="reading-progress-bar"

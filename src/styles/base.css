@@ -39,6 +39,30 @@ html {
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ========= 全局浮层层级表（z-index 语义档位，2026-10 token 化）=========
+ * 新增浮层先查此表取档，禁止再写裸数字；改动任何一档前须逐对复验叠放
+ * （约束链详见 AGENTS.md 4.10）。两 token 数值重合 = 实测互不同屏。
+ * 容器内部 ::before(0)/>(1) 双层隔离与 Lightbox 内部 close(10) 不入表，
+ * 属局部堆叠上下文，token 化无语义收益。 */
+:root {
+  --z-sticky: 30; /* 页面内 sticky：周刊表头、阅读标尺（遮罩+线） */
+  --z-page-affix: 40; /* 页面固定小钮：文章返回、回顶（原 35/40 并档，同屏不重叠） */
+  --z-reading-resume: 45; /* 专注模式：续读提示条 */
+  --z-nav: 50; /* 常驻导航：顶/底栏、浮动按钮、桌面 TOC、侧栏 tooltip */
+  --z-progress: 55; /* 阅读进度条、专注回顶钮 */
+  --z-reading-chrome: 60; /* 专注工具栏、退出 toast */
+  --z-mobile-toc-backdrop: 60; /* 移动端 TOC 抽屉遮罩（与专注层互不同屏） */
+  --z-mobile-toc-panel: 61; /* 移动端 TOC 抽屉面板 */
+  --z-reading-panel-backdrop: 61; /* 专注设置面板遮罩（与移动 TOC 面板互不同屏） */
+  --z-reading-panel: 62; /* 专注设置面板、休息提醒 */
+  --z-reading-toc-backdrop: 65; /* 专注 TOC 遮罩 */
+  --z-reading-toc-panel: 70; /* 专注 TOC 面板 */
+  --z-search-backdrop: 75; /* 搜索遮罩（原 70，提升以避让专注 TOC 同值碰撞） */
+  --z-search-panel: 76; /* 搜索面板（原 71） */
+  --z-skip-link: 80; /* 键盘跳转链接：a11y 生命线，高于一切常驻 UI（修复被侧栏遮挡） */
+  --z-lightbox: 9999; /* 图片灯箱，永远最高 */
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -71,17 +95,8 @@ html {
   }
 
   /* (乱码注释已清理) */
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-  }
+  /* .sr-only 已移除：与 Tailwind v4 not-sr-only（clip-path 体系）属性错位，
+     项目版 clip:rect 永远解不开，SkipLink focus 后不可见；v4 原生 utilities 接管 */
 
   /* 文章正文标题层级(与站内标题体系一致) */
   .article-body h2 {

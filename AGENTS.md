@@ -36,16 +36,16 @@
 
 ### 2.1 技术栈与版本基线
 
-| 层     | 技术                                                   | 备注                                                                                                  |
-| ------ | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| 运行时 | **Node.js ≥ 20**                                       | 构建脚本与 Vite 6 基线，低版本会报语法错                                                              |
+| 层     | 技术                                                   | 备注                                                                                                                                                |
+| ------ | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 运行时 | **Node.js ≥ 20**                                       | 构建脚本与 Vite 6 基线，低版本会报语法错                                                                                                            |
 | UI     | React 19 · react-router-dom 7 · Tailwind CSS 4         | Tailwind 4 用 `@tailwindcss/vite` 插件，**无 tailwind.config.js**（CSS-first 配置在 `src/styles/base.css` 的 `@theme`，入口串联在 `src/index.css`） |
-| 动效   | motion（原 framer-motion）12                           | ⚠️ 见 4.6 transform 劫持坑                                                                            |
-| 内容   | react-markdown 10 + remark-gfm/math + rehype-katex/raw | rehype-raw 启用，但经过自研安全管道（见 2.4）                                                         |
-| 高亮   | Shiki 4，`shiki/core` 细粒度 + 语言动态 import         | JS 正则引擎（无 oniguruma wasm），CSP 因此可收紧                                                      |
-| 构建   | Vite 6 + 两个自研插件 + prerender.mjs                  | 见 2.2                                                                                                |
-| 测试   | vitest（jsdom）+ Playwright 1.59                       | E2E 双视口（桌面 + 390×844 移动）                                                                     |
-| 质量   | ESLint 10 flat config + Prettier 3 + husky/lint-staged | 提交钩子会**原地重写暂存文件**（坑，见 4.1）                                                          |
+| 动效   | motion（原 framer-motion）12                           | ⚠️ 见 4.6 transform 劫持坑                                                                                                                          |
+| 内容   | react-markdown 10 + remark-gfm/math + rehype-katex/raw | rehype-raw 启用，但经过自研安全管道（见 2.4）                                                                                                       |
+| 高亮   | Shiki 4，`shiki/core` 细粒度 + 语言动态 import         | JS 正则引擎（无 oniguruma wasm），CSP 因此可收紧                                                                                                    |
+| 构建   | Vite 6 + 两个自研插件 + prerender.mjs                  | 见 2.2                                                                                                                                              |
+| 测试   | vitest（jsdom）+ Playwright 1.59                       | E2E 双视口（桌面 + 390×844 移动）                                                                                                                   |
+| 质量   | ESLint 10 flat config + Prettier 3 + husky/lint-staged | 提交钩子会**原地重写暂存文件**（坑，见 4.1）                                                                                                        |
 
 ### 2.2 架构与原理
 
@@ -253,15 +253,16 @@ motion 组件上任何 `y`/`scale` 等动画属性会**整体覆盖** CSS 的 `t
 - `npm test` 默认 watch 模式，CI/脚本里用 `npm run test:run`
 - Shiki 语言 loader 是动态 import：dev server 重启后旧页面会报 `Failed to fetch dynamically imported module`（旧 hash 残留），reload 即愈，非 bug
 - 搜索索引打开弹窗时才并行加载（~200KB），相关断言要等 networkidle
+- **自定义 CSS 类勿与 Tailwind 同名工具类属性体系错位**：项目曾在 @layer base 自定义 `.sr-only` 用 v3 老 `clip: rect()`，而 Tailwind v4 的 `not-sr-only` 只重置 v4 体系的 `clip-path`——两个不同属性互不覆盖，SkipLink focus 后 `clip: rect(0,0,0,0)` 永远残留，跳转链接上线以来从未可见（2026-10 z-index token 化时发现并修复：删项目版，v4 原生接管）。教训：要用 Tailwind 同名类（sr-only / hidden / visible 等），直接依赖原生实现，不要自己再写一份"等价"定义——两套体系并存在产物里共存，解除规则只清自己那套属性
 
 ### 4.10 CSS 架构：styles/ 拆分、G 区兜底与债务路线图
 
 - **styles/ 拆分约束（2026-10 已完成）**：按原 index.css 连续区块纵切、规则顺序零重排，拆分前后编译产物逐字节一致（验证法：拆分前 build 存产物 → 拆分后 build → diff，hash 未变即零副作用）。约束：① `index.css` 只做 @import 串联，顺序即层叠不可调换（`fallback.css` 最末、`reading.css` 在 `components.css` 之后）；② 不设独立 `mobile.css`/`glass.css`——30+ 处断点与玻璃类散布各区块，与相邻规则有覆盖顺序依赖，抽出必重排；③ 新样式写到对应主题文件，勿再堆回 index.css。
 - **G 区（`src/styles/fallback.css`，`@supports not` 块）**：不支持 backdrop-filter 的浏览器（旧 Android WebView / 老 Firefox）靠它把低透明玻璃提到实色保可读。新增玻璃容器若亮色透明度 ≤0.75 或为暗色白玻璃（0.07–0.16 白），必须同步在 G 区补兜底（各文件头注释亦有约定）。该文件必须保持在 @import 链**最末**（unlayered，靠源顺序压过同特异性原规则），不要往前插、也不要改写块内选择器的写法。
+- **z-index 语义档位表（2026-10 已完成，路线图第 2 条）**：`base.css` `:root` 内 16 个 `--z-*` token 覆盖全部全局浮层（30 页面内 sticky → 9999 灯箱），新增浮层一律取档，禁止裸数字。实施依据：① 逐对实测叠放关系后仅安全归并 1 处（返回钮 35→40 并档），评审当年“16→6 档”激进方案因会改变实际层级被否；② 两处防御性提升——搜索 70/71→75/76（避免与专注 TOC 面板同值 70 碰撞，原靠 DOM 顺序碰巧正确）、skip-link 50→80（a11y 生命线）；③ 容器内部 `::before(0)/>(1)` 双层与 Lightbox 内 close(10) 不入表（局部堆叠上下文）；④ 同值双 token（60、61 各两个）= 实测互不同屏，语义独立故不强行合并。CI 棘轮同步升级：CSS 内裸数字仅允许白名单 0/1/3/10，TSX 内仅允许 z-10，新增即挂 CI。验证方法沉淀：改造前后 7 状态 × 26 元素计算样式快照对比（scripts/css-baseline/zindex/ + zindex_baseline.js），比截图更硬。
 - **债务路线图**（源自外部评审 D1/D7，按评审自身纪律分批执行，勿一次性大爆炸重写）：
-  1. 已完成：A–G 分节目录、新增样式约定、CI 预算棘轮、G 区兜底、vendor-react 分包、**物理拆分为 src/styles/ 八文件（产物 diff 零差异）**
-  2. 待做（上线后分批、每批独立 PR）：z-index 16 档归并为语义档位——须先逐对验证 Toast / 搜索弹窗 / Lightbox / 专注工具栏 / TOC 的叠放关系，档位映射不得改变现有实际层级
-  3. 随后：`@layer base` 内 !important 偿还（同层提高 specificity 替代，**不可**叠加新 important 对冲——4.7 的层间反转教训）；约 250 处硬编码色 token 化
+  1. 已完成：A–G 分节目录、新增样式约定、CI 预算棘轮、G 区兜底、vendor-react 分包、**物理拆分为 src/styles/ 八文件（产物 diff 零差异）**、**z-index 语义档位 token 化（16 token + a11y 双修复）**
+  2. 随后：`@layer base` 内 !important 偿还（同层提高 specificity 替代，**不可**叠加新 important 对冲——4.7 的层间反转教训）；约 250 处硬编码色 token 化（可复用 z-index 档位表的同套验证法：计算样式快照对比）
 - **vendor 分包**：`vite.config.ts` 用对象式 `manualChunks` 精确列 react / react-dom / react-router-dom 三件套；**严禁**改成函数式 `id.includes('react')` 粗匹配——会把 react-markdown 渲染链（约 500KB）吸进 vendor chunk，反伤首屏。shiki / katex 已按需分包不归并，motion 跨组件共享留在默认分包。
 
 ---

@@ -244,7 +244,7 @@
 .lightbox-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: var(--z-lightbox);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -553,7 +553,7 @@
   right: 20px;
   width: 204px;
   max-height: calc(100vh - 110px);
-  z-index: 50;
+  z-index: var(--z-nav);
 
   /* (repaired comment) */
   background: rgba(245, 242, 238, 0.9);
@@ -941,7 +941,7 @@
     position: fixed;
     top: 96px;
     left: max(1rem, calc(50vw - 28rem));
-    z-index: 35;
+    z-index: var(--z-page-affix);
     margin: 0;
   }
 }
@@ -1189,7 +1189,7 @@
 /* (repaired comment) */
 .scroll-to-top-btn {
   position: fixed;
-  z-index: 40;
+  z-index: var(--z-page-affix);
   bottom: 24px;
   right: 24px;
   width: 44px;

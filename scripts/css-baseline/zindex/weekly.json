@@ -1,0 +1,76 @@
+{
+  "floatingActions": {
+    "display": "none",
+    "h": 0,
+    "pos": "fixed",
+    "w": 0,
+    "x": 0,
+    "y": 0,
+    "z": "50"
+  },
+  "lightboxClose": null,
+  "lightboxOverlay": null,
+  "mobileBottomNav": {
+    "display": "block",
+    "h": 69,
+    "pos": "fixed",
+    "w": 390,
+    "x": 0,
+    "y": 775,
+    "z": "50"
+  },
+  "postBackBtn": null,
+  "readingBacktop": null,
+  "readingCapsule": null,
+  "readingExitToast": null,
+  "readingPanel": null,
+  "readingPanelBackdrop": null,
+  "readingProgress": null,
+  "readingReminder": null,
+  "readingResume": null,
+  "readingTocBackdrop": null,
+  "readingTocPanel": null,
+  "readingToolbar": null,
+  "ruler": null,
+  "rulerMask": null,
+  "scrollToTop": null,
+  "searchBackdrop": null,
+  "searchPanel": null,
+  "sideBar": {
+    "display": "none",
+    "h": 0,
+    "pos": "sticky",
+    "w": 0,
+    "x": 0,
+    "y": 0,
+    "z": "auto"
+  },
+  "skipLink": {
+    "display": "block",
+    "h": 1,
+    "pos": "absolute",
+    "w": 1,
+    "x": -1,
+    "y": -1,
+    "z": "auto"
+  },
+  "tocShell": null,
+  "topNavMobile": {
+    "display": "block",
+    "h": 61,
+    "pos": "sticky",
+    "w": 390,
+    "x": 0,
+    "y": 0,
+    "z": "50"
+  },
+  "wkSticky": {
+    "display": "block",
+    "h": 89,
+    "pos": "sticky",
+    "w": 358,
+    "x": 16,
+    "y": 180,
+    "z": "30"
+  }
+}

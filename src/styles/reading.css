@@ -256,7 +256,7 @@ html.reading-guide[data-reading-focus] #post-content {
      再用 max-width 兑底不溢出屏幕 */
   width: max-content;
   max-width: calc(100vw - 1rem);
-  z-index: 60;
+  z-index: var(--z-reading-chrome);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -429,7 +429,7 @@ html.reading-guide[data-reading-focus] #post-content {
 .reading-panel-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 61;
+  z-index: var(--z-reading-panel-backdrop);
   background: rgba(28, 25, 23, 0.32);
 }
 .reading-panel {
@@ -437,7 +437,7 @@ html.reading-guide[data-reading-focus] #post-content {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 62;
+  z-index: var(--z-reading-panel);
   display: flex;
   flex-direction: column;
   max-height: 76vh;
@@ -694,7 +694,7 @@ html.reading-guide[data-reading-focus] #post-content {
 .reading-toc-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 65;
+  z-index: var(--z-reading-toc-backdrop);
   background: rgba(28, 25, 23, 0.32);
 }
 /* 分节浮层 v2：条目样式直接复用普通模式目录（.toc-title/.toc-scroll/.toc-item/.toc-pill）。
@@ -706,7 +706,7 @@ html.reading-guide[data-reading-focus] #post-content {
   left: 0;
   right: 0;
   margin-inline: auto;
-  z-index: 70;
+  z-index: var(--z-reading-toc-panel);
   display: flex;
   flex-direction: column;
   width: min(400px, calc(100vw - 32px));
@@ -808,7 +808,7 @@ html.reading-guide[data-reading-focus] #post-content {
   position: fixed;
   left: 0;
   right: 0;
-  z-index: 30;
+  z-index: var(--z-sticky);
   pointer-events: none;
 }
 .reading-ruler-mask--top {
@@ -860,7 +860,7 @@ html[data-reading-theme='night'] .reading-ruler-mask--solid {
 /* 标尺带：靠强对比形成“亮窗”——backdrop-filter 提亮下方内容 + 暖白叠加 + 边界线 */
 .reading-ruler {
   position: fixed;
-  z-index: 30;
+  z-index: var(--z-sticky);
   pointer-events: none;
   border-radius: 10px;
   background: rgba(255, 253, 246, 0.34);
@@ -896,7 +896,7 @@ html[data-reading-theme='night'] .reading-ruler {
   position: fixed;
   right: 1.25rem;
   bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
-  z-index: 55;
+  z-index: var(--z-progress);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -967,7 +967,7 @@ html[data-reading-theme='sepia'] .reading-backtop-btn {
   top: calc(1rem + env(safe-area-inset-top, 0px));
   left: 50%;
   transform: translateX(-50%);
-  z-index: 62;
+  z-index: var(--z-reading-panel);
   pointer-events: none;
 }
 .reading-reminder-toast {
@@ -999,7 +999,7 @@ html[data-reading-theme='sepia'] .reading-backtop-btn {
   /* 居中位移交给 motion 的 x:'-50%'（CSS transform 会被动画覆盖） */
   left: 50%;
   bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-  z-index: 60;
+  z-index: var(--z-reading-chrome);
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -1046,7 +1046,7 @@ html[data-reading-theme='sepia'] .reading-backtop-btn {
   position: fixed;
   right: 1rem;
   bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
-  z-index: 45;
+  z-index: var(--z-reading-resume);
 }
 @media (min-width: 640px) {
   .reading-resume {

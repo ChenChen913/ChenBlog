@@ -8,7 +8,7 @@ export default function FloatingActions() {
   return (
     <div
       id="floating-actions"
-      className="hidden md:flex fixed top-4 right-4 z-50 items-center gap-2"
+      className="hidden md:flex fixed top-4 right-4 z-[var(--z-nav)] items-center gap-2"
     >
       <button
         id="floating-theme-toggle"

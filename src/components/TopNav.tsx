@@ -7,7 +7,7 @@ export default function TopNav({ onOpenSearch }: { onOpenSearch: () => void }) {
   const { theme, toggleTheme, lang, toggleLang, t } = useAppContext();
 
   return (
-    <header id="mobile-topnav" className="mobile-topnav md:hidden sticky top-0 z-50">
+    <header id="mobile-topnav" className="mobile-topnav md:hidden sticky top-0 z-[var(--z-nav)]">
       <div className="flex items-center justify-between px-4 py-3 w-full">
         <Link id="mobile-topnav-logo-link" to="/" className="flex items-center gap-2 flex-shrink-0">
           <div

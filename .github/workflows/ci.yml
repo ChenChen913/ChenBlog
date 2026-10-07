@@ -37,8 +37,12 @@ jobs:
 
       # CSS 债务预算：只减不增。阈值 = 2026-10 index.css 拆分为
       # src/index.css + src/styles/* 后的实测基线（55 占位 / 49 important /
-      # 36 z-index / 4997 行，index.css 与 styles/ 合计）。偿还债务后应
+      # 36 z-index / 5005 行，index.css 与 styles/ 合计）。偿还债务后应
       # 同步下调阈值；确需上调须在 PR 中说明理由。
+      # 行数 4997→5005：z-index 语义档位表（base.css :root，14 token）+ a11y
+      # 修复（删除与 Tailwind v4 not-sr-only 属性错位的自定义 .sr-only）。
+      # z-index 已 token 化：CSS 内裸数字仅允许容器内层白名单值 0/1/3/10，
+      # TSX 内仅允许 z-10（图标层）；新浮层一律用 var(--z-*) 档位。
       - name: CSS budget check (ratchet)
         run: |
           CSS_FILES="src/index.css src/styles/*.css"
@@ -46,11 +50,15 @@ jobs:
           IMPORTANTS=$(cat $CSS_FILES | grep -o '!important' | wc -l)
           ZINDEX=$(cat $CSS_FILES | grep -o 'z-index:' | wc -l)
           LINES=$(cat $CSS_FILES | wc -l)
-          echo "css placeholders=$PLACEHOLDERS importants=$IMPORTANTS z-index=$ZINDEX lines=$LINES"
+          ZINDEX_BAD=$(grep -hE 'z-index: [0-9]+' $CSS_FILES | grep -vcE 'z-index: (0|1|3|10);[[:space:]]*$' || true)
+          ZINDEX_TSX_BAD=$(grep -rhoE 'z-\[?[0-9]+' src --include='*.tsx' | grep -vcE 'z-10$' || true)
+          echo "css placeholders=$PLACEHOLDERS importants=$IMPORTANTS z-index=$ZINDEX zindex_raw_bad=$ZINDEX_BAD zindex_tsx_bad=$ZINDEX_TSX_BAD lines=$LINES"
           test "$PLACEHOLDERS" -le 55
           test "$IMPORTANTS" -le 49
           test "$ZINDEX" -le 36
-          test "$LINES" -le 4997
+          test "$ZINDEX_BAD" -eq 0
+          test "$ZINDEX_TSX_BAD" -eq 0
+          test "$LINES" -le 5005
 
   # 生产构建 + 预渲染产物校验
   build:

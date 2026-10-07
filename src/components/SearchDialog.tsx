@@ -130,7 +130,7 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
         <>
           <motion.div
             id="search-dialog-overlay"
-            className="fixed inset-0 z-[70] bg-black/30 dark:bg-black/50"
+            className="fixed inset-0 z-[var(--z-search-backdrop)] bg-black/30 dark:bg-black/50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -143,7 +143,7 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
             role="dialog"
             aria-modal="true"
             aria-label={t('search_placeholder')}
-            className="search-glass-panel fixed left-1/2 top-[12vh] z-[71] w-[calc(100vw-2rem)] max-w-xl -translate-x-1/2"
+            className="search-glass-panel fixed left-1/2 top-[12vh] z-[var(--z-search-panel)] w-[calc(100vw-2rem)] max-w-xl -translate-x-1/2"
             initial={{ opacity: 0, scale: 0.97, y: -8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: -8 }}

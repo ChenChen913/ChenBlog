@@ -191,7 +191,7 @@ export default function SideBar({ onOpenSearch }: { onOpenSearch: () => void }) 
           </button>
           {showQrCode && (
             <div
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-white dark:bg-stone-800 rounded-lg shadow-lg border border-stone-200 dark:border-stone-700 z-50"
+              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-white dark:bg-stone-800 rounded-lg shadow-lg border border-stone-200 dark:border-stone-700 z-[var(--z-nav)]"
               style={{ minWidth: '160px' }}
             >
               <img

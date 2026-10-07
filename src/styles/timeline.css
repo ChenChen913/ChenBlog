@@ -333,7 +333,7 @@
 .wk-sticky-wrap {
   position: sticky;
   top: 10px;
-  z-index: 30;
+  z-index: var(--z-sticky);
 }
 .wk-strip {
   margin: 20px 0 6px;

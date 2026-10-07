@@ -1,0 +1,124 @@
+{
+  "floatingActions": {
+    "display": "flex",
+    "h": 38,
+    "pos": "fixed",
+    "w": 93,
+    "x": 1171,
+    "y": 16,
+    "z": "50"
+  },
+  "lightboxClose": {
+    "display": "flex",
+    "h": 44,
+    "pos": "absolute",
+    "w": 44,
+    "x": 1216,
+    "y": 20,
+    "z": "10"
+  },
+  "lightboxOverlay": {
+    "display": "flex",
+    "h": 577,
+    "pos": "fixed",
+    "w": 1280,
+    "x": 0,
+    "y": 0,
+    "z": "9999"
+  },
+  "mobileBottomNav": null,
+  "postBackBtn": {
+    "display": "flex",
+    "h": 50,
+    "pos": "fixed",
+    "w": 108,
+    "x": 192,
+    "y": 96,
+    "z": "35"
+  },
+  "readingBacktop": null,
+  "readingCapsule": null,
+  "readingExitToast": null,
+  "readingPanel": null,
+  "readingPanelBackdrop": null,
+  "readingProgress": {
+    "display": "block",
+    "h": 3,
+    "pos": "fixed",
+    "w": 1280,
+    "x": 0,
+    "y": 0,
+    "z": "55"
+  },
+  "readingReminder": null,
+  "readingResume": {
+    "display": "block",
+    "h": 0,
+    "pos": "fixed",
+    "w": 0,
+    "x": 1256,
+    "y": 553,
+    "z": "45"
+  },
+  "readingTocBackdrop": null,
+  "readingTocPanel": null,
+  "readingToolbar": null,
+  "ruler": null,
+  "rulerMask": null,
+  "scrollToTop": null,
+  "searchBackdrop": {
+    "display": "block",
+    "h": 577,
+    "pos": "fixed",
+    "w": 1280,
+    "x": 0,
+    "y": 0,
+    "z": "70"
+  },
+  "searchPanel": {
+    "display": "block",
+    "h": 197,
+    "pos": "fixed",
+    "w": 576,
+    "x": 352,
+    "y": 69,
+    "z": "71"
+  },
+  "sideBar": {
+    "display": "flex",
+    "h": 577,
+    "pos": "sticky",
+    "w": 256,
+    "x": 0,
+    "y": 0,
+    "z": "auto"
+  },
+  "skipLink": {
+    "display": "block",
+    "h": 1,
+    "pos": "absolute",
+    "w": 1,
+    "x": -1,
+    "y": -1,
+    "z": "auto"
+  },
+  "tocShell": {
+    "display": "block",
+    "h": 412,
+    "pos": "fixed",
+    "w": 180,
+    "x": 1080,
+    "y": 88,
+    "z": "50"
+  },
+  "topNavMobile": {
+    "display": "none",
+    "h": 0,
+    "pos": "sticky",
+    "w": 0,
+    "x": 0,
+    "y": 0,
+    "z": "50"
+  },
+  "wkSticky": null
+}

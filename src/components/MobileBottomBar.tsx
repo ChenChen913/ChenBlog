@@ -76,7 +76,7 @@ function PostBottomBar() {
     <>
       <nav
         aria-label="移动端文章操作"
-        className="mobile-topnav md:hidden fixed bottom-0 left-0 right-0 z-50"
+        className="mobile-topnav md:hidden fixed bottom-0 left-0 right-0 z-[var(--z-nav)]"
         style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
         <div className="flex items-center justify-center gap-6 px-6 py-3">
@@ -102,7 +102,7 @@ function PostBottomBar() {
           <>
             {/* 遮罩 */}
             <motion.div
-              className="fixed inset-0 z-[60] bg-black/30 md:hidden"
+              className="fixed inset-0 z-[var(--z-mobile-toc-backdrop)] bg-black/30 md:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -110,7 +110,7 @@ function PostBottomBar() {
             />
             {/* 目录面板 */}
             <motion.div
-              className="mobile-toc-panel fixed bottom-0 left-0 right-0 z-[61] md:hidden"
+              className="mobile-toc-panel fixed bottom-0 left-0 right-0 z-[var(--z-mobile-toc-panel)] md:hidden"
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
@@ -302,7 +302,7 @@ function NavBottomBar() {
     <nav
       aria-label="移动端导航"
       role="navigation"
-      className="mobile-bottomnav md:hidden fixed bottom-0 left-0 right-0 z-50"
+      className="mobile-bottomnav md:hidden fixed bottom-0 left-0 right-0 z-[var(--z-nav)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div
