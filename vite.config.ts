@@ -57,6 +57,19 @@ export default defineConfig(({ command }) => {
         '@': path.resolve(__dirname, './src'),
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          // vendor 分包：框架三件套独立成 chunk，业务代码迭代不再使回访用户
+          // 的框架缓存失效。⚠ 必须用对象式精确列包——函数式 id.includes('react')
+          // 会把 react-markdown 渲染链（约 500KB）吸进 vendor，反伤首屏；
+          // shiki / katex 已按需分包不归并，motion 跨组件共享留在默认分包
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          },
+        },
+      },
+    },
     server: {
       port: 3000,
       host: true,

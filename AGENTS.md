@@ -120,6 +120,8 @@ npm run build         # build + prerender：末尾输出 16 条路由的预渲�
 
 E2E 依赖三篇**内置测试文章**（勿删）：`markdown-syntax-test.md`（reading-mode/navigation 用例的载体）、`codeblock-stress-test.md`、`test-duplicate-headings.md`；`文章模板.md` 是写作模板。均为 `draft: true`（syntax-test 除外——它需要出现在列表里供 e2e 断言）。
 
+CI（checks job）另有 **CSS 债务预算棘轮**：`src/index.css` 占位注释 ≤57、`!important` ≤50、`z-index` ≤36、总行数 ≤4935，只减不增；偿还债务（拆分/token 化）后应同步下调阈值，确需上调须在 PR 里说明理由。
+
 ---
 
 ## 3. 部署
@@ -240,6 +242,15 @@ motion 组件上任何 `y`/`scale` 等动画属性会**整体覆盖** CSS 的 `t
 - `npm test` 默认 watch 模式，CI/脚本里用 `npm run test:run`
 - Shiki 语言 loader 是动态 import：dev server 重启后旧页面会报 `Failed to fetch dynamically imported module`（旧 hash 残留），reload 即愈，非 bug
 - 搜索索引打开弹窗时才并行加载（~200KB），相关断言要等 networkidle
+
+### 4.10 index.css 的 G 区兜底与 CSS 债务路线图
+
+- **G 区（文件末尾 `@supports not` 块）**：不支持 backdrop-filter 的浏览器（旧 Android WebView / 老 Firefox）靠它把低透明玻璃提到实色保可读。新增玻璃容器若亮色透明度 ≤0.75 或为暗色白玻璃（0.07–0.16 白），必须同步在 G 区补兜底（头部「新增样式约定」亦有约定）。该块必须保持在文件**最末**（unlayered，靠源顺序压过同特异性原规则），不要往前插、也不要改写块内选择器的写法。
+- **债务路线图**（源自外部评审 D1/D7，按评审自身纪律分批执行，勿一次性大爆炸重写）：
+  1. 已完成：A–G 分节目录、新增样式约定、CI 预算棘轮、G 区兜底、vendor-react 分包
+  2. 待做（上线后分批、每批独立 PR）：index.css 物理拆分为 `src/styles/` 多文件——内容整块原样搬，保持 layer 归属与选择器优先级，每迁一节跑全量验证，拆分前后 CSS 总体积应持平（±2%）；z-index 16 档归并为语义档位——须先逐对验证 Toast / 搜索弹窗 / Lightbox / 专注工具栏 / TOC 的叠放关系，档位映射不得改变现有实际层级
+  3. 随后：`@layer base` 内 !important 偿还（同层提高 specificity 替代，**不可**叠加新 important 对冲——4.7 的层间反转教训）；约 250 处硬编码色 token 化
+- **vendor 分包**：`vite.config.ts` 用对象式 `manualChunks` 精确列 react / react-dom / react-router-dom 三件套；**严禁**改成函数式 `id.includes('react')` 粗匹配——会把 react-markdown 渲染链（约 500KB）吸进 vendor chunk，反伤首屏。shiki / katex 已按需分包不归并，motion 跨组件共享留在默认分包。
 
 ---
 
