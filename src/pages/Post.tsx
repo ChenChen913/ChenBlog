@@ -694,7 +694,11 @@ export default function Post() {
                   onChange={handleArticleFontSizeChange}
                 />
                 <span className="post-meta-toolbar__divider" aria-hidden="true" />
-                <ReadingFocusButton onEnter={() => reading.enter()} label={t('focus_reading')} />
+                <ReadingFocusButton
+                  onEnter={() => reading.enter()}
+                  label={t('focus_reading')}
+                  compactLabel={t('focus_reading_compact')}
+                />
               </div>
             )}
           </header>

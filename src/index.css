@@ -653,11 +653,37 @@ html {
   box-shadow: none;
 }
 
+/* 紧凑/全称双标签：桌面默认全称，手机（≤520px）切紧凑，防止同行溢出重叠 */
+.article-font-size-control__compact,
+.focus-reading-btn__compact {
+  display: none;
+}
+
+/* 手机端（用户反馈）：去掉"字体大小"文字标签，只留分段控件；
+   与"专注阅读"按钮强制同行排列，杜绝分行/竖排。
+   英文用紧凑标签（A-/A/A+、"Focus"）防止溢出；中文紧凑与全称一致。
+   无障碍语义由 aria-label 承担，视觉上做减法 */
 @media (max-width: 520px) {
-  .post-meta-toolbar .article-font-size-control {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.5rem;
+  .post-meta-toolbar {
+    flex-wrap: nowrap;
+  }
+  .article-font-size-control__label,
+  .article-font-size-control__full,
+  .focus-reading-btn__full {
+    display: none;
+  }
+  .article-font-size-control__compact,
+  .focus-reading-btn__compact {
+    display: inline;
+  }
+  .article-font-size-control__button {
+    min-width: 2.5rem;
+    padding: 0.34rem 0.55rem;
+    white-space: nowrap;
+  }
+  .focus-reading-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 }
 
@@ -3492,6 +3518,12 @@ html.reading-guide[data-reading-focus] #post-content {
   bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
+  /* width: max-content —— 修复手机端 "专注"/"引导" 竖排：
+     left:50% 的 fixed 元素可用宽度只剩半屏，内容收缩时 mode 按钮被压到
+     单字宽度，两字换行成竖排。显式 max-content 让工具栏按内容取宽，
+     再用 max-width 兑底不溢出屏幕 */
+  width: max-content;
+  max-width: calc(100vw - 1rem);
   z-index: 60;
   display: flex;
   flex-direction: column;
@@ -3503,6 +3535,7 @@ html.reading-guide[data-reading-focus] #post-content {
   display: flex;
   align-items: center;
   gap: 3px;
+  max-width: 100%;
   padding: 5px 6px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.82);
@@ -3612,6 +3645,9 @@ html.reading-guide[data-reading-focus] #post-content {
   font-size: 12.5px;
   font-weight: 600;
   color: #78716c;
+  /* 手机端不被压缩换行："专注""引导"必须水平排列 */
+  flex-shrink: 0;
+  white-space: nowrap;
   transition: all 0.16s ease;
   cursor: pointer;
 }

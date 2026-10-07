@@ -21,6 +21,21 @@ const LABELS = {
   },
 } as const;
 
+/* 手机端紧凑标签：英文 Small/Standard/Large 太宽，与专注阅读按钮同行时会溢出重叠；
+   换成 A-/A/A+ 通用字号记号。中文本来就短，紧凑标签与全称一致 */
+const COMPACT_LABELS = {
+  zh: {
+    small: '小',
+    standard: '标准',
+    large: '大',
+  },
+  en: {
+    small: 'A-',
+    standard: 'A',
+    large: 'A+',
+  },
+} as const;
+
 const OPTIONS: ArticleFontSizeMode[] = ['small', 'standard', 'large'];
 
 export default function ArticleFontSizeControl({
@@ -29,6 +44,7 @@ export default function ArticleFontSizeControl({
   onChange,
 }: ArticleFontSizeControlProps) {
   const labels = LABELS[language];
+  const compact = COMPACT_LABELS[language];
 
   return (
     <div className="article-font-size-control" aria-label={labels.group}>
@@ -47,7 +63,14 @@ export default function ArticleFontSizeControl({
               onClick={() => onChange(option)}
               type="button"
             >
-              {labels[option]}
+              {compact[option] === labels[option] ? (
+                <span>{labels[option]}</span>
+              ) : (
+                <>
+                  <span className="article-font-size-control__full">{labels[option]}</span>
+                  <span className="article-font-size-control__compact">{compact[option]}</span>
+                </>
+              )}
             </button>
           );
         })}

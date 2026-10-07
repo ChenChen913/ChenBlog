@@ -22,9 +22,10 @@ describe('ArticleFontSizeControl', () => {
   test('calls onChange with the selected mode', () => {
     const onChange = vi.fn();
 
+    // 英文按钮带手机端紧凑标签（Large + A+ 双 span），用正则匹配可访问名
     render(<ArticleFontSizeControl mode="standard" language="en" onChange={onChange} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Large' }));
+    fireEvent.click(screen.getByRole('button', { name: /Large/ }));
 
     expect(onChange).toHaveBeenCalledWith('large');
   });
