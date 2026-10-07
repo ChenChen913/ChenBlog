@@ -2,11 +2,10 @@
  * reading.css —— 专注阅读模式（原 index.css F 区，层叠敏感区！）
  * 内部 14 个编号小节（"---------- N. xxx ----------" 注释），
  * 全文注释中「第 N 节」均指这套编号。
- * ⚠ 本文件对 CSS 层叠顺序极度敏感：
- *   - 第 14 节的 @layer base（全文第二个 base 块）必须保持在
- *     base.css 的 @layer base 之后（同名层按出现顺序合并）；
- *   - 本文件必须排在 components/overlays/timeline 之后 import；
- *   - 改动后必跑「暗色 × 4 套阅读背景」矩阵抽查（AGENTS.md 4.7）。
+ * ⚠ 须排在 components/overlays/timeline 之后 import（未分层同特异性
+ *   靠源顺序压制前文）；强主题覆盖（第 3 节）靠 specificity 压过
+ *   article.css 排版与 .dark 变体，零 important（2026-10 已偿还）；
+ *   改动后必跑「暗色 × 4 套阅读背景」矩阵抽查（AGENTS.md 4.7）。
  * ============================================================ */
 
 /* ============================================================
@@ -20,6 +19,7 @@
  * ============================================================ */
 
 /* ---------- 1. 模式激活：隐藏站点 chrome ---------- */
+/* 未分层规则天然压过 utilities 层的 hidden/md:flex 等，无需 important */
 html.reading-focus #desktop-sidebar,
 html.reading-focus .mobile-topnav,
 html.reading-focus .mobile-bottomnav,
@@ -28,12 +28,16 @@ html.reading-focus #floating-actions,
 html.reading-focus .scroll-to-top-btn,
 html.reading-focus .post-back-btn,
 html.reading-focus .toc-shell {
-  display: none !important;
+  display: none;
 }
 
-/* 底部留出工具胶囊的空间（覆盖 md:pb-12） */
-html.reading-focus #main-content {
-  padding-bottom: 6.5rem;
+/* 底部留出工具胶囊的空间（覆盖 md:pb-12）。仅桌面：手机专注态由
+   components.css 的 #main-content 移动端 80px 接管（历史靠 important
+   压过本规则，2026-10 改为媒体查询分治，行为不变） */
+@media (min-width: 768px) {
+  html.reading-focus #main-content {
+    padding-bottom: 6.5rem;
+  }
 }
 
 /* ---------- 2. 正文收窄居中 + 排版变量接管 ---------- */
@@ -93,7 +97,7 @@ html.reading-focus[data-reading-theme='night'] #app-layout {
   background: var(--reading-bg);
 }
 
-/* 强制主题下的文字颜色（覆盖 h1-h3 渲染器的内联 rgb(15 23 42)） */
+/* 强制主题文字颜色：(0,3,2) 高于 article.css 的 .dark 变体 (0,2,1)，未分层同域直接胜出 */
 html.reading-focus[data-reading-theme='paper']
   .article-body
   :is(h1, h2, h3, h4, h5, h6, p, li, blockquote, strong, b, em, i, td, th, figcaption, dt, dd),
@@ -103,7 +107,7 @@ html.reading-focus[data-reading-theme='sepia']
 html.reading-focus[data-reading-theme='night']
   .article-body
   :is(h1, h2, h3, h4, h5, h6, p, li, blockquote, strong, b, em, i, td, th, figcaption, dt, dd) {
-  color: var(--reading-fg) !important;
+  color: var(--reading-fg);
 }
 html.reading-focus[data-reading-theme='paper'] #post-title,
 html.reading-focus[data-reading-theme='sepia'] #post-title,
@@ -126,15 +130,15 @@ html.reading-focus[data-reading-theme='night'] .article-body a {
 html.reading-focus[data-reading-theme='paper'] .article-body .katex,
 html.reading-focus[data-reading-theme='sepia'] .article-body .katex,
 html.reading-focus[data-reading-theme='night'] .article-body .katex {
-  color: var(--reading-fg) !important;
+  color: var(--reading-fg);
 }
+/* 表格/分隔线边框走阅读主题色。⚠ h2 不在此列：历史上 h2 边框始终是
+   article.css 基础色（旧分层 important 靠层间反转压过本规则，
+   --reading-border 从未生效），按实际渲染行为保留，勿顺手"修复" */
 html.reading-focus[data-reading-theme='paper'] .article-body :is(td, th, hr),
 html.reading-focus[data-reading-theme='sepia'] .article-body :is(td, th, hr),
-html.reading-focus[data-reading-theme='night'] .article-body :is(td, th, hr),
-html.reading-focus[data-reading-theme='paper'] .article-body h2,
-html.reading-focus[data-reading-theme='sepia'] .article-body h2,
-html.reading-focus[data-reading-theme='night'] .article-body h2 {
-  border-color: var(--reading-border) !important;
+html.reading-focus[data-reading-theme='night'] .article-body :is(td, th, hr) {
+  border-color: var(--reading-border);
 }
 html.reading-focus[data-reading-theme='paper'] .article-body blockquote,
 html.reading-focus[data-reading-theme='sepia'] .article-body blockquote,
@@ -849,13 +853,14 @@ html[data-reading-theme='night'] .reading-ruler-mask--bottom {
     rgba(0, 0, 0, 0)
   );
 }
-/* 无渐变变体（设置里可关）：尺内外硬边强对比，遮罩纯色无过渡 */
+/* 无渐变变体（设置里可关）：尺内外硬边强对比，遮罩纯色无过渡。
+   同特异性靠源顺序（本文件内靠后）压过渐变版 */
 .reading-ruler-mask--solid {
-  background: rgba(28, 25, 23, 0.87) !important;
+  background: rgba(28, 25, 23, 0.87);
 }
 .dark .reading-ruler-mask--solid,
 html[data-reading-theme='night'] .reading-ruler-mask--solid {
-  background: rgba(0, 0, 0, 0.84) !important;
+  background: rgba(0, 0, 0, 0.84);
 }
 /* 标尺带：靠强对比形成“亮窗”——backdrop-filter 提亮下方内容 + 暖白叠加 + 边界线 */
 .reading-ruler {
@@ -1291,28 +1296,16 @@ html[data-reading-theme='sepia'] .reading-resume-toast {
   }
 }
 
-/* ---------- 14. 专注强主题 × 站点暗色的层叠收口（黑夜模式字体虚化修复） ----------
+/* ---------- 14. 专注强主题 × 站点暗色的收口（黑夜模式字体虚化修复） ----------
    复现路径：亮色打开文章 → 手动切黑夜 → 进专注阅读（选纸白/暖米背景）。
-   根因（两层叠加）：
-   1) 标题虚化：.dark .article-body h2~h6 的 !important 规则位于 @layer base。
-      CSS 层叠规则中 important 声明层间反转——base 层的 important 优先于
-      unlayered 的 important，也优先于 utilities 层的 dark:!text-*。于是第 3 节
-      （unlayered）的强主题文字覆盖永远打不赢，标题呈 stone-200 浅灰叠在
-      纸白/暖米正文上发虚。解法：同回 @layer base，靠 specificity 压制
-      (0,2,2) > (0,2,1)，同时层间反转天然压住 utilities 的 dark:!text-*。
-   2) 工具浮层虚化：第 12 节把 paper/sepia 的面板/胶囊背景覆盖成了亮玻璃，
-      但容器内子元素文字仍被 .dark 的浅灰规则直接命中（元素级规则赢过容器
-      继承），亮底浅字 = 面板文字整体发虚。解法：为 paper/sepia 补全子元素
-      亮色覆盖（对齐 night 版做法，值取各控件的基础亮色）。 */
-
-/* A. 标题颜色：进 base 层打 important 层叠反转战（三主题齐备） */
-@layer base {
-  html[data-reading-theme='paper'] .article-body :is(h1, h2, h3, h4, h5, h6),
-  html[data-reading-theme='sepia'] .article-body :is(h1, h2, h3, h4, h5, h6),
-  html[data-reading-theme='night'] .article-body :is(h1, h2, h3, h4, h5, h6) {
-    color: var(--reading-fg) !important;
-  }
-}
+   历史根因（2026-10 important 偿还后已结构性消除）：
+   1) 标题虚化：base.css 分层 important 与渲染器 dark:! 工具类互相倾轧，
+      强主题覆盖被迫再叠 important 打层间反转战（旧 A 块即当时的补丁：
+      @layer base + important，specificity (0,2,2)>(0,2,1)）。偿还后排版
+      收拢为 article.css 未分层规则，第 3 节靠 (0,3,2) 直接胜出，A 块已删。
+   2) 工具浮层虚化：第 12 节把 paper/sepia 面板背景覆盖成亮玻璃，但容器
+      内子元素文字仍被 .dark 浅灰规则直接命中（元素级规则赢过容器继承），
+      亮底浅字 = 发虚。解法（仍生效）：补全子元素亮色覆盖，值取基础亮色。 */
 
 /* B. 行内 code：强主题接管（.dark 版浅字半透明深底叠亮正文，观感发灰蒙） */
 html[data-reading-theme='paper'] .article-body code:not(.hljs),

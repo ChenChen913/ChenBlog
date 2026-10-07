@@ -228,12 +228,69 @@
   --article-code-size: 1rem;
 }
 
-.article-body h1,
-.article-body h2,
-.article-body h3,
-.article-body h4 {
-  @apply font-bold text-stone-900 dark:text-stone-100;
+/* 正文标题排版——唯一事实源（2026-10 important 偿还时自 base.css 分层规则、
+   Post.tsx 内联样式、dark:! 工具类三方收拢）。暗色 h1 取原 dark:!text-stone-200
+   的 oklch 字面量保值；阅读强主题覆盖见 reading.css 第 3 节（specificity 更高） */
+.article-body h1 {
+  font-size: var(--article-h1-size, 1.75rem);
+  line-height: 1.4;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: rgb(15 23 42);
   font-family: var(--font-kai);
+}
+.article-body h2 {
+  font-size: var(--article-h2-size, 1.5rem);
+  line-height: 1.4;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgb(228 228 231);
+  color: rgb(15 23 42);
+  font-family: var(--font-kai);
+}
+.article-body h3 {
+  font-size: var(--article-h3-size, 1.375rem);
+  line-height: 1.4;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: rgb(15 23 42);
+  font-family: var(--font-kai);
+}
+.article-body h4 {
+  font-size: calc(var(--article-h3-size, 1.375rem) * 0.9);
+  line-height: 1.45;
+  font-weight: 700;
+  margin-top: 1.25rem;
+  margin-bottom: 0.65rem;
+  color: rgb(30 41 59);
+  font-family: var(--font-kai);
+}
+.article-body h5,
+.article-body h6 {
+  font-size: calc(var(--article-body-size, 1.25rem) * 0.9);
+  line-height: 1.45;
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: rgb(51 65 85);
+  font-family: var(--font-kai);
+}
+.dark .article-body h1 {
+  color: oklch(92.3% 0.003 48.717);
+}
+.dark .article-body h2,
+.dark .article-body h3,
+.dark .article-body h4,
+.dark .article-body h5,
+.dark .article-body h6 {
+  color: rgb(214 211 209);
+}
+.dark .article-body h2 {
+  border-bottom-color: rgb(68 64 60 / 0.3);
 }
 /* 移除默认焦点, 使用 focus-visible */
 .article-body p {

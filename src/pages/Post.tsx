@@ -634,61 +634,25 @@ export default function Post() {
                     return <p className="mb-4">{children}</p>;
                   },
 
-                  // h1 渲染器
+                  // h1 渲染器：排版全部由 article.css 的 .article-body h1~h6 统一接管
+                  // （2026-10 重要偿还：内联样式与 dark:! 工具类曾是 base.css 被迫用
+                  //   ！important 对冲的根源，三方争夺已收敛为 CSS 单一事实源）
                   h1: ({ children, id, ...props }) => (
-                    <h1
-                      id={id}
-                      {...props}
-                      style={{
-                        fontSize: 'var(--article-h1-size)',
-                        lineHeight: '1.4',
-                        fontWeight: '700',
-                        marginTop: '1.5rem',
-                        marginBottom: '0.75rem',
-                        color: 'rgb(15 23 42)',
-                      }}
-                      className="dark:!text-stone-200 heading-anchor"
-                    >
+                    <h1 id={id} {...props} className="heading-anchor">
                       {children}
                     </h1>
                   ),
 
                   // h2 渲染器：ID 已由 rehypeSequentialIds 插件注入，直接透传
                   h2: ({ children, id, ...props }) => (
-                    <h2
-                      id={id}
-                      {...props}
-                      style={{
-                        fontSize: 'var(--article-h2-size)',
-                        lineHeight: '1.4',
-                        fontWeight: '700',
-                        marginTop: '2rem',
-                        marginBottom: '1rem',
-                        paddingBottom: '0.5rem',
-                        borderBottom: '1px solid rgb(228 228 231)',
-                        color: 'rgb(15 23 42)',
-                      }}
-                      className="dark:!border-stone-700/30 dark:!text-stone-200 heading-anchor"
-                    >
+                    <h2 id={id} {...props} className="heading-anchor">
                       {children}
                     </h2>
                   ),
 
                   // h3 渲染器：ID 已由 rehypeSequentialIds 插件注入，直接透传
                   h3: ({ children, id, ...props }) => (
-                    <h3
-                      id={id}
-                      {...props}
-                      style={{
-                        fontSize: 'var(--article-h3-size)',
-                        lineHeight: '1.4',
-                        fontWeight: '700',
-                        marginTop: '1.5rem',
-                        marginBottom: '0.75rem',
-                        color: 'rgb(15 23 42)',
-                      }}
-                      className="dark:!text-stone-200 heading-anchor"
-                    >
+                    <h3 id={id} {...props} className="heading-anchor">
                       {children}
                     </h3>
                   ),

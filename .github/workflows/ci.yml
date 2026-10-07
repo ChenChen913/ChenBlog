@@ -36,11 +36,15 @@ jobs:
         run: npm run test:run
 
       # CSS 债务预算：只减不增。阈值 = 2026-10 index.css 拆分为
-      # src/index.css + src/styles/* 后的实测基线（55 占位 / 49 important /
-      # 36 z-index / 5005 行，index.css 与 styles/ 合计）。偿还债务后应
-      # 同步下调阈值；确需上调须在 PR 中说明理由。
+      # src/index.css + src/styles/* 后的实测基线（占位 55 / z-index 36 /
+      # 5005 行，index.css 与 styles/ 合计）。偿还债务后应同步下调阈值；
+      # 确需上调须在 PR 中说明理由。
+      # important 49→0（2026-10 全量偿还）：三方内斗根源（Post.tsx 渲染器
+      #   内联样式 + dark:! 工具类 + base.css 分层 important）已清除，排版
+      #   收拢为 article.css 未分层单一事实源；KaTeX 用 .article-body 前缀
+      #   specificity 压制运行时注入的 katex.min.css。新增 important 直接挂。
       # 行数 4997→5005：z-index 语义档位表（base.css :root，14 token）+ a11y
-      # 修复（删除与 Tailwind v4 not-sr-only 属性错位的自定义 .sr-only）。
+      #   修复 + important 偿还的层叠知识注释（净额持平，见 PR）。
       # z-index 已 token 化：CSS 内裸数字仅允许容器内层白名单值 0/1/3/10，
       # TSX 内仅允许 z-10（图标层）；新浮层一律用 var(--z-*) 档位。
       - name: CSS budget check (ratchet)
@@ -54,7 +58,7 @@ jobs:
           ZINDEX_TSX_BAD=$(grep -rhoE 'z-\[?[0-9]+' src --include='*.tsx' | grep -vcE 'z-10$' || true)
           echo "css placeholders=$PLACEHOLDERS importants=$IMPORTANTS z-index=$ZINDEX zindex_raw_bad=$ZINDEX_BAD zindex_tsx_bad=$ZINDEX_TSX_BAD lines=$LINES"
           test "$PLACEHOLDERS" -le 55
-          test "$IMPORTANTS" -le 49
+          test "$IMPORTANTS" -le 0
           test "$ZINDEX" -le 36
           test "$ZINDEX_BAD" -eq 0
           test "$ZINDEX_TSX_BAD" -eq 0

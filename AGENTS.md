@@ -129,7 +129,7 @@ npm run build         # build + prerender：末尾输出 16 条路由的预渲�
 
 E2E 依赖三篇**内置测试文章**（勿删）：`markdown-syntax-test.md`（reading-mode/navigation 用例的载体）、`codeblock-stress-test.md`、`test-duplicate-headings.md`；`文章模板.md` 是写作模板。均为 `draft: true`（syntax-test 除外——它需要出现在列表里供 e2e 断言）。
 
-CI（checks job）另有 **CSS 债务预算棘轮**：`src/index.css + src/styles/*.css` 合计占位注释 ≤55、`!important` ≤49、`z-index` ≤36、总行数 ≤4997，只减不增；偿还债务（token 化等）后应同步下调阈值，确需上调须在 PR 里说明理由。
+CI（checks job）另有 **CSS 债务预算棘轮**：`src/index.css + src/styles/*.css` 合计占位注释 ≤55、`!important` **≤0（2026-10 全量偿还，新增即挂）**、`z-index` ≤36、总行数 ≤5005，只减不增；偿还债务（token 化等）后应同步下调阈值，确需上调须在 PR 里说明理由。
 
 ---
 
@@ -236,11 +236,13 @@ python3 scripts/font-split.py   # 幂等，可重复执行；源字体在 script
 
 motion 组件上任何 `y`/`scale` 等动画属性会**整体覆盖** CSS 的 `translateX(-50%)` 居中。需要居中+动画时，把居中也交给 motion：`animate={{ x: '-50%', y: 0 }}`。（历史案例：退出 toast 的 CSS 居中被动画覆盖导致水平错位。）
 
-### 4.7 样式层叠反转（暗色 + 强阅读主题的样式覆盖）
+### 4.7 正文排版的层叠结构（2026-10 important 全量偿还后）
 
-`.dark .article-body h2 { color: X !important }` 写在 `@layer base` 里时（现 `src/styles/base.css`），**important 层间反转**使其优先于 unlayered/utilities 的 `dark:!text-*`。专注模式的 paper/sepia/night 强主题覆盖必须写在**同一 layer 且更高 specificity**，且要覆盖**子元素**（元素级规则赢过容器继承）。改 `src/styles/reading.css` 第 12–14 编号小节前后务必跑暗色×全背景矩阵。
+正文标题排版的**唯一事实源**是 `article.css` 的 `.article-body h1~h6` 未分层规则（亮色 slate 系 / 暗色 `.dark` 变体，暗色 h1 为 oklch 字面量以保值原 `dark:!text-stone-200` 工具类的 notation）。历史上这里是三方 important 内斗场（base.css 分层 important × Post.tsx 渲染器内联样式 × `dark:!text-*` 工具类），2026-10 已连根拔除——**渲染器只留 `heading-anchor` 标记类**，全站 CSS 零 important。
 
-另：拆分后 `@layer base` 有两块（`base.css` 与 `reading.css` 第 14 节），同名层按出现顺序合并——**import 顺序不可调换**；`fallback.css` 必须保持最末。
+覆盖链（全靠 specificity，无 important）：专注模式强主题（reading.css 第 3 节，`html.reading-focus[data-reading-theme] .article-body :is(...)` ≈ (0,3,2)）> 站点暗色（`.dark .article-body h*` (0,2,1)）> 基础排版 (0,1,1)。改 `src/styles/reading.css` 第 3/12/14 编号小节或 article.css 排版块前后务必跑暗色×全背景矩阵（计算样式快照法见 scripts/css-baseline/colorstyle/）。
+
+层叠要点：① `@layer base` 现仅 base.css 一块（reading.css 第 14 节旧 base 块已随偿还删除），**import 顺序仍不可调换**，`fallback.css` 必须保持最末；② KaTeX 的 `katex.min.css` 是**运行时注入**的未分层样式表（晚于打包产物，同特异性靠源顺序赢）——覆盖它用 `.article-body` 前缀抬 specificity，且**只声明历史上真正生效过的属性**（`line-height`、`display`、`text-align` 等曾被它压死的声明勿因提 specificity 而复活）；③ 手机专注态 `#main-content` 底部 padding 由 components.css 移动端 80px 规则接管，reading.css 第 1 节的 6.5rem 仅桌面（媒体查询分治，行为与旧 important 时代一致）。
 
 ### 4.8 手机端布局断点
 
@@ -262,7 +264,7 @@ motion 组件上任何 `y`/`scale` 等动画属性会**整体覆盖** CSS 的 `t
 - **z-index 语义档位表（2026-10 已完成，路线图第 2 条）**：`base.css` `:root` 内 16 个 `--z-*` token 覆盖全部全局浮层（30 页面内 sticky → 9999 灯箱），新增浮层一律取档，禁止裸数字。实施依据：① 逐对实测叠放关系后仅安全归并 1 处（返回钮 35→40 并档），评审当年“16→6 档”激进方案因会改变实际层级被否；② 两处防御性提升——搜索 70/71→75/76（避免与专注 TOC 面板同值 70 碰撞，原靠 DOM 顺序碰巧正确）、skip-link 50→80（a11y 生命线）；③ 容器内部 `::before(0)/>(1)` 双层与 Lightbox 内 close(10) 不入表（局部堆叠上下文）；④ 同值双 token（60、61 各两个）= 实测互不同屏，语义独立故不强行合并。CI 棘轮同步升级：CSS 内裸数字仅允许白名单 0/1/3/10，TSX 内仅允许 z-10，新增即挂 CI。验证方法沉淀：改造前后 7 状态 × 26 元素计算样式快照对比（scripts/css-baseline/zindex/ + zindex_baseline.js），比截图更硬。
 - **债务路线图**（源自外部评审 D1/D7，按评审自身纪律分批执行，勿一次性大爆炸重写）：
   1. 已完成：A–G 分节目录、新增样式约定、CI 预算棘轮、G 区兜底、vendor-react 分包、**物理拆分为 src/styles/ 八文件（产物 diff 零差异）**、**z-index 语义档位 token 化（16 token + a11y 双修复）**
-  2. 随后：`@layer base` 内 !important 偿还（同层提高 specificity 替代，**不可**叠加新 important 对冲——4.7 的层间反转教训）；约 250 处硬编码色 token 化（可复用 z-index 档位表的同套验证法：计算样式快照对比）
+  2. 已完成：**!important 全量偿还（49→0，2026-10）**——根因是三方内斗（Post.tsx 渲染器内联样式 + `dark:!text-*` 工具类 + base.css 分层 important），连根拔除后排版收拢为 article.css 单一事实源；KaTeX 改用 `.article-body` 前缀 specificity 压制运行时注入的 katex.min.css（死代码声明勿复活，见 4.7）。验证：9 状态 × 30 元素计算样式快照零差异 + 悬停/标尺遮罩实测。余量：约 250 处硬编码色 token 化（复用 z-index 档位表同套验证法：计算样式快照对比，基线已存 scripts/css-baseline/colorstyle/）
 - **vendor 分包**：`vite.config.ts` 用对象式 `manualChunks` 精确列 react / react-dom / react-router-dom 三件套；**严禁**改成函数式 `id.includes('react')` 粗匹配——会把 react-markdown 渲染链（约 500KB）吸进 vendor chunk，反伤首屏。shiki / katex 已按需分包不归并，motion 跨组件共享留在默认分包。
 
 ---

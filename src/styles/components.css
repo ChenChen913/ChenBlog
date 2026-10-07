@@ -7,15 +7,16 @@
  *   不做独立 glass.css —— 抽取会重排层叠顺序（历史回归点）。
  * ============================================================ */
 
-/* 桌面侧栏（sidebar）与站内导航玻璃件 */
+/* 桌面侧栏（sidebar）与站内导航玻璃件
+   （2026-10 important 偿还：元素无背景工具类，历史上无实际对手） */
 
 #desktop-sidebar {
-  background: rgba(245, 242, 238, 0.85) !important;
+  background: rgba(245, 242, 238, 0.85);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 .dark #desktop-sidebar {
-  background: rgba(28, 25, 23, 0.85) !important;
+  background: rgba(28, 25, 23, 0.85);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
@@ -392,17 +393,20 @@
    KaTeX 数学公式 + 分类页动态去玻璃 + 目录 + 回到顶部
    ───────────────────────────────────── */
 
-/* (repaired comment) */
-.katex {
-  font-size: 1em !important;
-  line-height: inherit;
+/* (repaired comment)
+   KaTeX 覆盖：katex.min.css 为运行时按需注入的未分层样式表（晚于打包产物，
+   同特异性靠源顺序取胜），故用 .article-body 前缀抬高 specificity 压制。
+   原独立 .katex-display 通用规则（margin:0）系死代码已并入；line-height
+   不声明——katex.min.css 的 1.2 历史上即胜出，旧 line-height:inherit
+   从未生效，勿"修复" */
+.article-body .katex {
+  font-size: 1em;
   color: inherit;
 }
 
-/* (repaired comment) */
-.katex-display {
+.article-body .katex-display {
   display: block;
-  margin: 0 !important;
+  margin: 24px 0;
   padding: 0;
   overflow-x: auto;
   overflow-y: hidden;
@@ -410,11 +414,10 @@
   color: inherit;
 }
 
-/* (repaired comment) */
-.katex-display > .katex {
-  font-size: 1.15em !important;
-  display: inline-block;
-  text-align: left;
+.article-body .katex-display > .katex {
+  /* 仅 font-size：display/text-align 历史上被 katex.min.css 同特异性
+     规则靠源顺序压制（旧代码即死代码），勿因提 specificity 而复活 */
+  font-size: 1.15em;
 }
 
 /* 修复问题2：当 <p> 内只包含一个 .katex-display 时，消除段落额外行高 */
@@ -424,15 +427,9 @@
   line-height: 1;
 }
 
-.article-body .katex-display {
-  margin: 24px 0 !important;
-  padding: 0;
-  overflow-x: auto;
-}
-
 /* 暗色模式 KaTeX 配色（原规则曾被未闭合注释意外吞掉，已修复） */
-.dark .katex {
-  color: #e7e5e4 !important;
+.dark .article-body .katex {
+  color: #e7e5e4;
 }
 .dark .katex * {
   border-color: currentColor;
@@ -690,14 +687,16 @@
 .toc-title-row:hover .toc-collapse-btn {
   color: rgba(120, 113, 108, 0.85);
 }
-.toc-collapse-btn:hover {
-  color: rgba(120, 113, 108, 1) !important;
+/* 按钮自身悬停：加 .toc-title-row 前缀抬到 (0,3,0) 压过行悬停规则
+   （旧代码靠 important 承重，2026-10 改为 specificity 分治） */
+.toc-title-row .toc-collapse-btn:hover {
+  color: rgba(120, 113, 108, 1);
 }
 .dark .toc-title-row:hover .toc-collapse-btn {
   color: rgba(168, 162, 158, 0.8);
 }
-.dark .toc-collapse-btn:hover {
-  color: rgba(214, 211, 209, 1) !important;
+.dark .toc-title-row .toc-collapse-btn:hover {
+  color: rgba(214, 211, 209, 1);
 }
 
 /* (repaired comment) */
@@ -816,7 +815,7 @@
 /* (乱码注释已清理) */
 .toc-shell--collapsed {
   border-radius: 12px;
-  padding: 0 !important;
+  padding: 0;
   overflow: hidden;
   max-height: calc(100vh - 110px);
 }
@@ -1179,10 +1178,11 @@
   );
 }
 
-/* (repaired comment) */
 @media (max-width: 767px) {
+  /* 手机端底部导航（67px）留白；ID 未分层规则天然压过 utilities 层 pb-24，
+     专注模式下继续接管（reading.css 第 1 节 6.5rem 仅桌面，同历史行为） */
   #main-content {
-    padding-bottom: 80px !important;
+    padding-bottom: 80px;
   }
 }
 
