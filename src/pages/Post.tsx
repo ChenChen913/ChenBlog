@@ -33,6 +33,9 @@ import { getSafeLinkAttributes, isSafeResourceUrl, toTrustedEmbedUrl } from '../
 import { hasMathDelimiters } from '../utils/math-detect';
 import { rehypeBionic } from '../utils/bionic';
 import { useReadingMode } from '../hooks/useReadingMode';
+import ReadingExitToast, {
+  type ReadingExitToastData,
+} from '../components/reading/ReadingExitToast';
 import ReadingFocusButton from '../components/reading/ReadingFocusButton';
 import ReadingToolbar from '../components/reading/ReadingToolbar';
 import ReadingTocOverlay from '../components/reading/ReadingTocOverlay';
@@ -477,6 +480,24 @@ export default function Post() {
     enabled: Boolean(slug && postMeta && !postMeta.frontmatter.draft),
   });
 
+  // 退出专注/引导模式时的轻提示（用户反馈：退出后需要一条“已退出XX模式”确认）
+  const [exitToast, setExitToast] = useState<ReadingExitToastData | null>(null);
+  const exitToastIdRef = useRef(0);
+  const handleReadingExit = useCallback(() => {
+    const prevMode = reading.mode;
+    reading.exit();
+    if (prevMode === 'focus' || prevMode === 'guide') {
+      exitToastIdRef.current += 1;
+      setExitToast({
+        text: prevMode === 'guide' ? t('exit_toast_guide') : t('exit_toast_focus'),
+        id: exitToastIdRef.current,
+      });
+    }
+    // t 随语言变化但 exit 瞬间取值即可；reading.exit 是稳定引用（useReadingMode 内 useCallback）
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reading.mode, reading.exit, t]);
+  const clearExitToast = useCallback(() => setExitToast(null), []);
+
   const remarkPlugins = useMemo<PluggableList>(
     () => (mathExtensions ? [remarkGfm, mathExtensions.remarkMath] : [remarkGfm]),
     [mathExtensions]
@@ -896,7 +917,13 @@ export default function Post() {
       {/* 专注阅读：工具胶囊 + 分节浮层 + 行标尺 + 节奏提醒 */}
       {reading.mode !== 'standard' && (
         <>
-          <ReadingToolbar api={reading} hasToc={headings.length > 0} content={post.content} t={t} />
+          <ReadingToolbar
+            api={reading}
+            hasToc={headings.length > 0}
+            content={post.content}
+            t={t}
+            onExit={handleReadingExit}
+          />
           <ReadingTocOverlay
             headings={headings}
             open={reading.tocOpen}
@@ -932,6 +959,9 @@ export default function Post() {
         label={t('reading_resume')}
         buttonLabel={t('reading_resume_btn')}
       />
+
+      {/* 退出专注/引导模式的轻提示（约 1s，底部居中单行） */}
+      <ReadingExitToast toast={exitToast} onFinished={clearExitToast} />
 
       {/* giscus 评论（未配置环境变量时渲染 null，零开销）—— 专注模式下隐藏 */}
       {reading.mode === 'standard' && <Comments />}

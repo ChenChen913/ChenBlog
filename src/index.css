@@ -3344,7 +3344,8 @@ html.reading-focus[data-reading-theme='sepia'] {
 }
 html.reading-focus[data-reading-theme='night'] {
   --reading-bg: #201d1a;
-  --reading-fg: #e6dfd5;
+  /* fg 微提亮：#e6dfd5 在楷体细笔画下偏虚，提亮后对比更硬朗 */
+  --reading-fg: #ede6dc;
   --reading-muted: #a39c92;
   --reading-link: #8ab4f8;
   --reading-border: rgba(230, 223, 213, 0.16);
@@ -3539,8 +3540,10 @@ html.reading-guide[data-reading-focus] #post-content {
   padding: 5px 6px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  /* blur 24→18 / saturate 180→160：过强的 backdrop-filter 会让上层文字观感发虚，
+     降档后文字更实，玻璃质感仍在（用户反馈黑夜模式字体虚化） */
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
   border-top: 1px solid rgba(255, 255, 255, 0.95);
   border-left: 1px solid rgba(255, 255, 255, 0.9);
   border-right: 1px solid rgba(210, 205, 200, 0.55);
@@ -3569,7 +3572,9 @@ html.reading-guide[data-reading-focus] #post-content {
   z-index: 1;
 }
 .dark .reading-capsule {
-  background: rgba(28, 25, 23, 0.88);
+  /* 0.88→0.94 + blur 降档：半透明+强 blur 时文字叠在毛玻璃上会发虚（用户反馈黑夜模式专注模式字体虚化）。
+     背景更实、blur 更柔，液态玻璃质感保留但文字对比更硬朗 */
+  background: rgba(28, 25, 23, 0.94);
   border-top: 1px solid rgba(255, 255, 255, 0.24);
   border-left: 1px solid rgba(255, 255, 255, 0.18);
   border-right: 1px solid rgba(255, 255, 255, 0.06);
@@ -3616,7 +3621,8 @@ html.reading-guide[data-reading-focus] #post-content {
   font-weight: 600;
 }
 .dark .reading-capsule-btn {
-  color: #a8a29e;
+  /* stone-400→stone-300：黑夜下非激活按钮发虚，提亮一档 */
+  color: #d6d3d1;
 }
 .dark .reading-capsule-btn:hover,
 .dark .reading-capsule-btn--active {
@@ -3659,7 +3665,7 @@ html.reading-guide[data-reading-focus] #post-content {
     inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 .dark .reading-mode-btn {
-  color: #a8a29e;
+  color: #d6d3d1;
 }
 .dark .reading-mode-btn--active {
   color: #f5f5f4;
@@ -3670,12 +3676,14 @@ html.reading-guide[data-reading-focus] #post-content {
 .reading-time-chip {
   font-family: var(--font-kai);
   font-size: 12.5px;
+  /* 楷体细笔画在暗色发虚，加一档字重撑住笔画密度 */
+  font-weight: 500;
   color: #78716c;
   padding: 0 7px;
   white-space: nowrap;
 }
 .dark .reading-time-chip {
-  color: #a8a29e;
+  color: #d6d3d1;
 }
 @media (max-width: 369px) {
   .reading-time-chip {
@@ -3816,7 +3824,8 @@ html.reading-guide[data-reading-focus] #post-content {
   color: #a8a29e;
 }
 .dark .reading-toggle-hint {
-  color: #8a8580;
+  /* #8a8580→#b6b1ac：提示小字在黑夜 blur 面板上严重发虚，提亮两档保可读 */
+  color: #b6b1ac;
 }
 .reading-panel-divider {
   height: 1px;
@@ -3856,7 +3865,7 @@ html.reading-guide[data-reading-focus] #post-content {
   background: rgba(255, 255, 255, 0.08);
 }
 .dark .reading-seg-btn {
-  color: #a8a29e;
+  color: #d6d3d1;
 }
 .dark .reading-seg-btn:hover,
 .dark .reading-seg-btn--active {
@@ -4251,6 +4260,57 @@ html[data-reading-theme='sepia'] .reading-backtop-btn {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
 }
 
+/* 退出专注/引导模式的轻提示：底部居中小胶囊，约 1s 自动消失。
+   与 reading-resume-toast 同语言（液态玻璃 + inset 高光），但更轻更短命。
+   portal 到 body + fixed：退出瞬间工具胶囊卸载，老位置正好空出，视觉衔接自然 */
+.reading-exit-toast {
+  position: fixed;
+  /* 居中位移交给 motion 的 x:'-50%'（CSS transform 会被动画覆盖） */
+  left: 50%;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #44403c;
+  background: rgba(250, 249, 246, 0.95);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(210, 205, 200, 0.6);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 8px 26px rgba(0, 0, 0, 0.12),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+  /* 手机单行硬约束：不折行；文案短（"已退出专注模式"7 字），视口宽度兜底防溢出 */
+  white-space: nowrap;
+  max-width: calc(100vw - 1.5rem);
+  overflow: hidden;
+  pointer-events: none;
+}
+.reading-exit-toast__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dark .reading-exit-toast {
+  color: #e7e5e4;
+  background: rgba(28, 25, 23, 0.95);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.45),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.2);
+}
+/* 手机端：退出后 mobile-bottomnav（约 67px，fixed bottom）回归，
+   toast 抬到导航栏上方，避免叠在其上（与 md:hidden 断点对齐） */
+@media (max-width: 767px) {
+  .reading-exit-toast {
+    bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 .reading-resume {
   position: fixed;
   right: 1rem;
@@ -4306,7 +4366,7 @@ html[data-reading-theme='sepia'] .reading-backtop-btn {
 /* ---------- 12. 强制主题下的工具层玻璃修正 ---------- */
 /* 站点亮色 + 暖黑阅读：工具层用暗玻璃 */
 html[data-reading-theme='night'] .reading-capsule {
-  background: rgba(28, 25, 23, 0.88);
+  background: rgba(28, 25, 23, 0.94);
   border-top: 1px solid rgba(255, 255, 255, 0.24);
   border-left: 1px solid rgba(255, 255, 255, 0.18);
   border-right: 1px solid rgba(255, 255, 255, 0.06);
@@ -4324,7 +4384,7 @@ html[data-reading-theme='night'] .reading-capsule::before {
   );
 }
 html[data-reading-theme='night'] .reading-capsule-btn {
-  color: #a8a29e;
+  color: #d6d3d1;
 }
 html[data-reading-theme='night'] .reading-capsule-btn:hover,
 html[data-reading-theme='night'] .reading-capsule-btn--active {
@@ -4335,7 +4395,7 @@ html[data-reading-theme='night'] .reading-mode-seg {
   background: rgba(255, 255, 255, 0.1);
 }
 html[data-reading-theme='night'] .reading-mode-btn {
-  color: #a8a29e;
+  color: #d6d3d1;
 }
 html[data-reading-theme='night'] .reading-mode-btn--active {
   color: #f5f5f4;
@@ -4343,7 +4403,7 @@ html[data-reading-theme='night'] .reading-mode-btn--active {
   box-shadow: none;
 }
 html[data-reading-theme='night'] .reading-time-chip {
-  color: #a8a29e;
+  color: #d6d3d1;
 }
 html[data-reading-theme='night'] .reading-panel,
 html[data-reading-theme='night'] .reading-toc-panel,
@@ -4367,7 +4427,7 @@ html[data-reading-theme='night'] .reading-seg {
   background: rgba(255, 255, 255, 0.08);
 }
 html[data-reading-theme='night'] .reading-seg-btn {
-  color: #a8a29e;
+  color: #d6d3d1;
 }
 html[data-reading-theme='night'] .reading-seg-btn--active {
   color: #f5f5f4;
@@ -4375,7 +4435,7 @@ html[data-reading-theme='night'] .reading-seg-btn--active {
   box-shadow: none;
 }
 html[data-reading-theme='night'] .reading-swatch {
-  color: #a8a29e;
+  color: #d6d3d1;
   border-color: rgba(255, 255, 255, 0.14);
 }
 html[data-reading-theme='night'] .reading-swatch--active {
@@ -4384,7 +4444,7 @@ html[data-reading-theme='night'] .reading-swatch--active {
   background: rgba(255, 255, 255, 0.1);
 }
 html[data-reading-theme='night'] .reading-toc-panel .toc-item {
-  color: #a8a29e;
+  color: #d6d3d1;
 }
 html[data-reading-theme='night'] .reading-toc-panel .toc-item:hover,
 html[data-reading-theme='night'] .reading-toc-panel .toc-item--active {
@@ -4392,18 +4452,18 @@ html[data-reading-theme='night'] .reading-toc-panel .toc-item--active {
   color: #f5f5f4;
 }
 html[data-reading-theme='night'] .reading-toc-panel .reading-toc-count {
-  color: #a8a29e;
+  color: #d6d3d1;
   background: rgba(255, 255, 255, 0.09);
 }
 html[data-reading-theme='night'] .reading-toc-close {
-  color: #a8a29e;
+  color: #d6d3d1;
 }
 html[data-reading-theme='night'] .reading-toc-close:hover {
   color: #f5f5f4;
   background: rgba(255, 255, 255, 0.1);
 }
 html[data-reading-theme='night'] .reading-toggle-hint {
-  color: #8a8580;
+  color: #b6b1ac;
 }
 html[data-reading-theme='night'] .reading-panel-divider {
   background: rgba(255, 255, 255, 0.1);

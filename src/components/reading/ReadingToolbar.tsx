@@ -22,6 +22,8 @@ interface ReadingToolbarProps {
   hasToc: boolean;
   content?: string;
   t: (key: LangKey) => string;
+  /** 退出时外层弹“已退出XX模式”轻提示；未传时直接退（兼容旧调用） */
+  onExit?: () => void;
 }
 
 /** 剩余阅读分钟数：文章域进度 × 总时长（与站点 calcReadTime 同口径） */
@@ -181,7 +183,7 @@ function ThemeRow(props: {
  * 点击页面空白处根本落在背板上，造成"只能点叉号关闭"。挂到 body 后
  * fixed 回到视口坐标系，点击空白关闭才能成立（桌面透明背板 + 移动暗色背板）。
  */
-export default function ReadingToolbar({ api, hasToc, content, t }: ReadingToolbarProps) {
+export default function ReadingToolbar({ api, hasToc, content, t, onExit }: ReadingToolbarProps) {
   const { mode, prefs, enter, exit, setPrefs, setTocOpen, panelOpen, setPanelOpen } = api;
   const remaining = useReadingTimeRemaining(mode !== 'standard', content);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -436,7 +438,7 @@ export default function ReadingToolbar({ api, hasToc, content, t }: ReadingToolb
         <button
           type="button"
           className="reading-capsule-btn reading-capsule-btn--exit"
-          onClick={exit}
+          onClick={onExit ?? exit}
           aria-label={t('reading_exit')}
           title={t('reading_exit')}
         >
