@@ -2,7 +2,7 @@
 title: Markdown 语法测试
 title_en: Markdown Syntax Test
 date: 2025-01-01
-category: test
+category: tech
 tags: [markdown, test]
 draft: false
 ---

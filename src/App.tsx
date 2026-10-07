@@ -8,7 +8,7 @@ import {
   useNavigationType,
 } from 'react-router-dom';
 import Home from './pages/Home';
-import { AppProvider } from './context/AppContext';
+import { AppProvider, useAppContext } from './context/AppContext';
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import NotFound from './pages/NotFound';
@@ -29,11 +29,12 @@ const LIST_PATHS = new Set(['/', '/categories', '/weekly']);
 
 /** 懒加载路由的加载态：极简骨架，避免布局抖动 */
 function RouteFallback() {
+  const { t } = useAppContext();
   return (
     <div
       className="flex items-center justify-center min-h-[60vh]"
       role="status"
-      aria-label="加载中"
+      aria-label={t('route_loading')}
     >
       <div className="w-8 h-8 border-2 border-stone-300 dark:border-stone-600 border-t-stone-800 dark:border-t-stone-200 rounded-full animate-spin" />
     </div>
