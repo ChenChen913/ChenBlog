@@ -13,6 +13,8 @@ interface ReadingRulerProps {
   rulerStyle: ReadingRulerStyle;
   lines: ReadingRulerLines;
   position: ReadingRulerPosition;
+  /** 遮罩边缘渐变开关：关掉后尺内外硬边强对比 */
+  fade: boolean;
   /** DOM 重建信号：正文加载/字号变化都会改变几何 */
   contentKey: string;
 }
@@ -49,6 +51,7 @@ export default function ReadingRuler({
   rulerStyle,
   lines,
   position,
+  fade,
   contentKey,
 }: ReadingRulerProps) {
   const elRef = useRef<HTMLDivElement>(null);
@@ -236,11 +239,15 @@ export default function ReadingRuler({
 
   return createPortal(
     <>
-      <div ref={maskTopRef} className="reading-ruler-mask reading-ruler-mask--top" aria-hidden />
+      <div
+        ref={maskTopRef}
+        className={`reading-ruler-mask reading-ruler-mask--top${fade ? '' : ' reading-ruler-mask--solid'}`}
+        aria-hidden
+      />
       <div ref={elRef} className="reading-ruler" aria-hidden />
       <div
         ref={maskBottomRef}
-        className="reading-ruler-mask reading-ruler-mask--bottom"
+        className={`reading-ruler-mask reading-ruler-mask--bottom${fade ? '' : ' reading-ruler-mask--solid'}`}
         aria-hidden
       />
     </>,

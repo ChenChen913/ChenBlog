@@ -39,6 +39,7 @@ import ReadingTocOverlay from '../components/reading/ReadingTocOverlay';
 import ReadingRuler from '../components/reading/ReadingRuler';
 import ReadingParagraphFocus from '../components/reading/ReadingParagraphFocus';
 import ReadingReminder from '../components/reading/ReadingReminder';
+import ReadingBackTop from '../components/reading/ReadingBackTop';
 import ReadingResume from '../components/reading/ReadingResume';
 
 /**
@@ -684,19 +685,15 @@ export default function Post() {
               {displayTitle}
             </h1>
 
+            {/* 字体调节与专注阅读入口同排同侧：一行工具条，左对齐保持与正文列一致 */}
             {reading.mode === 'standard' && (
-              <ArticleFontSizeControl
-                mode={articleFontSize}
-                language={lang === 'en' ? 'en' : 'zh'}
-                onChange={handleArticleFontSizeChange}
-              />
-            )}
-
-            {reading.mode === 'standard' && (
-              <div
-                id="post-meta-bottom"
-                className="flex items-center justify-end border-b border-stone-200 dark:border-stone-800 pb-6"
-              >
+              <div id="post-meta-bottom" className="post-meta-toolbar">
+                <ArticleFontSizeControl
+                  mode={articleFontSize}
+                  language={lang === 'en' ? 'en' : 'zh'}
+                  onChange={handleArticleFontSizeChange}
+                />
+                <span className="post-meta-toolbar__divider" aria-hidden="true" />
                 <ReadingFocusButton onEnter={() => reading.enter()} label={t('focus_reading')} />
               </div>
             )}
@@ -907,6 +904,7 @@ export default function Post() {
             rulerStyle={reading.prefs.rulerStyle}
             lines={reading.prefs.rulerLines}
             position={reading.prefs.rulerPosition}
+            fade={reading.prefs.rulerFade}
             contentKey={`${post.slug}:${post.content ? 'loaded' : 'pending'}:${reading.prefs.fontSize}:${reading.prefs.lineHeight}`}
           />
           <ReadingParagraphFocus
@@ -919,6 +917,7 @@ export default function Post() {
             slug={post.slug}
             message={minutes => t('reading_reminder_toast').replace('{n}', String(minutes))}
           />
+          <ReadingBackTop active={reading.prefs.backTop} />
         </>
       )}
 

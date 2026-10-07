@@ -554,6 +554,41 @@ html {
   font-size: 0.875rem;
 }
 
+/* 文章头部工具条：字体调节与专注阅读同排同侧（用户反馈两控件分行分侧不协调）。
+   左对齐与正文列对齐；窄屏放不下时整行换行，分隔线随之隐藏 */
+.post-meta-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e7e5e4;
+}
+.dark .post-meta-toolbar {
+  border-bottom-color: #292524;
+}
+.post-meta-toolbar .article-font-size-control {
+  margin-bottom: 0;
+}
+.post-meta-toolbar__divider {
+  flex: 0 0 auto;
+  width: 1px;
+  height: 1.35rem;
+  background: rgba(120, 113, 108, 0.22);
+}
+.dark .post-meta-toolbar__divider {
+  background: rgba(214, 211, 209, 0.16);
+}
+@media (max-width: 640px) {
+  .post-meta-toolbar {
+    gap: 0.75rem;
+  }
+  .post-meta-toolbar__divider {
+    display: none;
+  }
+}
+
 .dark .article-font-size-control {
   color: #a8a29e;
 }
@@ -619,7 +654,7 @@ html {
 }
 
 @media (max-width: 520px) {
-  .article-font-size-control {
+  .post-meta-toolbar .article-font-size-control {
     align-items: flex-start;
     flex-direction: column;
     gap: 0.5rem;
@@ -3370,9 +3405,9 @@ html.reading-guide[data-reading-focus='paragraph']
   :is(p, blockquote, li).reading-active {
   opacity: 1;
 }
-/* 行标尺模式：正文首尾留白（JS 按标尺几何写入变量）
-   头部留白让第一行初始即落在标尺带内；尾部留白让最后一行能滚进标尺带 */
-html.reading-guide[data-reading-focus='line'] #post-content {
+/* 行标尺/段落聚焦模式：正文首尾留白（JS 按当前引导几何写入变量）
+   头部留白让第一行/首段初始即落在阅读锚点上；尾部留白让最后一行/末段能滚到锚点 */
+html.reading-guide[data-reading-focus] #post-content {
   padding-top: var(--reading-pad-top, 0px);
   padding-bottom: var(--reading-pad-bottom, 0px);
 }
@@ -3886,16 +3921,20 @@ html.reading-guide[data-reading-focus='line'] #post-content {
   z-index: 65;
   background: rgba(28, 25, 23, 0.32);
 }
+/* 分节浮层 v2：条目样式直接复用普通模式目录（.toc-title/.toc-scroll/.toc-item/.toc-pill）。
+   居中不依赖 transform——motion 入场动画会接管 transform，把 translateX(-50%) 抹掉
+   （v1"错位"根因）；改用 left:0;right:0;margin-inline:auto 的无 transform 居中 */
 .reading-toc-panel {
   position: fixed;
-  top: 10vh;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 9vh;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
   z-index: 70;
   display: flex;
   flex-direction: column;
   width: min(400px, calc(100vw - 32px));
-  max-height: 66vh;
+  max-height: 68vh;
   border-radius: 18px;
   background: rgba(250, 249, 246, 0.96);
   backdrop-filter: blur(26px) saturate(180%);
@@ -3920,20 +3959,24 @@ html.reading-guide[data-reading-focus='line'] #post-content {
     0 18px 54px rgba(0, 0, 0, 0.55),
     inset 0 1.5px 0 rgba(255, 255, 255, 0.2);
 }
+/* 移动端：底部抽屉（与普通模式的移动目录同形态） */
+@media (max-width: 639px) {
+  .reading-toc-panel {
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    max-height: 66vh;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    border-radius: 22px 22px 0 0;
+  }
+}
 .reading-toc-head {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px 6px;
-}
-.reading-toc-title {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: #44403c;
-}
-.dark .reading-toc-title {
-  color: #e7e5e4;
+  gap: 8px;
+  padding: 14px 12px 0 16px;
 }
 .reading-toc-count {
   font-family: var(--font-kai);
@@ -3947,55 +3990,39 @@ html.reading-guide[data-reading-focus='line'] #post-content {
   color: #a8a29e;
   background: rgba(255, 255, 255, 0.09);
 }
-.reading-toc-list {
-  overflow-y: auto;
-  padding: 4px 10px 14px;
-}
-.reading-toc-list ul {
-  list-style: none;
-}
-.reading-toc-item {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-size: 13.5px;
-  color: #57534e;
+.reading-toc-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  border: 0;
+  border-radius: 8px;
+  color: #78716c;
+  background: transparent;
+  cursor: pointer;
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
-  cursor: pointer;
 }
-.reading-toc-item:hover {
-  background: rgba(120, 113, 108, 0.1);
+.reading-toc-close:hover {
   color: #1c1917;
+  background: rgba(120, 113, 108, 0.12);
 }
-.reading-toc-item--sub {
-  padding-left: 28px;
-  font-size: 12.5px;
-}
-.reading-toc-item--active {
-  background: rgba(120, 113, 108, 0.13);
-  color: #1c1917;
-  font-weight: 600;
-  box-shadow: inset 3px 0 0 #78716c;
-}
-.reading-toc-sub {
-  margin-left: 14px;
-  border-left: 1px solid rgba(120, 113, 108, 0.16);
-}
-.dark .reading-toc-item {
+.dark .reading-toc-close {
   color: #a8a29e;
 }
-.dark .reading-toc-item:hover,
-.dark .reading-toc-item--active {
-  background: rgba(255, 255, 255, 0.09);
+.dark .reading-toc-close:hover {
   color: #f5f5f4;
-  box-shadow: inset 3px 0 0 #a8a29e;
+  background: rgba(255, 255, 255, 0.1);
 }
-.dark .reading-toc-sub {
-  border-left-color: rgba(255, 255, 255, 0.1);
+/* 复用 .toc-scroll 的细滚动条，但改为随面板高度伸缩 */
+.reading-toc-panel .toc-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  padding: 10px 12px 14px;
 }
 
 /* ---------- 10. 行标尺（引导模式进阶：尺内亮、尺外黑） ---------- */
@@ -4046,6 +4073,14 @@ html[data-reading-theme='night'] .reading-ruler-mask--bottom {
     rgba(0, 0, 0, 0)
   );
 }
+/* 无渐变变体（设置里可关）：尺内外硬边强对比，遮罩纯色无过渡 */
+.reading-ruler-mask--solid {
+  background: rgba(28, 25, 23, 0.87) !important;
+}
+.dark .reading-ruler-mask--solid,
+html[data-reading-theme='night'] .reading-ruler-mask--solid {
+  background: rgba(0, 0, 0, 0.84) !important;
+}
 /* 标尺带：靠强对比形成“亮窗”——backdrop-filter 提亮下方内容 + 暖白叠加 + 边界线 */
 .reading-ruler {
   position: fixed;
@@ -4080,6 +4115,77 @@ html[data-reading-theme='night'] .reading-ruler {
 }
 
 /* ---------- 11. 节奏提醒 + 续读提示 ---------- */
+/* 阅读模式一键返回顶部（设置可开关）：悬在工具胶囊右上方，玻璃小圆钮 */
+.reading-backtop-btn {
+  position: fixed;
+  right: 1.25rem;
+  bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  z-index: 55;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(210, 205, 200, 0.6);
+  border-radius: 999px;
+  color: #44403c;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 6px 18px rgba(0, 0, 0, 0.1),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    background-color 0.16s ease;
+}
+.reading-backtop-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
+  box-shadow:
+    0 2px 2px rgba(255, 255, 255, 0.95),
+    0 10px 24px rgba(0, 0, 0, 0.14),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+}
+.dark .reading-backtop-btn {
+  color: #e7e5e4;
+  background: rgba(28, 25, 23, 0.82);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.45),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.2);
+}
+.dark .reading-backtop-btn:hover {
+  background: rgba(28, 25, 23, 0.95);
+}
+html[data-reading-theme='night'] .reading-backtop-btn {
+  color: #e7e5e4;
+  background: rgba(28, 25, 23, 0.9);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+html[data-reading-theme='paper'] .reading-backtop-btn,
+html[data-reading-theme='sepia'] .reading-backtop-btn {
+  color: #57534e;
+  background: rgba(255, 255, 255, 0.82);
+}
+@media (min-width: 640px) {
+  .reading-backtop-btn {
+    right: 1.5rem;
+    bottom: 4.5rem;
+  }
+}
+/* 手机端：工具胶囊几乎满宽，回顶钮需抬到胶囊上方（5.75rem）才不压角；
+   续读 toast 同层但已在用户手动滚动时自动收起，不会同屏 */
+@media (max-width: 639px) {
+  .reading-backtop-btn {
+    right: 1rem;
+    bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 .reading-reminder {
   position: fixed;
   top: calc(1rem + env(safe-area-inset-top, 0px));
@@ -4212,13 +4318,13 @@ html[data-reading-theme='night'] .reading-resume-toast {
   border-color: rgba(255, 255, 255, 0.14);
 }
 html[data-reading-theme='night'] .reading-panel .reading-panel-title,
-html[data-reading-theme='night'] .reading-toc-panel .reading-toc-title,
+html[data-reading-theme='night'] .reading-toc-panel .toc-title,
 html[data-reading-theme='night'] .reading-reminder-toast,
 html[data-reading-theme='night'] .reading-resume-toast {
   color: #e7e5e4;
 }
 html[data-reading-theme='night'] .reading-panel .reading-panel-label,
-html[data-reading-theme='night'] .reading-toc-panel .reading-toc-title {
+html[data-reading-theme='night'] .reading-toc-panel .toc-title {
   color: #e7e5e4;
 }
 html[data-reading-theme='night'] .reading-seg {
@@ -4241,13 +4347,24 @@ html[data-reading-theme='night'] .reading-swatch--active {
   border-color: rgba(255, 255, 255, 0.42);
   background: rgba(255, 255, 255, 0.1);
 }
-html[data-reading-theme='night'] .reading-toc-item {
+html[data-reading-theme='night'] .reading-toc-panel .toc-item {
   color: #a8a29e;
 }
-html[data-reading-theme='night'] .reading-toc-item:hover,
-html[data-reading-theme='night'] .reading-toc-item--active {
+html[data-reading-theme='night'] .reading-toc-panel .toc-item:hover,
+html[data-reading-theme='night'] .reading-toc-panel .toc-item--active {
   background: rgba(255, 255, 255, 0.09);
   color: #f5f5f4;
+}
+html[data-reading-theme='night'] .reading-toc-panel .reading-toc-count {
+  color: #a8a29e;
+  background: rgba(255, 255, 255, 0.09);
+}
+html[data-reading-theme='night'] .reading-toc-close {
+  color: #a8a29e;
+}
+html[data-reading-theme='night'] .reading-toc-close:hover {
+  color: #f5f5f4;
+  background: rgba(255, 255, 255, 0.1);
 }
 html[data-reading-theme='night'] .reading-toggle-hint {
   color: #8a8580;
@@ -4305,7 +4422,9 @@ html[data-reading-theme='sepia'] .reading-resume-toast {
 .reading-seg-btn:focus-visible,
 .reading-swatch:focus-visible,
 .reading-switch:focus-visible,
-.reading-toc-item:focus-visible,
+.reading-toc-close:focus-visible,
+.reading-toc-panel .toc-item:focus-visible,
+.reading-backtop-btn:focus-visible,
 .reading-panel-close:focus-visible,
 .focus-reading-btn:focus-visible {
   outline: 2px solid rgba(87, 83, 78, 0.75);
@@ -4316,7 +4435,9 @@ html[data-reading-theme='sepia'] .reading-resume-toast {
 .dark .reading-seg-btn:focus-visible,
 .dark .reading-swatch:focus-visible,
 .dark .reading-switch:focus-visible,
-.dark .reading-toc-item:focus-visible,
+.dark .reading-toc-close:focus-visible,
+.dark .reading-toc-panel .toc-item:focus-visible,
+.dark .reading-backtop-btn:focus-visible,
 .dark .reading-panel-close:focus-visible {
   outline-color: rgba(214, 211, 209, 0.85);
 }
@@ -4334,7 +4455,9 @@ html[data-reading-theme='sepia'] .reading-resume-toast {
   .reading-swatch,
   .reading-switch,
   .reading-switch-knob,
-  .reading-toc-item,
+  .reading-toc-close,
+  .reading-toc-panel .toc-item,
+  .reading-backtop-btn,
   .focus-reading-btn,
   .reading-resume-toast {
     transition: none;

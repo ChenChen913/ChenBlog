@@ -20,7 +20,7 @@ export type ReadingFontSize = 0 | 1 | 2 | 3;
 export type ReadingLineHeight = 0 | 1 | 2;
 export type ReadingPageWidth = 0 | 1 | 2;
 export type ReadingFocusStyle = 'paragraph' | 'line';
-/** 段落聚焦范围：窄=仅最近 1 段 / 标准=3 段 / 宽松=5 段 */
+/** 段落聚焦范围：窄/标准/宽（量化为目标行数，段落仅作对齐边界） */
 export type ReadingFocusSpan = 0 | 1 | 2;
 /** 行标尺驱动方式：跟随光标（实体阅读尺隐喻）/ 固定位置（Immersive Reader 的 Line Focus） */
 export type ReadingRulerStyle = 'follow' | 'fixed';
@@ -35,11 +35,15 @@ export interface ReadingPrefs {
   pageWidth: ReadingPageWidth;
   theme: ReadingTheme;
   focusStyle: ReadingFocusStyle;
-  /** 段落聚焦的同时保持全亮的段数（1/3/5，由档位映射） */
+  /** 段落聚焦范围档位（窄/标准/宽 → 目标行数 6/12/20） */
   focusSpan: ReadingFocusSpan;
   rulerStyle: ReadingRulerStyle;
   rulerLines: ReadingRulerLines;
   rulerPosition: ReadingRulerPosition;
+  /** 行标尺遮罩边缘的柔和渐变（关掉后尺内外硬边强对比） */
+  rulerFade: boolean;
+  /** 阅读模式下的一键返回顶部按钮 */
+  backTop: boolean;
   bionic: boolean;
   reminder: boolean;
 }
@@ -54,12 +58,14 @@ export const DEFAULT_READING_PREFS: ReadingPrefs = {
   rulerStyle: 'fixed',
   rulerLines: 1,
   rulerPosition: 1,
+  rulerFade: true,
+  backTop: true,
   bionic: false,
   reminder: false,
 };
 
-/** 段落聚焦范围档位 → 实际保持全亮的段数 */
-export const READING_FOCUS_SPAN_PARAS: readonly number[] = [1, 3, 5];
+/** 段落聚焦范围档位 → 目标保持全亮的正文行数（按段落边界对齐取整） */
+export const READING_FOCUS_SPAN_LINES: readonly number[] = [6, 12, 20];
 /** 固定标尺位置档位 → 视口高度百分比（标尺带中心点） */
 export const READING_RULER_POSITION_PCT: readonly number[] = [0.34, 0.48, 0.62];
 /** 固定标尺行数档位 → 标尺带覆盖的正文行数 */
@@ -179,6 +185,9 @@ export function readReadingPrefs(): ReadingPrefs {
       : DEFAULT_READING_PREFS.rulerStyle,
     rulerLines: clampGear(stored.rulerLines, 2) as ReadingRulerLines,
     rulerPosition: clampGear(stored.rulerPosition, 2) as ReadingRulerPosition,
+    // 布尔偏好缺省视为开启（老数据无此字段时保持旧行为不突变）
+    rulerFade: stored.rulerFade !== false,
+    backTop: stored.backTop !== false,
     bionic: stored.bionic === true,
     reminder: stored.reminder === true,
   };

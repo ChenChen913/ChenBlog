@@ -30,11 +30,36 @@ describe('reading-mode preferences', () => {
       rulerStyle: 'fixed',
       rulerLines: 0,
       rulerPosition: 2,
+      rulerFade: false,
+      backTop: false,
       bionic: true,
       reminder: true,
     } as const;
     saveReadingPrefs(prefs);
     expect(readReadingPrefs()).toEqual(prefs);
+  });
+
+  test('new boolean prefs default to true when absent in stored data', () => {
+    // 老版本 localStorage 里没有 rulerFade / backTop 字段：读回来应保持旧行为（开启）
+    localStorage.setItem(
+      READING_PREFS_STORAGE_KEY,
+      JSON.stringify({
+        fontSize: 1,
+        lineHeight: 1,
+        pageWidth: 1,
+        theme: 'auto',
+        focusStyle: 'paragraph',
+        focusSpan: 1,
+        rulerStyle: 'fixed',
+        rulerLines: 1,
+        rulerPosition: 1,
+        bionic: false,
+        reminder: false,
+      })
+    );
+    const prefs = readReadingPrefs();
+    expect(prefs.rulerFade).toBe(true);
+    expect(prefs.backTop).toBe(true);
   });
 
   test('clamps out-of-range gears to valid indices', () => {

@@ -101,6 +101,12 @@ export default function ReadingResume({ slug, ready, label, buttonLabel }: Readi
       return;
     }
     const onScroll = () => {
+      // 用户开始手动滚动 = 放弃"继续上次阅读"，立即收起 toast
+      // （也避免与右下角的返回顶部按钮同屏挤在一起）
+      if (pending !== null) {
+        setPending(null);
+        window.clearTimeout(hideTimerRef.current);
+      }
       if (skipSaveRef.current) {
         return;
       }
@@ -129,7 +135,8 @@ export default function ReadingResume({ slug, ready, label, buttonLabel }: Readi
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('pagehide', onPageHide);
     };
-  }, [slug, ready]);
+    // pending 入依赖：toast 收起依赖最新状态而非过期闭包
+  }, [slug, ready, pending]);
 
   useEffect(() => () => window.clearTimeout(hideTimerRef.current), []);
 

@@ -344,6 +344,12 @@ export default function ReadingToolbar({ api, hasToc, content, t }: ReadingToolb
                       onChange={value => setPrefs({ rulerPosition: value })}
                     />
                   )}
+                  <ToggleRow
+                    label={t('reading_ruler_fade')}
+                    hint={t('reading_ruler_fade_hint')}
+                    checked={prefs.rulerFade}
+                    onChange={value => setPrefs({ rulerFade: value })}
+                  />
                 </>
               )}
             </>
@@ -360,6 +366,12 @@ export default function ReadingToolbar({ api, hasToc, content, t }: ReadingToolb
             hint={t('reading_reminder_hint')}
             checked={prefs.reminder}
             onChange={value => setPrefs({ reminder: value })}
+          />
+          <ToggleRow
+            label={t('reading_back_top')}
+            hint={t('reading_back_top_hint')}
+            checked={prefs.backTop}
+            onChange={value => setPrefs({ backTop: value })}
           />
         </div>
       </motion.div>
