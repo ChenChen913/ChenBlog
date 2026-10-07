@@ -189,15 +189,15 @@ html.reading-guide[data-reading-focus] #post-content {
   border-radius: 999px;
   font-size: 13.5px;
   font-weight: 600;
-  color: #44403c;
-  background: rgba(255, 255, 255, 0.72);
+  color: var(--stone-700);
+  background: var(--white-72);
   backdrop-filter: blur(18px) saturate(180%);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
-  border: 1px solid rgba(210, 205, 200, 0.6);
+  border: 1px solid var(--sand-60);
   box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.9),
-    0 4px 14px rgba(0, 0, 0, 0.08),
-    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+    0 1px 1px var(--white-90),
+    0 4px 14px var(--black-8),
+    inset 0 1.5px 0 var(--white);
   transition: all 0.18s ease;
   cursor: pointer;
   position: relative;
@@ -207,12 +207,7 @@ html.reading-guide[data-reading-focus] #post-content {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.5) 0%,
-    rgba(255, 255, 255, 0.08) 40%,
-    rgba(255, 255, 255, 0.2) 100%
-  );
+  background: linear-gradient(135deg, var(--white-50) 0%, var(--white-8) 40%, var(--white-20) 100%);
   pointer-events: none;
 }
 .focus-reading-btn > * {
@@ -220,32 +215,27 @@ html.reading-guide[data-reading-focus] #post-content {
   z-index: 1;
 }
 .focus-reading-btn:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--white-95);
   transform: translateY(-1px);
   box-shadow:
-    0 2px 2px rgba(255, 255, 255, 0.95),
-    0 6px 18px rgba(0, 0, 0, 0.12),
-    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+    0 2px 2px var(--white-95),
+    0 6px 18px var(--black-12),
+    inset 0 1.5px 0 var(--white);
 }
 .dark .focus-reading-btn {
-  color: #d6d3d1;
-  background: rgba(255, 255, 255, 0.09);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--stone-300);
+  background: var(--white-9);
+  border: 1px solid var(--white-14);
   box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.3),
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.22);
+    0 4px 16px var(--black-30),
+    inset 0 1.5px 0 var(--white-22);
 }
 .dark .focus-reading-btn::before {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.14) 0%,
-    rgba(255, 255, 255, 0.02) 40%,
-    rgba(255, 255, 255, 0.07) 100%
-  );
+  background: linear-gradient(135deg, var(--white-14) 0%, var(--white-2) 40%, var(--white-7) 100%);
 }
 .dark .focus-reading-btn:hover {
-  color: #f5f5f4;
-  background: rgba(255, 255, 255, 0.16);
+  color: var(--stone-100);
+  background: var(--white-16);
 }
 
 /* ---------- 7. 工具胶囊（底部） ---------- */
@@ -274,32 +264,27 @@ html.reading-guide[data-reading-focus] #post-content {
   max-width: 100%;
   padding: 5px 6px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.82);
+  background: var(--white-82);
   /* blur 24→18 / saturate 180→160：过强的 backdrop-filter 会让上层文字观感发虚，
      降档后文字更实，玻璃质感仍在（用户反馈黑夜模式字体虚化） */
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
-  border-top: 1px solid rgba(255, 255, 255, 0.95);
-  border-left: 1px solid rgba(255, 255, 255, 0.9);
-  border-right: 1px solid rgba(210, 205, 200, 0.55);
-  border-bottom: 1px solid rgba(210, 205, 200, 0.55);
+  border-top: 1px solid var(--white-95);
+  border-left: 1px solid var(--white-90);
+  border-right: 1px solid var(--sand-55);
+  border-bottom: 1px solid var(--sand-55);
   box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.9),
-    0 10px 34px rgba(0, 0, 0, 0.14),
-    0 2px 8px rgba(0, 0, 0, 0.07),
-    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+    0 1px 1px var(--white-90),
+    0 10px 34px var(--black-14),
+    0 2px 8px var(--black-7),
+    inset 0 1.5px 0 var(--white);
 }
 .reading-capsule::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.42) 0%,
-    rgba(255, 255, 255, 0.05) 45%,
-    rgba(255, 255, 255, 0.16) 100%
-  );
+  background: linear-gradient(135deg, var(--white-42) 0%, var(--white-5) 45%, var(--white-16) 100%);
   pointer-events: none;
 }
 .reading-capsule > * {
@@ -309,23 +294,18 @@ html.reading-guide[data-reading-focus] #post-content {
 .dark .reading-capsule {
   /* 0.88→0.94 + blur 降档：半透明+强 blur 时文字叠在毛玻璃上会发虚（用户反馈黑夜模式专注模式字体虚化）。
      背景更实、blur 更柔，液态玻璃质感保留但文字对比更硬朗 */
-  background: rgba(28, 25, 23, 0.94);
-  border-top: 1px solid rgba(255, 255, 255, 0.24);
-  border-left: 1px solid rgba(255, 255, 255, 0.18);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--stone-900-94);
+  border-top: 1px solid var(--white-24);
+  border-left: 1px solid var(--white-18);
+  border-right: 1px solid var(--white-6);
+  border-bottom: 1px solid var(--white-5);
   box-shadow:
-    0 10px 34px rgba(0, 0, 0, 0.5),
-    0 2px 8px rgba(0, 0, 0, 0.3),
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.22);
+    0 10px 34px var(--black-50),
+    0 2px 8px var(--black-30),
+    inset 0 1.5px 0 var(--white-22);
 }
 .dark .reading-capsule::before {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.01) 45%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
+  background: linear-gradient(135deg, var(--white-12) 0%, var(--white-1) 45%, var(--white-5) 100%);
 }
 
 .reading-capsule-btn {
@@ -334,22 +314,22 @@ html.reading-guide[data-reading-focus] #post-content {
   gap: 5px;
   padding: 7px 10px;
   border-radius: 999px;
-  color: #57534e;
+  color: var(--stone-600);
   transition:
     background-color 0.16s ease,
     color 0.16s ease;
   cursor: pointer;
 }
 .reading-capsule-btn:hover {
-  background: rgba(120, 113, 108, 0.1);
-  color: #1c1917;
+  background: var(--stone-500-10);
+  color: var(--stone-900);
 }
 .reading-capsule-btn--active {
-  background: rgba(120, 113, 108, 0.12);
-  color: #1c1917;
+  background: var(--stone-500-12);
+  color: var(--stone-900);
 }
 .reading-capsule-btn--exit:hover {
-  color: #b91c1c;
+  color: var(--red-700);
 }
 .reading-capsule-btn-text {
   font-size: 12.5px;
@@ -357,15 +337,15 @@ html.reading-guide[data-reading-focus] #post-content {
 }
 .dark .reading-capsule-btn {
   /* stone-400→stone-300：黑夜下非激活按钮发虚，提亮一档 */
-  color: #d6d3d1;
+  color: var(--stone-300);
 }
 .dark .reading-capsule-btn:hover,
 .dark .reading-capsule-btn--active {
-  background: rgba(255, 255, 255, 0.1);
-  color: #f5f5f4;
+  background: var(--white-10);
+  color: var(--stone-100);
 }
 .dark .reading-capsule-btn--exit:hover {
-  color: #f87171;
+  color: var(--red-400);
 }
 @media (max-width: 479px) {
   .reading-capsule-btn-text {
@@ -378,14 +358,14 @@ html.reading-guide[data-reading-focus] #post-content {
   padding: 3px;
   gap: 2px;
   border-radius: 999px;
-  background: rgba(120, 113, 108, 0.12);
+  background: var(--stone-500-12);
 }
 .reading-mode-btn {
   padding: 5px 13px;
   border-radius: 999px;
   font-size: 12.5px;
   font-weight: 600;
-  color: #78716c;
+  color: var(--stone-500);
   /* 手机端不被压缩换行："专注""引导"必须水平排列 */
   flex-shrink: 0;
   white-space: nowrap;
@@ -393,18 +373,18 @@ html.reading-guide[data-reading-focus] #post-content {
   cursor: pointer;
 }
 .reading-mode-btn--active {
-  color: #1c1917;
-  background: #ffffff;
+  color: var(--stone-900);
+  background: var(--white);
   box-shadow:
-    0 1px 4px rgba(28, 25, 23, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 1);
+    0 1px 4px var(--stone-900-14),
+    inset 0 1px 0 var(--white);
 }
 .dark .reading-mode-btn {
-  color: #d6d3d1;
+  color: var(--stone-300);
 }
 .dark .reading-mode-btn--active {
-  color: #f5f5f4;
-  background: rgba(255, 255, 255, 0.17);
+  color: var(--stone-100);
+  background: var(--white-17);
   box-shadow: none;
 }
 
@@ -413,12 +393,12 @@ html.reading-guide[data-reading-focus] #post-content {
   font-size: 12.5px;
   /* 楷体细笔画在暗色发虚，加一档字重撑住笔画密度 */
   font-weight: 500;
-  color: #78716c;
+  color: var(--stone-500);
   padding: 0 7px;
   white-space: nowrap;
 }
 .dark .reading-time-chip {
-  color: #d6d3d1;
+  color: var(--stone-300);
 }
 @media (max-width: 369px) {
   .reading-time-chip {
@@ -434,7 +414,7 @@ html.reading-guide[data-reading-focus] #post-content {
   position: fixed;
   inset: 0;
   z-index: var(--z-reading-panel-backdrop);
-  background: rgba(28, 25, 23, 0.32);
+  background: var(--stone-900-32);
 }
 .reading-panel {
   position: fixed;
@@ -447,13 +427,13 @@ html.reading-guide[data-reading-focus] #post-content {
   max-height: 76vh;
   padding-bottom: env(safe-area-inset-bottom, 0px);
   border-radius: 22px 22px 0 0;
-  background: rgba(250, 249, 246, 0.96);
+  background: var(--linen-96);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-top: 1px solid var(--white-95);
   box-shadow:
-    0 -12px 44px rgba(0, 0, 0, 0.18),
-    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+    0 -12px 44px var(--black-18),
+    inset 0 1.5px 0 var(--white);
 }
 @media (min-width: 640px) {
   /* 桌面 popover：透明背板只负责接收点击（点空白关闭），不压暗内容；
@@ -471,17 +451,17 @@ html.reading-guide[data-reading-focus] #post-content {
     border-radius: 16px;
     padding-bottom: 0;
     box-shadow:
-      0 16px 48px rgba(0, 0, 0, 0.16),
-      0 2px 8px rgba(0, 0, 0, 0.07),
-      inset 0 1.5px 0 rgba(255, 255, 255, 1);
+      0 16px 48px var(--black-16),
+      0 2px 8px var(--black-7),
+      inset 0 1.5px 0 var(--white);
   }
 }
 .dark .reading-panel {
-  background: rgba(28, 25, 23, 0.96);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--stone-900-96);
+  border-top: 1px solid var(--white-20);
   box-shadow:
-    0 -12px 44px rgba(0, 0, 0, 0.55),
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.16);
+    0 -12px 44px var(--black-55),
+    inset 0 1.5px 0 var(--white-16);
 }
 
 .reading-panel-head {
@@ -494,10 +474,10 @@ html.reading-guide[data-reading-focus] #post-content {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: #44403c;
+  color: var(--stone-700);
 }
 .dark .reading-panel-title {
-  color: #e7e5e4;
+  color: var(--stone-200);
 }
 .reading-panel-close {
   display: inline-flex;
@@ -506,20 +486,20 @@ html.reading-guide[data-reading-focus] #post-content {
   width: 26px;
   height: 26px;
   border-radius: 8px;
-  color: #78716c;
+  color: var(--stone-500);
   transition: all 0.15s ease;
   cursor: pointer;
 }
 .reading-panel-close:hover {
-  background: rgba(120, 113, 108, 0.12);
-  color: #1c1917;
+  background: var(--stone-500-12);
+  color: var(--stone-900);
 }
 .dark .reading-panel-close {
-  color: #a8a29e;
+  color: var(--stone-400);
 }
 .dark .reading-panel-close:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #f5f5f4;
+  background: var(--white-10);
+  color: var(--stone-100);
 }
 .reading-panel-body {
   display: flex;
@@ -542,10 +522,10 @@ html.reading-guide[data-reading-focus] #post-content {
   flex-shrink: 0;
   font-size: 13px;
   font-weight: 600;
-  color: #44403c;
+  color: var(--stone-700);
 }
 .dark .reading-panel-label {
-  color: #e7e5e4;
+  color: var(--stone-200);
 }
 .reading-toggle-text {
   display: flex;
@@ -556,19 +536,19 @@ html.reading-guide[data-reading-focus] #post-content {
 .reading-toggle-hint {
   font-size: 11.5px;
   line-height: 1.5;
-  color: #a8a29e;
+  color: var(--stone-400);
 }
 .dark .reading-toggle-hint {
   /* #8a8580→#b6b1ac：提示小字在黑夜 blur 面板上严重发虚，提亮两档保可读 */
-  color: #b6b1ac;
+  color: var(--reading-muted-strong);
 }
 .reading-panel-divider {
   height: 1px;
   margin: 3px 0;
-  background: rgba(120, 113, 108, 0.16);
+  background: var(--stone-500-16);
 }
 .dark .reading-panel-divider {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--white-10);
 }
 
 .reading-seg {
@@ -576,38 +556,38 @@ html.reading-guide[data-reading-focus] #post-content {
   gap: 2px;
   padding: 2.5px;
   border-radius: 9px;
-  background: rgba(120, 113, 108, 0.12);
+  background: var(--stone-500-12);
 }
 .reading-seg-btn {
   padding: 4px 9px;
   border-radius: 7px;
   font-size: 12px;
   font-weight: 600;
-  color: #78716c;
+  color: var(--stone-500);
   transition: all 0.15s ease;
   cursor: pointer;
   white-space: nowrap;
 }
 .reading-seg-btn:hover {
-  color: #1c1917;
+  color: var(--stone-900);
 }
 .reading-seg-btn--active {
-  color: #1c1917;
-  background: #ffffff;
-  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.12);
+  color: var(--stone-900);
+  background: var(--white);
+  box-shadow: 0 1px 4px var(--stone-900-12);
 }
 .dark .reading-seg {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--white-8);
 }
 .dark .reading-seg-btn {
-  color: #d6d3d1;
+  color: var(--stone-300);
 }
 .dark .reading-seg-btn:hover,
 .dark .reading-seg-btn--active {
-  color: #f5f5f4;
+  color: var(--stone-100);
 }
 .dark .reading-seg-btn--active {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--white-15);
   box-shadow: none;
 }
 
@@ -623,9 +603,9 @@ html.reading-guide[data-reading-focus] #post-content {
   gap: 5px;
   padding: 4px 9px 4px 6px;
   border-radius: 999px;
-  border: 1px solid rgba(120, 113, 108, 0.22);
+  border: 1px solid var(--stone-500-22);
   font-size: 12px;
-  color: #57534e;
+  color: var(--stone-600);
   transition: all 0.15s ease;
   cursor: pointer;
 }
@@ -633,31 +613,31 @@ html.reading-guide[data-reading-focus] #post-content {
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  border: 1px solid rgba(0, 0, 0, 0.14);
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--black-14);
+  box-shadow: inset 0 1px 2px var(--white-55);
   flex-shrink: 0;
 }
 .reading-swatch:hover {
-  background: rgba(120, 113, 108, 0.08);
+  background: var(--stone-500-8);
 }
 .reading-swatch--active {
-  color: #1c1917;
+  color: var(--stone-900);
   font-weight: 700;
-  border-color: rgba(41, 37, 36, 0.5);
-  background: rgba(255, 255, 255, 0.75);
-  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.1);
+  border-color: var(--stone-800-50);
+  background: var(--white-75);
+  box-shadow: 0 1px 4px var(--stone-900-10);
 }
 .dark .reading-swatch {
-  color: #a8a29e;
-  border-color: rgba(255, 255, 255, 0.14);
+  color: var(--stone-400);
+  border-color: var(--white-14);
 }
 .dark .reading-swatch:hover,
 .dark .reading-swatch--active {
-  color: #f5f5f4;
+  color: var(--stone-100);
 }
 .dark .reading-swatch--active {
-  border-color: rgba(255, 255, 255, 0.42);
-  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--white-42);
+  background: var(--white-10);
   box-shadow: none;
 }
 
@@ -667,7 +647,7 @@ html.reading-guide[data-reading-focus] #post-content {
   width: 40px;
   height: 23px;
   border-radius: 999px;
-  background: rgba(120, 113, 108, 0.28);
+  background: var(--stone-500-28);
   transition: background-color 0.18s ease;
   cursor: pointer;
 }
@@ -678,20 +658,20 @@ html.reading-guide[data-reading-focus] #post-content {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #ffffff;
+  background: var(--white);
   box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 1);
+    0 1px 3px var(--black-28),
+    inset 0 1px 0 var(--white);
   transition: transform 0.18s ease;
 }
 .reading-switch--on {
-  background: #57534e;
+  background: var(--stone-600);
 }
 .reading-switch--on .reading-switch-knob {
   transform: translateX(17px);
 }
 .dark .reading-switch--on {
-  background: #a8a29e;
+  background: var(--stone-400);
 }
 
 /* ---------- 9. 分节导航浮层 ---------- */
@@ -699,7 +679,7 @@ html.reading-guide[data-reading-focus] #post-content {
   position: fixed;
   inset: 0;
   z-index: var(--z-reading-toc-backdrop);
-  background: rgba(28, 25, 23, 0.32);
+  background: var(--stone-900-32);
 }
 /* 分节浮层 v2：条目样式直接复用普通模式目录（.toc-title/.toc-scroll/.toc-item/.toc-pill）。
    居中不依赖 transform——motion 入场动画会接管 transform，把 translateX(-50%) 抹掉
@@ -716,28 +696,28 @@ html.reading-guide[data-reading-focus] #post-content {
   width: min(400px, calc(100vw - 32px));
   max-height: 68vh;
   border-radius: 18px;
-  background: rgba(250, 249, 246, 0.96);
+  background: var(--linen-96);
   backdrop-filter: blur(26px) saturate(180%);
   -webkit-backdrop-filter: blur(26px) saturate(180%);
-  border-top: 1px solid rgba(255, 255, 255, 0.95);
-  border-left: 1px solid rgba(255, 255, 255, 0.9);
-  border-right: 1px solid rgba(210, 205, 200, 0.55);
-  border-bottom: 1px solid rgba(210, 205, 200, 0.55);
+  border-top: 1px solid var(--white-95);
+  border-left: 1px solid var(--white-90);
+  border-right: 1px solid var(--sand-55);
+  border-bottom: 1px solid var(--sand-55);
   box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.9),
-    0 18px 54px rgba(0, 0, 0, 0.18),
-    0 2px 8px rgba(0, 0, 0, 0.07),
-    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+    0 1px 1px var(--white-90),
+    0 18px 54px var(--black-18),
+    0 2px 8px var(--black-7),
+    inset 0 1.5px 0 var(--white);
 }
 .dark .reading-toc-panel {
-  background: rgba(28, 25, 23, 0.96);
-  border-top: 1px solid rgba(255, 255, 255, 0.22);
-  border-left: 1px solid rgba(255, 255, 255, 0.16);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--stone-900-96);
+  border-top: 1px solid var(--white-22);
+  border-left: 1px solid var(--white-16);
+  border-right: 1px solid var(--white-6);
+  border-bottom: 1px solid var(--white-5);
   box-shadow:
-    0 18px 54px rgba(0, 0, 0, 0.55),
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.2);
+    0 18px 54px var(--black-55),
+    inset 0 1.5px 0 var(--white-20);
 }
 /* 移动端：底部抽屉（与普通模式的移动目录同形态） */
 @media (max-width: 639px) {
@@ -761,14 +741,14 @@ html.reading-guide[data-reading-focus] #post-content {
 .reading-toc-count {
   font-family: var(--font-kai);
   font-size: 11px;
-  color: #78716c;
-  background: rgba(120, 113, 108, 0.14);
+  color: var(--stone-500);
+  background: var(--stone-500-14);
   padding: 2px 9px;
   border-radius: 999px;
 }
 .dark .reading-toc-count {
-  color: #a8a29e;
-  background: rgba(255, 255, 255, 0.09);
+  color: var(--stone-400);
+  background: var(--white-9);
 }
 .reading-toc-close {
   display: inline-flex;
@@ -779,7 +759,7 @@ html.reading-guide[data-reading-focus] #post-content {
   margin-left: auto;
   border: 0;
   border-radius: 8px;
-  color: #78716c;
+  color: var(--stone-500);
   background: transparent;
   cursor: pointer;
   transition:
@@ -787,15 +767,15 @@ html.reading-guide[data-reading-focus] #post-content {
     color 0.15s ease;
 }
 .reading-toc-close:hover {
-  color: #1c1917;
-  background: rgba(120, 113, 108, 0.12);
+  color: var(--stone-900);
+  background: var(--stone-500-12);
 }
 .dark .reading-toc-close {
-  color: #a8a29e;
+  color: var(--stone-400);
 }
 .dark .reading-toc-close:hover {
-  color: #f5f5f4;
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--stone-100);
+  background: var(--white-10);
 }
 /* 复用 .toc-scroll 的细滚动条，但改为随面板高度伸缩 */
 .reading-toc-panel .toc-scroll {
@@ -820,9 +800,9 @@ html.reading-guide[data-reading-focus] #post-content {
   height: 0;
   background: linear-gradient(
     to bottom,
-    rgba(28, 25, 23, 0.87),
-    rgba(28, 25, 23, 0.87) calc(100% - 96px),
-    rgba(28, 25, 23, 0)
+    var(--stone-900-87),
+    var(--stone-900-87) calc(100% - 96px),
+    var(--stone-900-0)
   );
 }
 .reading-ruler-mask--bottom {
@@ -830,37 +810,37 @@ html.reading-guide[data-reading-focus] #post-content {
   bottom: 0;
   background: linear-gradient(
     to top,
-    rgba(28, 25, 23, 0.87),
-    rgba(28, 25, 23, 0.87) calc(100% - 96px),
-    rgba(28, 25, 23, 0)
+    var(--stone-900-87),
+    var(--stone-900-87) calc(100% - 96px),
+    var(--stone-900-0)
   );
 }
 .dark .reading-ruler-mask--top,
 html[data-reading-theme='night'] .reading-ruler-mask--top {
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.84),
-    rgba(0, 0, 0, 0.84) calc(100% - 96px),
-    rgba(0, 0, 0, 0)
+    var(--black-84),
+    var(--black-84) calc(100% - 96px),
+    var(--black-0)
   );
 }
 .dark .reading-ruler-mask--bottom,
 html[data-reading-theme='night'] .reading-ruler-mask--bottom {
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.84),
-    rgba(0, 0, 0, 0.84) calc(100% - 96px),
-    rgba(0, 0, 0, 0)
+    var(--black-84),
+    var(--black-84) calc(100% - 96px),
+    var(--black-0)
   );
 }
 /* 无渐变变体（设置里可关）：尺内外硬边强对比，遮罩纯色无过渡。
    同特异性靠源顺序（本文件内靠后）压过渐变版 */
 .reading-ruler-mask--solid {
-  background: rgba(28, 25, 23, 0.87);
+  background: var(--stone-900-87);
 }
 .dark .reading-ruler-mask--solid,
 html[data-reading-theme='night'] .reading-ruler-mask--solid {
-  background: rgba(0, 0, 0, 0.84);
+  background: var(--black-84);
 }
 /* 标尺带：靠强对比形成“亮窗”——backdrop-filter 提亮下方内容 + 暖白叠加 + 边界线 */
 .reading-ruler {
@@ -868,25 +848,25 @@ html[data-reading-theme='night'] .reading-ruler-mask--solid {
   z-index: var(--z-sticky);
   pointer-events: none;
   border-radius: 10px;
-  background: rgba(255, 253, 246, 0.34);
+  background: var(--ivory-34);
   backdrop-filter: brightness(1.12) saturate(1.04);
   -webkit-backdrop-filter: brightness(1.12) saturate(1.04);
-  border-top: 1px solid rgba(120, 113, 108, 0.38);
-  border-bottom: 1px solid rgba(120, 113, 108, 0.38);
+  border-top: 1px solid var(--stone-500-38);
+  border-bottom: 1px solid var(--stone-500-38);
   box-shadow:
-    0 0 30px rgba(255, 253, 246, 0.16),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    0 0 30px var(--ivory-16),
+    inset 0 0 0 1px var(--white-12);
 }
 .dark .reading-ruler,
 html[data-reading-theme='night'] .reading-ruler {
-  background: rgba(255, 240, 214, 0.055);
+  background: var(--ruler-warmtint);
   backdrop-filter: brightness(1.24);
   -webkit-backdrop-filter: brightness(1.24);
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  border-top: 1px solid var(--white-14);
+  border-bottom: 1px solid var(--white-14);
   box-shadow:
-    0 0 30px rgba(255, 230, 180, 0.07),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    0 0 30px var(--ruler-glow),
+    inset 0 0 0 1px var(--white-5);
 }
 @media (prefers-reduced-motion: reduce) {
   .reading-ruler,
@@ -907,16 +887,16 @@ html[data-reading-theme='night'] .reading-ruler {
   justify-content: center;
   width: 40px;
   height: 40px;
-  border: 1px solid rgba(210, 205, 200, 0.6);
+  border: 1px solid var(--sand-60);
   border-radius: 999px;
-  color: #44403c;
-  background: rgba(255, 255, 255, 0.78);
+  color: var(--stone-700);
+  background: var(--white-78);
   backdrop-filter: blur(18px) saturate(180%);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
   box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.9),
-    0 6px 18px rgba(0, 0, 0, 0.1),
-    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+    0 1px 1px var(--white-90),
+    0 6px 18px var(--black-10),
+    inset 0 1.5px 0 var(--white);
   cursor: pointer;
   transition:
     transform 0.16s ease,
@@ -924,33 +904,33 @@ html[data-reading-theme='night'] .reading-ruler {
     background-color 0.16s ease;
 }
 .reading-backtop-btn:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--white-95);
   transform: translateY(-2px);
   box-shadow:
-    0 2px 2px rgba(255, 255, 255, 0.95),
-    0 10px 24px rgba(0, 0, 0, 0.14),
-    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+    0 2px 2px var(--white-95),
+    0 10px 24px var(--black-14),
+    inset 0 1.5px 0 var(--white);
 }
 .dark .reading-backtop-btn {
-  color: #e7e5e4;
-  background: rgba(28, 25, 23, 0.82);
-  border-color: rgba(255, 255, 255, 0.16);
+  color: var(--stone-200);
+  background: var(--stone-900-82);
+  border-color: var(--white-16);
   box-shadow:
-    0 8px 22px rgba(0, 0, 0, 0.45),
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.2);
+    0 8px 22px var(--black-45),
+    inset 0 1.5px 0 var(--white-20);
 }
 .dark .reading-backtop-btn:hover {
-  background: rgba(28, 25, 23, 0.95);
+  background: var(--stone-900-95);
 }
 html[data-reading-theme='night'] .reading-backtop-btn {
-  color: #e7e5e4;
-  background: rgba(28, 25, 23, 0.9);
-  border-color: rgba(255, 255, 255, 0.14);
+  color: var(--stone-200);
+  background: var(--stone-900-90);
+  border-color: var(--white-14);
 }
 html[data-reading-theme='paper'] .reading-backtop-btn,
 html[data-reading-theme='sepia'] .reading-backtop-btn {
-  color: #57534e;
-  background: rgba(255, 255, 255, 0.82);
+  color: var(--stone-600);
+  background: var(--white-82);
 }
 @media (min-width: 640px) {
   .reading-backtop-btn {
@@ -980,20 +960,20 @@ html[data-reading-theme='sepia'] .reading-backtop-btn {
   border-radius: 999px;
   font-family: var(--font-kai);
   font-size: 13.5px;
-  color: #44403c;
-  background: rgba(250, 249, 246, 0.92);
+  color: var(--stone-700);
+  background: var(--linen-92);
   backdrop-filter: blur(22px) saturate(180%);
   -webkit-backdrop-filter: blur(22px) saturate(180%);
-  border: 1px solid rgba(210, 205, 200, 0.55);
+  border: 1px solid var(--sand-55);
   box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.9),
-    0 10px 30px rgba(0, 0, 0, 0.12);
+    0 1px 1px var(--white-90),
+    0 10px 30px var(--black-12);
 }
 .dark .reading-reminder-toast {
-  color: #e7e5e4;
-  background: rgba(28, 25, 23, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  color: var(--stone-200);
+  background: var(--stone-900-92);
+  border: 1px solid var(--white-16);
+  box-shadow: 0 10px 30px var(--black-45);
 }
 
 /* 退出专注/引导模式的轻提示：底部居中小胶囊，约 1s 自动消失。
@@ -1012,15 +992,15 @@ html[data-reading-theme='sepia'] .reading-backtop-btn {
   border-radius: 999px;
   font-size: 13px;
   font-weight: 500;
-  color: #44403c;
-  background: rgba(250, 249, 246, 0.95);
+  color: var(--stone-700);
+  background: var(--linen-95);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid rgba(210, 205, 200, 0.6);
+  border: 1px solid var(--sand-60);
   box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.9),
-    0 8px 26px rgba(0, 0, 0, 0.12),
-    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+    0 1px 1px var(--white-90),
+    0 8px 26px var(--black-12),
+    inset 0 1.5px 0 var(--white);
   /* 手机单行硬约束：不折行；文案短（"已退出专注模式"7 字），视口宽度兜底防溢出 */
   white-space: nowrap;
   max-width: calc(100vw - 1.5rem);
@@ -1032,12 +1012,12 @@ html[data-reading-theme='sepia'] .reading-backtop-btn {
   text-overflow: ellipsis;
 }
 .dark .reading-exit-toast {
-  color: #e7e5e4;
-  background: rgba(28, 25, 23, 0.95);
-  border-color: rgba(255, 255, 255, 0.14);
+  color: var(--stone-200);
+  background: var(--stone-900-95);
+  border-color: var(--white-14);
   box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.45),
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.2);
+    0 10px 30px var(--black-45),
+    inset 0 1.5px 0 var(--white-20);
 }
 /* 手机端：退出后 mobile-bottomnav（约 67px，fixed bottom）回归，
    toast 抬到导航栏上方，避免叠在其上（与 md:hidden 断点对齐） */
@@ -1066,14 +1046,14 @@ html[data-reading-theme='sepia'] .reading-backtop-btn {
   padding: 9px 15px;
   border-radius: 999px;
   font-size: 13px;
-  color: #44403c;
-  background: rgba(250, 249, 246, 0.94);
+  color: var(--stone-700);
+  background: var(--linen-94);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(210, 205, 200, 0.6);
+  border: 1px solid var(--sand-60);
   box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.9),
-    0 8px 26px rgba(0, 0, 0, 0.12);
+    0 1px 1px var(--white-90),
+    0 8px 26px var(--black-12);
   transition:
     transform 0.16s ease,
     box-shadow 0.16s ease;
@@ -1082,141 +1062,136 @@ html[data-reading-theme='sepia'] .reading-backtop-btn {
 .reading-resume-toast:hover {
   transform: translateY(-1px);
   box-shadow:
-    0 2px 2px rgba(255, 255, 255, 0.95),
-    0 10px 30px rgba(0, 0, 0, 0.16);
+    0 2px 2px var(--white-95),
+    0 10px 30px var(--black-16);
 }
 .reading-resume-go {
   font-weight: 700;
-  color: #2563eb;
+  color: var(--blue-600);
 }
 .dark .reading-resume-toast {
-  color: #e7e5e4;
-  background: rgba(28, 25, 23, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
+  color: var(--stone-200);
+  background: var(--stone-900-92);
+  border: 1px solid var(--white-14);
+  box-shadow: 0 8px 26px var(--black-45);
 }
 .dark .reading-resume-go {
-  color: #93c5fd;
+  color: var(--blue-300);
 }
 
 /* ---------- 12. 强制主题下的工具层玻璃修正 ---------- */
 /* 站点亮色 + 暖黑阅读：工具层用暗玻璃 */
 html[data-reading-theme='night'] .reading-capsule {
-  background: rgba(28, 25, 23, 0.94);
-  border-top: 1px solid rgba(255, 255, 255, 0.24);
-  border-left: 1px solid rgba(255, 255, 255, 0.18);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--stone-900-94);
+  border-top: 1px solid var(--white-24);
+  border-left: 1px solid var(--white-18);
+  border-right: 1px solid var(--white-6);
+  border-bottom: 1px solid var(--white-5);
   box-shadow:
-    0 10px 34px rgba(0, 0, 0, 0.5),
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.22);
+    0 10px 34px var(--black-50),
+    inset 0 1.5px 0 var(--white-22);
 }
 html[data-reading-theme='night'] .reading-capsule::before {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.01) 45%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
+  background: linear-gradient(135deg, var(--white-12) 0%, var(--white-1) 45%, var(--white-5) 100%);
 }
 html[data-reading-theme='night'] .reading-capsule-btn {
-  color: #d6d3d1;
+  color: var(--stone-300);
 }
 html[data-reading-theme='night'] .reading-capsule-btn:hover,
 html[data-reading-theme='night'] .reading-capsule-btn--active {
-  background: rgba(255, 255, 255, 0.1);
-  color: #f5f5f4;
+  background: var(--white-10);
+  color: var(--stone-100);
 }
 html[data-reading-theme='night'] .reading-mode-seg {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--white-10);
 }
 html[data-reading-theme='night'] .reading-mode-btn {
-  color: #d6d3d1;
+  color: var(--stone-300);
 }
 html[data-reading-theme='night'] .reading-mode-btn--active {
-  color: #f5f5f4;
-  background: rgba(255, 255, 255, 0.17);
+  color: var(--stone-100);
+  background: var(--white-17);
   box-shadow: none;
 }
 html[data-reading-theme='night'] .reading-time-chip {
-  color: #d6d3d1;
+  color: var(--stone-300);
 }
 html[data-reading-theme='night'] .reading-panel,
 html[data-reading-theme='night'] .reading-toc-panel,
 html[data-reading-theme='night'] .reading-reminder-toast,
 html[data-reading-theme='night'] .reading-resume-toast {
-  background: rgba(28, 25, 23, 0.96);
-  color: #e7e5e4;
-  border-color: rgba(255, 255, 255, 0.14);
+  background: var(--stone-900-96);
+  color: var(--stone-200);
+  border-color: var(--white-14);
 }
 html[data-reading-theme='night'] .reading-panel .reading-panel-title,
 html[data-reading-theme='night'] .reading-toc-panel .toc-title,
 html[data-reading-theme='night'] .reading-reminder-toast,
 html[data-reading-theme='night'] .reading-resume-toast {
-  color: #e7e5e4;
+  color: var(--stone-200);
 }
 html[data-reading-theme='night'] .reading-panel .reading-panel-label,
 html[data-reading-theme='night'] .reading-toc-panel .toc-title {
-  color: #e7e5e4;
+  color: var(--stone-200);
 }
 html[data-reading-theme='night'] .reading-seg {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--white-8);
 }
 html[data-reading-theme='night'] .reading-seg-btn {
-  color: #d6d3d1;
+  color: var(--stone-300);
 }
 html[data-reading-theme='night'] .reading-seg-btn--active {
-  color: #f5f5f4;
-  background: rgba(255, 255, 255, 0.15);
+  color: var(--stone-100);
+  background: var(--white-15);
   box-shadow: none;
 }
 html[data-reading-theme='night'] .reading-swatch {
-  color: #d6d3d1;
-  border-color: rgba(255, 255, 255, 0.14);
+  color: var(--stone-300);
+  border-color: var(--white-14);
 }
 html[data-reading-theme='night'] .reading-swatch--active {
-  color: #f5f5f4;
-  border-color: rgba(255, 255, 255, 0.42);
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--stone-100);
+  border-color: var(--white-42);
+  background: var(--white-10);
 }
 html[data-reading-theme='night'] .reading-toc-panel .toc-item {
-  color: #d6d3d1;
+  color: var(--stone-300);
 }
 html[data-reading-theme='night'] .reading-toc-panel .toc-item:hover,
 html[data-reading-theme='night'] .reading-toc-panel .toc-item--active {
-  background: rgba(255, 255, 255, 0.09);
-  color: #f5f5f4;
+  background: var(--white-9);
+  color: var(--stone-100);
 }
 html[data-reading-theme='night'] .reading-toc-panel .reading-toc-count {
-  color: #d6d3d1;
-  background: rgba(255, 255, 255, 0.09);
+  color: var(--stone-300);
+  background: var(--white-9);
 }
 html[data-reading-theme='night'] .reading-toc-close {
-  color: #d6d3d1;
+  color: var(--stone-300);
 }
 html[data-reading-theme='night'] .reading-toc-close:hover {
-  color: #f5f5f4;
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--stone-100);
+  background: var(--white-10);
 }
 html[data-reading-theme='night'] .reading-toggle-hint {
-  color: #b6b1ac;
+  color: var(--reading-muted-strong);
 }
 html[data-reading-theme='night'] .reading-panel-divider {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--white-10);
 }
 
 /* 站点暗色 + 纸白/暖米阅读：工具层用亮玻璃 */
 html[data-reading-theme='paper'] .reading-capsule,
 html[data-reading-theme='sepia'] .reading-capsule {
-  background: rgba(255, 255, 255, 0.82);
-  border-top: 1px solid rgba(255, 255, 255, 0.95);
-  border-left: 1px solid rgba(255, 255, 255, 0.9);
-  border-right: 1px solid rgba(210, 205, 200, 0.55);
-  border-bottom: 1px solid rgba(210, 205, 200, 0.55);
+  background: var(--white-82);
+  border-top: 1px solid var(--white-95);
+  border-left: 1px solid var(--white-90);
+  border-right: 1px solid var(--sand-55);
+  border-bottom: 1px solid var(--sand-55);
   box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.9),
-    0 10px 34px rgba(0, 0, 0, 0.14),
-    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+    0 1px 1px var(--white-90),
+    0 10px 34px var(--black-14),
+    inset 0 1.5px 0 var(--white);
 }
 html[data-reading-theme='paper'] .reading-capsule-btn,
 html[data-reading-theme='sepia'] .reading-capsule-btn,
@@ -1224,17 +1199,17 @@ html[data-reading-theme='paper'] .reading-mode-btn,
 html[data-reading-theme='sepia'] .reading-mode-btn,
 html[data-reading-theme='paper'] .reading-time-chip,
 html[data-reading-theme='sepia'] .reading-time-chip {
-  color: #57534e;
+  color: var(--stone-600);
 }
 html[data-reading-theme='paper'] .reading-mode-seg,
 html[data-reading-theme='sepia'] .reading-mode-seg {
-  background: rgba(120, 113, 108, 0.12);
+  background: var(--stone-500-12);
 }
 html[data-reading-theme='paper'] .reading-mode-btn--active,
 html[data-reading-theme='sepia'] .reading-mode-btn--active {
-  color: #1c1917;
-  background: #ffffff;
-  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.14);
+  color: var(--stone-900);
+  background: var(--white);
+  box-shadow: 0 1px 4px var(--stone-900-14);
 }
 html[data-reading-theme='paper'] .reading-panel,
 html[data-reading-theme='sepia'] .reading-panel,
@@ -1244,8 +1219,8 @@ html[data-reading-theme='paper'] .reading-reminder-toast,
 html[data-reading-theme='sepia'] .reading-reminder-toast,
 html[data-reading-theme='paper'] .reading-resume-toast,
 html[data-reading-theme='sepia'] .reading-resume-toast {
-  background: rgba(250, 249, 246, 0.96);
-  color: #44403c;
+  background: var(--linen-96);
+  color: var(--stone-700);
 }
 
 /* ---------- 13. 键盘可达性 + reduced-motion ---------- */
@@ -1259,7 +1234,7 @@ html[data-reading-theme='sepia'] .reading-resume-toast {
 .reading-backtop-btn:focus-visible,
 .reading-panel-close:focus-visible,
 .focus-reading-btn:focus-visible {
-  outline: 2px solid rgba(87, 83, 78, 0.75);
+  outline: 2px solid var(--stone-600-75);
   outline-offset: 2px;
 }
 .dark .reading-capsule-btn:focus-visible,
@@ -1271,7 +1246,7 @@ html[data-reading-theme='sepia'] .reading-resume-toast {
 .dark .reading-toc-panel .toc-item:focus-visible,
 .dark .reading-backtop-btn:focus-visible,
 .dark .reading-panel-close:focus-visible {
-  outline-color: rgba(214, 211, 209, 0.85);
+  outline-color: var(--stone-300-85);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1310,167 +1285,162 @@ html[data-reading-theme='sepia'] .reading-resume-toast {
 /* B. 行内 code：强主题接管（.dark 版浅字半透明深底叠亮正文，观感发灰蒙） */
 html[data-reading-theme='paper'] .article-body code:not(.hljs),
 html[data-reading-theme='sepia'] .article-body code:not(.hljs) {
-  background: rgba(243, 244, 246, 0.7);
-  color: #1f2937;
-  border-color: rgba(209, 213, 219, 0.5);
+  background: var(--gray-100-70);
+  color: var(--gray-800);
+  border-color: var(--gray-300-50);
 }
 html[data-reading-theme='sepia'] .article-body code:not(.hljs) {
-  background: rgba(255, 252, 243, 0.78);
-  border-color: rgba(196, 181, 148, 0.55);
+  background: var(--parchment-78);
+  border-color: var(--sepia-code-edge);
 }
 html[data-reading-theme='night'] .article-body code:not(.hljs) {
-  background: rgba(55, 65, 81, 0.5);
-  color: #e5e7eb;
-  border-color: rgba(55, 65, 81, 0.5);
+  background: var(--gray-700-50);
+  color: var(--gray-200);
+  border-color: var(--gray-700-50);
 }
 
 /* C. paper/sepia 下工具层子元素的亮色版（值全部对齐各控件的基础亮色） */
 html[data-reading-theme='paper'] .reading-capsule::before,
 html[data-reading-theme='sepia'] .reading-capsule::before {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.42) 0%,
-    rgba(255, 255, 255, 0.05) 45%,
-    rgba(255, 255, 255, 0.16) 100%
-  );
+  background: linear-gradient(135deg, var(--white-42) 0%, var(--white-5) 45%, var(--white-16) 100%);
 }
 html[data-reading-theme='paper'] .reading-capsule-btn:hover,
 html[data-reading-theme='paper'] .reading-capsule-btn--active,
 html[data-reading-theme='sepia'] .reading-capsule-btn:hover,
 html[data-reading-theme='sepia'] .reading-capsule-btn--active {
-  background: rgba(120, 113, 108, 0.1);
-  color: #1c1917;
+  background: var(--stone-500-10);
+  color: var(--stone-900);
 }
 html[data-reading-theme='paper'] .reading-capsule-btn--exit:hover,
 html[data-reading-theme='sepia'] .reading-capsule-btn--exit:hover {
-  color: #b91c1c;
+  color: var(--red-700);
 }
 html[data-reading-theme='paper'] .reading-panel .reading-panel-title,
 html[data-reading-theme='sepia'] .reading-panel .reading-panel-title {
-  color: #44403c;
+  color: var(--stone-700);
 }
 html[data-reading-theme='paper'] .reading-panel .reading-panel-close,
 html[data-reading-theme='sepia'] .reading-panel .reading-panel-close {
-  color: #78716c;
+  color: var(--stone-500);
 }
 html[data-reading-theme='paper'] .reading-panel .reading-panel-close:hover,
 html[data-reading-theme='sepia'] .reading-panel .reading-panel-close:hover {
-  background: rgba(120, 113, 108, 0.12);
-  color: #1c1917;
+  background: var(--stone-500-12);
+  color: var(--stone-900);
 }
 html[data-reading-theme='paper'] .reading-panel .reading-panel-label,
 html[data-reading-theme='sepia'] .reading-panel .reading-panel-label {
-  color: #44403c;
+  color: var(--stone-700);
 }
 html[data-reading-theme='paper'] .reading-panel .reading-toggle-hint,
 html[data-reading-theme='sepia'] .reading-panel .reading-toggle-hint {
-  color: #a8a29e;
+  color: var(--stone-400);
 }
 html[data-reading-theme='paper'] .reading-panel .reading-panel-divider,
 html[data-reading-theme='sepia'] .reading-panel .reading-panel-divider {
-  background: rgba(120, 113, 108, 0.16);
+  background: var(--stone-500-16);
 }
 html[data-reading-theme='paper'] .reading-seg,
 html[data-reading-theme='sepia'] .reading-seg {
-  background: rgba(120, 113, 108, 0.12);
+  background: var(--stone-500-12);
 }
 html[data-reading-theme='paper'] .reading-seg-btn,
 html[data-reading-theme='sepia'] .reading-seg-btn {
-  color: #78716c;
+  color: var(--stone-500);
 }
 html[data-reading-theme='paper'] .reading-seg-btn:hover,
 html[data-reading-theme='sepia'] .reading-seg-btn:hover {
-  color: #1c1917;
+  color: var(--stone-900);
 }
 html[data-reading-theme='paper'] .reading-seg-btn--active,
 html[data-reading-theme='sepia'] .reading-seg-btn--active {
-  color: #1c1917;
-  background: #ffffff;
-  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.12);
+  color: var(--stone-900);
+  background: var(--white);
+  box-shadow: 0 1px 4px var(--stone-900-12);
 }
 html[data-reading-theme='paper'] .reading-swatch,
 html[data-reading-theme='sepia'] .reading-swatch {
-  color: #57534e;
-  border-color: rgba(120, 113, 108, 0.22);
+  color: var(--stone-600);
+  border-color: var(--stone-500-22);
 }
 html[data-reading-theme='paper'] .reading-swatch:hover,
 html[data-reading-theme='sepia'] .reading-swatch:hover {
-  background: rgba(120, 113, 108, 0.08);
-  color: #1c1917;
+  background: var(--stone-500-8);
+  color: var(--stone-900);
 }
 html[data-reading-theme='paper'] .reading-swatch--active,
 html[data-reading-theme='sepia'] .reading-swatch--active {
-  color: #1c1917;
-  border-color: rgba(41, 37, 36, 0.5);
-  background: rgba(255, 255, 255, 0.75);
-  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.1);
+  color: var(--stone-900);
+  border-color: var(--stone-800-50);
+  background: var(--white-75);
+  box-shadow: 0 1px 4px var(--stone-900-10);
 }
 html[data-reading-theme='paper'] .reading-switch--on,
 html[data-reading-theme='sepia'] .reading-switch--on {
-  background: #57534e;
+  background: var(--stone-600);
 }
 html[data-reading-theme='paper'] .reading-toc-panel .toc-item,
 html[data-reading-theme='sepia'] .reading-toc-panel .toc-item {
-  color: rgba(120, 113, 108, 0.85);
+  color: var(--stone-500-85);
 }
 html[data-reading-theme='paper'] .reading-toc-panel .toc-item:hover,
 html[data-reading-theme='sepia'] .reading-toc-panel .toc-item:hover {
-  color: rgb(68, 64, 60);
-  background: rgba(120, 113, 108, 0.08);
+  color: var(--stone-700);
+  background: var(--stone-500-8);
 }
 html[data-reading-theme='paper'] .reading-toc-panel .toc-item--active,
 html[data-reading-theme='sepia'] .reading-toc-panel .toc-item--active {
-  color: rgb(28, 25, 23);
-  background: rgba(120, 113, 108, 0.12);
+  color: var(--stone-900);
+  background: var(--stone-500-12);
 }
 /* h2 级条目加粗色：.dark 版选择器 specificity 高 (0,3,2)，带前缀后 (0,4,3) 反超 */
 html[data-reading-theme='paper'] .toc-scroll > ul > li > div > .toc-item:not(.toc-item--h3),
 html[data-reading-theme='sepia'] .toc-scroll > ul > li > div > .toc-item:not(.toc-item--h3) {
-  color: rgba(41, 37, 36, 0.9);
+  color: var(--stone-800-90);
 }
 html[data-reading-theme='paper'] .reading-toc-panel .reading-toc-count,
 html[data-reading-theme='sepia'] .reading-toc-panel .reading-toc-count {
-  color: #78716c;
-  background: rgba(120, 113, 108, 0.14);
+  color: var(--stone-500);
+  background: var(--stone-500-14);
 }
 html[data-reading-theme='paper'] .reading-toc-panel .reading-toc-close,
 html[data-reading-theme='sepia'] .reading-toc-panel .reading-toc-close {
-  color: #78716c;
+  color: var(--stone-500);
 }
 html[data-reading-theme='paper'] .reading-toc-panel .reading-toc-close:hover,
 html[data-reading-theme='sepia'] .reading-toc-panel .reading-toc-close:hover {
-  background: rgba(120, 113, 108, 0.12);
-  color: #1c1917;
+  background: var(--stone-500-12);
+  color: var(--stone-900);
 }
 html[data-reading-theme='paper'] .reading-resume-toast .reading-resume-go,
 html[data-reading-theme='sepia'] .reading-resume-toast .reading-resume-go {
-  color: #2563eb;
+  color: var(--blue-600);
 }
 /* 回顶钮与行标尺：.dark 版是暗玻璃，浮在亮正文上突兀，回到基础亮版 */
 html[data-reading-theme='paper'] .reading-backtop-btn,
 html[data-reading-theme='sepia'] .reading-backtop-btn {
-  color: #44403c;
-  background: rgba(255, 255, 255, 0.78);
-  border-color: rgba(210, 205, 200, 0.6);
+  color: var(--stone-700);
+  background: var(--white-78);
+  border-color: var(--sand-60);
   box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.9),
-    0 6px 18px rgba(0, 0, 0, 0.1),
-    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+    0 1px 1px var(--white-90),
+    0 6px 18px var(--black-10),
+    inset 0 1.5px 0 var(--white);
 }
 html[data-reading-theme='paper'] .reading-backtop-btn:hover,
 html[data-reading-theme='sepia'] .reading-backtop-btn:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--white-95);
 }
 html[data-reading-theme='paper'] .reading-ruler,
 html[data-reading-theme='sepia'] .reading-ruler {
-  background: rgba(255, 253, 246, 0.34);
+  background: var(--ivory-34);
   backdrop-filter: brightness(1.12) saturate(1.04);
   -webkit-backdrop-filter: brightness(1.12) saturate(1.04);
-  border-top: 1px solid rgba(120, 113, 108, 0.38);
-  border-bottom: 1px solid rgba(120, 113, 108, 0.38);
+  border-top: 1px solid var(--stone-500-38);
+  border-bottom: 1px solid var(--stone-500-38);
   box-shadow:
-    0 0 30px rgba(255, 253, 246, 0.16),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    0 0 30px var(--ivory-16),
+    inset 0 0 0 1px var(--white-12);
 }
 /* 键盘焦点圈回到亮色版（.dark 的浅色圈在亮面板上不可见） */
 html[data-reading-theme='paper'] .reading-capsule-btn:focus-visible,
@@ -1491,5 +1461,5 @@ html[data-reading-theme='sepia'] .reading-toc-close:focus-visible,
 html[data-reading-theme='sepia'] .reading-toc-panel .toc-item:focus-visible,
 html[data-reading-theme='sepia'] .reading-backtop-btn:focus-visible,
 html[data-reading-theme='sepia'] .reading-panel-close:focus-visible {
-  outline-color: rgba(87, 83, 78, 0.75);
+  outline-color: var(--stone-600-75);
 }

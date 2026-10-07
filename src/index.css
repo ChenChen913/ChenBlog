@@ -8,16 +8,18 @@
  * 分文件结构（2026-10 自 4935 行单文件拆分，按原文件连续区块
  * 纵切、规则顺序零重排，编译产物与拆分前逐字节一致）：
  *
- *   1. base.css       全局基础：@theme token / @font-face / reset /
+ *   1. tokens.css     色彩 token 表（260 项 :root 自定义属性，零规则，
+ *                     必须最前——先于 base.css；z-index 档位仍在 base.css）
+ *   2. base.css       全局基础：@theme token / @font-face / reset /
  *                     focus-visible / sr-only / @layer base（第一块）
- *   2. code-block.css 代码块系统（.code-block*，Shiki 变量）
- *   3. article.css    文章页 chrome 与 .article-body 排版
- *   4. components.css 全站组件（侧栏/玻璃件/灯箱/媒体/KaTeX/TOC/
+ *   3. code-block.css 代码块系统（.code-block*，Shiki 变量）
+ *   4. article.css    文章页 chrome 与 .article-body 排版
+ *   5. components.css 全站组件（侧栏/玻璃件/灯箱/媒体/KaTeX/TOC/
  *                     移动导航/回到顶部/彩虹字）
- *   5. overlays.css   站内搜索弹窗 + 阅读进度条
- *   6. timeline.css   档案时间轴 + 写作热力墙
- *   7. reading.css    专注阅读模式（14 编号小节，层叠敏感区）
- *   8. fallback.css   无 backdrop-filter 浏览器兜底（必须最末）
+ *   6. overlays.css   站内搜索弹窗 + 阅读进度条
+ *   7. timeline.css   档案时间轴 + 写作热力墙
+ *   8. reading.css    专注阅读模式（14 编号小节，层叠敏感区）
+ *   9. fallback.css   无 backdrop-filter 浏览器兜底（必须最末）
  *
  * ⚠ 顺序即层叠：以下 @import 的先后顺序不可调换（尤其
  *   fallback 必须最末、reading 必须在 components 之后）。
@@ -27,7 +29,9 @@
  *   重排层叠顺序（见各文件头注释）。
  *
  * 新增样式约定（防止债务继续累积）：
- *  - 颜色优先走 @theme token（--color-*）或 Tailwind 语义类，不新增裸 hex
+ *  - 颜色一律取 styles/tokens.css 的既有 token（规则体裸 hex/rgb/rgba/
+ *    oklch 会挂 CI 颜色预算棘轮）；新色值先补 token 再引用。@theme 的
+ *    --color-* 仅供 Tailwind 工具类生成用
  *  - z-index 一律取 base.css :root 的 --z-* 档位（容器内层白名单 0/1/3/10
  *    除外，CI 棘轮强制）；全站 CSS 零 important（2026-10 偿还，CI 锁死 0），
  *    覆盖靠 specificity 与源顺序分层，勿再引入 important 内斗
@@ -35,6 +39,7 @@
  *    「暗色 × 4 套阅读背景」矩阵抽查（方法论见 AGENTS.md 4.7）
  * ============================================================ */
 
+@import './styles/tokens.css';
 @import './styles/base.css';
 @import './styles/code-block.css';
 @import './styles/article.css';

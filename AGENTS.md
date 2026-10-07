@@ -129,7 +129,7 @@ npm run build         # build + prerender：末尾输出 16 条路由的预渲�
 
 E2E 依赖三篇**内置测试文章**（勿删）：`markdown-syntax-test.md`（reading-mode/navigation 用例的载体）、`codeblock-stress-test.md`、`test-duplicate-headings.md`；`文章模板.md` 是写作模板。均为 `draft: true`（syntax-test 除外——它需要出现在列表里供 e2e 断言）。
 
-CI（checks job）另有 **CSS 债务预算棘轮**：`src/index.css + src/styles/*.css` 合计占位注释 ≤55、`!important` **≤0（2026-10 全量偿还，新增即挂）**、`z-index` ≤36、总行数 ≤5005，只减不增；偿还债务（token 化等）后应同步下调阈值，确需上调须在 PR 里说明理由。
+CI（checks job）另有 **CSS 债务预算棘轮**：`src/index.css + src/styles/*.css` 合计占位注释 ≤55、`!important` **≤0（2026-10 全量偿还，新增即挂）**、`z-index` ≤36、总行数 ≤5209、**规则体裸颜色字面量 ≤0（`scripts/css_color_budget.py`，fallback.css 兼容镜像除外）**，只减不增；偿还债务（token 化等）后应同步下调阈值，确需上调须在 PR 里说明理由。
 
 ---
 
@@ -264,7 +264,8 @@ motion 组件上任何 `y`/`scale` 等动画属性会**整体覆盖** CSS 的 `t
 - **z-index 语义档位表（2026-10 已完成，路线图第 2 条）**：`base.css` `:root` 内 16 个 `--z-*` token 覆盖全部全局浮层（30 页面内 sticky → 9999 灯箱），新增浮层一律取档，禁止裸数字。实施依据：① 逐对实测叠放关系后仅安全归并 1 处（返回钮 35→40 并档），评审当年“16→6 档”激进方案因会改变实际层级被否；② 两处防御性提升——搜索 70/71→75/76（避免与专注 TOC 面板同值 70 碰撞，原靠 DOM 顺序碰巧正确）、skip-link 50→80（a11y 生命线）；③ 容器内部 `::before(0)/>(1)` 双层与 Lightbox 内 close(10) 不入表（局部堆叠上下文）；④ 同值双 token（60、61 各两个）= 实测互不同屏，语义独立故不强行合并。CI 棘轮同步升级：CSS 内裸数字仅允许白名单 0/1/3/10，TSX 内仅允许 z-10，新增即挂 CI。验证方法沉淀：改造前后 7 状态 × 26 元素计算样式快照对比（scripts/css-baseline/zindex/ + zindex_baseline.js），比截图更硬。
 - **债务路线图**（源自外部评审 D1/D7，按评审自身纪律分批执行，勿一次性大爆炸重写）：
   1. 已完成：A–G 分节目录、新增样式约定、CI 预算棘轮、G 区兜底、vendor-react 分包、**物理拆分为 src/styles/ 八文件（产物 diff 零差异）**、**z-index 语义档位 token 化（16 token + a11y 双修复）**
-  2. 已完成：**!important 全量偿还（49→0，2026-10）**——根因是三方内斗（Post.tsx 渲染器内联样式 + `dark:!text-*` 工具类 + base.css 分层 important），连根拔除后排版收拢为 article.css 单一事实源；KaTeX 改用 `.article-body` 前缀 specificity 压制运行时注入的 katex.min.css（死代码声明勿复活，见 4.7）。验证：9 状态 × 30 元素计算样式快照零差异 + 悬停/标尺遮罩实测。余量：约 250 处硬编码色 token 化（复用 z-index 档位表同套验证法：计算样式快照对比，基线已存 scripts/css-baseline/colorstyle/）
+  2. 已完成：**!important 全量偿还（49→0，2026-10）**——根因是三方内斗（Post.tsx 渲染器内联样式 + `dark:!text-*` 工具类 + base.css 分层 important），连根拔除后排版收拢为 article.css 单一事实源；KaTeX 改用 `.article-body` 前缀 specificity 压制运行时注入的 katex.min.css（死代码声明勿复活，见 4.7）。验证：9 状态 × 30 元素计算样式快照零差异 + 悬停/标尺遮罩实测。**硬编码色 token 化亦已完成（同日）**：1088 处规则体字面量 → `src/styles/tokens.css` 260 项 token（值=历史实测字面量，含保值 notation 的 oklch），CI 颜色棘轮锁死 0；验证同套快照法零差异。**路线图至此全部清偿。**
+- **色彩 token 表（`src/styles/tokens.css`，2026-10 已完成，路线图第 3 条）**：260 项 `:root` 自定义属性，覆盖全部规则体颜色（1088 处字面量归零）。命名三段式：① Tailwind 色阶 `--{scale}[--{alpha%}]`（stone/slate/gray/zinc/blue/red/green/amber/yellow/white/black，与 v3 色板逐值一致）；② 项目暖色系 `--cream/sand/linen/ivory/parchment[-alpha]`；③ 语义名（`--code-chrome-*`、`--medal-navy`、`--timeline-ink`、`--rainbow-*` 彩虹字、`--heading-h1-dark` 等）。约束：该文件只放 `:root` 定义、保持 import 链最前（零规则零层叠影响）；`--heading-h1-dark` 是 oklch 字面量（保值原 `dark:!text-stone-200` 的 notation），勿改 hex；fallback.css 不引用 token（兼容镜像需与前文玻璃值手工同步）；新色值先补 token 再引用，规则体裸 hex/rgb/rgba/oklch 会挂 CI（`scripts/css_color_budget.py`，统计口径排除注释/自定义属性定义/var() 回退/fallback.css）。
 - **vendor 分包**：`vite.config.ts` 用对象式 `manualChunks` 精确列 react / react-dom / react-router-dom 三件套；**严禁**改成函数式 `id.includes('react')` 粗匹配——会把 react-markdown 渲染链（约 500KB）吸进 vendor chunk，反伤首屏。shiki / katex 已按需分包不归并，motion 跨组件共享留在默认分包。
 
 ---

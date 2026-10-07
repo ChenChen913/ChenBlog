@@ -73,7 +73,7 @@ html {
 
   /* 焦点可见性 - 确保键盘用户能看到焦点 */
   *:focus-visible {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid var(--blue-500);
     outline-offset: 2px;
     border-radius: 2px;
   }
@@ -89,7 +89,7 @@ html {
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid var(--blue-500);
     outline-offset: 2px;
     border-radius: 4px;
   }

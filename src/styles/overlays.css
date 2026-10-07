@@ -12,20 +12,20 @@
  *   ::before 的绝对定位会自动锚到 fixed 的面板自身。
  * ============================================================ */
 .search-glass-panel {
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--white-88);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border-top: 1px solid rgba(255, 255, 255, 0.95);
-  border-left: 1px solid rgba(255, 255, 255, 0.9);
-  border-right: 1px solid rgba(210, 205, 200, 0.6);
-  border-bottom: 1px solid rgba(210, 205, 200, 0.6);
+  border-top: 1px solid var(--white-95);
+  border-left: 1px solid var(--white-90);
+  border-right: 1px solid var(--sand-60);
+  border-bottom: 1px solid var(--sand-60);
   border-radius: 18px;
   box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.9),
-    0 18px 50px rgba(0, 0, 0, 0.16),
-    0 4px 12px rgba(0, 0, 0, 0.07),
-    inset 0 1.5px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+    0 1px 1px var(--white-90),
+    0 18px 50px var(--black-16),
+    0 4px 12px var(--black-7),
+    inset 0 1.5px 0 var(--white),
+    inset 0 -1px 0 var(--black-4);
   overflow: hidden;
 }
 .search-glass-panel::before {
@@ -34,9 +34,9 @@
   inset: 0;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.5) 0%,
-    rgba(255, 255, 255, 0.1) 40%,
-    rgba(255, 255, 255, 0.22) 100%
+    var(--white-50) 0%,
+    var(--white-10) 40%,
+    var(--white-22) 100%
   );
   border-radius: inherit;
   pointer-events: none;
@@ -47,24 +47,19 @@
   z-index: 1;
 }
 .dark .search-glass-panel {
-  background: rgba(255, 255, 255, 0.11);
-  border-top: 1px solid rgba(255, 255, 255, 0.28);
-  border-left: 1px solid rgba(255, 255, 255, 0.22);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--white-11);
+  border-top: 1px solid var(--white-28);
+  border-left: 1px solid var(--white-22);
+  border-right: 1px solid var(--white-8);
+  border-bottom: 1px solid var(--white-6);
   box-shadow:
-    0 18px 50px rgba(0, 0, 0, 0.45),
-    0 4px 12px rgba(0, 0, 0, 0.25),
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.3),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    0 18px 50px var(--black-45),
+    0 4px 12px var(--black-25),
+    inset 0 1.5px 0 var(--white-30),
+    inset 0 -1px 0 var(--black-15);
 }
 .dark .search-glass-panel::before {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.16) 0%,
-    rgba(255, 255, 255, 0.02) 40%,
-    rgba(255, 255, 255, 0.08) 100%
-  );
+  background: linear-gradient(135deg, var(--white-16) 0%, var(--white-2) 40%, var(--white-8) 100%);
 }
 
 /* 快捷键小徽章：仿真实键帽（顶部高光 + 底部厚度 + 轻投影），
@@ -78,17 +73,17 @@
   height: 22px;
   padding: 0 6px;
   border-radius: 6px;
-  background: linear-gradient(180deg, #ffffff 0%, #f3f1ee 100%);
-  border: 1px solid rgba(120, 113, 108, 0.24);
+  background: linear-gradient(180deg, var(--white) 0%, var(--search-gradient-end) 100%);
+  border: 1px solid var(--stone-500-24);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    0 1px 2px rgba(28, 25, 23, 0.1),
-    0 2px 0 rgba(120, 113, 108, 0.14);
+    inset 0 1px 0 var(--white-95),
+    0 1px 2px var(--stone-900-10),
+    0 2px 0 var(--stone-500-14);
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 11px;
   font-weight: 500;
   line-height: 1;
-  color: #57534e;
+  color: var(--stone-600);
   letter-spacing: 0.02em;
   text-indent: 0.02em;
   transition:
@@ -96,26 +91,26 @@
     transform 0.12s ease;
 }
 .dark .search-kbd {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.05) 100%);
-  border-color: rgba(255, 255, 255, 0.16);
+  background: linear-gradient(180deg, var(--white-14) 0%, var(--white-5) 100%);
+  border-color: var(--white-16);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 1px 2px rgba(0, 0, 0, 0.4),
-    0 2px 0 rgba(0, 0, 0, 0.3);
-  color: rgba(231, 229, 228, 0.9);
+    inset 0 1px 0 var(--white-14),
+    0 1px 2px var(--black-40),
+    0 2px 0 var(--black-30);
+  color: var(--stone-200-90);
 }
 
 /* 悬停/按压反馈：模拟真实键帽按下（下沉 1px，厚度阴影收起） */
 .search-kbd:hover {
   transform: translateY(1px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    0 1px 2px rgba(28, 25, 23, 0.1);
+    inset 0 1px 0 var(--white-95),
+    0 1px 2px var(--stone-900-10);
 }
 .dark .search-kbd:hover {
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 1px 2px rgba(0, 0, 0, 0.4);
+    inset 0 1px 0 var(--white-14),
+    0 1px 2px var(--black-40);
 }
 
 /* 输入行右侧加载态：与键帽同尺寸占位，
@@ -127,10 +122,10 @@
   width: 22px;
   height: 22px;
   border-radius: 6px;
-  color: #a8a29e;
+  color: var(--stone-400);
 }
 .dark .search-loading-chip {
-  color: #78716c;
+  color: var(--stone-500);
 }
 
 /* 结果条目 */
@@ -147,37 +142,37 @@
 }
 .search-result-item--active,
 .search-result-item:focus-visible {
-  background: rgba(255, 255, 255, 0.65);
-  border-left-color: rgba(59, 130, 246, 0.85);
+  background: var(--white-65);
+  border-left-color: var(--blue-500-85);
 }
 .dark .search-result-item--active,
 .dark .search-result-item:focus-visible {
-  background: rgba(255, 255, 255, 0.08);
-  border-left-color: rgba(96, 165, 250, 0.85);
+  background: var(--white-8);
+  border-left-color: var(--blue-400-85);
 }
 
 /* 命中词高亮 */
 .search-mark {
-  background: rgba(250, 204, 21, 0.35);
+  background: var(--yellow-400-35);
   color: inherit;
   border-radius: 3px;
   padding: 0 1px;
 }
 .dark .search-mark {
-  background: rgba(250, 204, 21, 0.22);
+  background: var(--yellow-400-22);
   color: inherit;
 }
 
 /* 结果滚动条（与站内细滚动条风格一致） */
 .search-scroll {
   scrollbar-width: thin;
-  scrollbar-color: rgba(120, 113, 108, 0.35) transparent;
+  scrollbar-color: var(--stone-500-35) transparent;
 }
 .search-scroll::-webkit-scrollbar {
   width: 5px;
 }
 .search-scroll::-webkit-scrollbar-thumb {
-  background: rgba(120, 113, 108, 0.35);
+  background: var(--stone-500-35);
   border-radius: 3px;
 }
 
@@ -185,8 +180,8 @@
  * 阅读进度条（文章页顶部，2.5px 渐变细条）
  * ============================================================ */
 .reading-progress-bar {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.55), rgba(59, 130, 246, 0.95));
-  box-shadow: 0 0 6px rgba(59, 130, 246, 0.3);
+  background: linear-gradient(90deg, var(--blue-500-55), var(--blue-500-95));
+  box-shadow: 0 0 6px var(--blue-500-30);
   border-radius: 0 2px 2px 0;
   transition: width 0.06s linear;
 }
