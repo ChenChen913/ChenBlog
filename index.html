@@ -9,7 +9,10 @@
     <title>MaoChen - Personal Blog</title>
     <script>
       /* 主题引导：首帧前同步暗色类，消除暗色用户的首屏白闪
-       （与 useTheme 同逻辑：theme-preference > 北京时间自动） */
+       （与 useTheme 同逻辑：theme-preference > 北京时间自动）
+       ⚠ 双份维护警告：自动暗色时段（20:00–06:00）与 src/utils/theme-detection.ts
+       的 getAutoTheme 是同一规则的两份实现——首帧防白闪要求内联、无法 import。
+       修改任何一边的时段/优先级，必须同步另一边，否则首帧与运行时行为静默分叉。 */
       (function () {
         try {
           var stored = localStorage.getItem('theme-preference');
@@ -36,7 +39,7 @@
     font-src 'self' data:;
     img-src 'self' https: data: blob:;
     media-src 'self' https: data: blob:;
-    connect-src 'self' https: http: ws: wss:;
+    connect-src 'self' https: wss:;
     frame-src https://www.youtube.com https://player.bilibili.com https://giscus.app;
     object-src 'none';
     base-uri 'self';

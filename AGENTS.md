@@ -22,13 +22,13 @@
 
 ### 1.3 站点能力速览
 
-| 维度 | 现状 |
-| --- | --- |
-| 路由 | `/` 首页（时间轴+分页）· `/posts/:slug` 文章 · `/categories`（`?filter=gem` 精选）· `/weekly` 周刊 · `/about` · `/status/:code` · `/highlights`→301 到 `/categories?filter=gem` · `*` 404 |
-| 主题 | 亮/暗双主题，`localStorage['theme-preference']`（`light`/`dark`），index.html 内联脚本首帧前防白闪 |
-| 语言 | 中/英，`localStorage['lang-preference']`（`zh`/`en`），文案在 `src/i18n/index.ts` |
-| 阅读模式 | `localStorage['reading-mode']`（`standard`/`focus`/`guide`），`?focus=1` URL 直入 |
-| 内容分类 | 12 个：tech/life/reading/AI/product/career/finance/travel/food/music/movie/game（`src/config/categories.ts`） |
+| 维度     | 现状                                                                                                                                                                                      |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 路由     | `/` 首页（时间轴+分页）· `/posts/:slug` 文章 · `/categories`（`?filter=gem` 精选）· `/weekly` 周刊 · `/about` · `/status/:code` · `/highlights`→301 到 `/categories?filter=gem` · `*` 404 |
+| 主题     | 亮/暗双主题，`localStorage['theme-preference']`（`light`/`dark`），index.html 内联脚本首帧前防白闪                                                                                        |
+| 语言     | 中/英，`localStorage['lang-preference']`（`zh`/`en`），文案在 `src/i18n/index.ts`                                                                                                         |
+| 阅读模式 | `localStorage['reading-mode']`（`standard`/`focus`/`guide`），`?focus=1` URL 直入                                                                                                         |
+| 内容分类 | 12 个：tech/life/reading/AI/product/career/finance/travel/food/music/movie/game（`src/config/categories.ts`）                                                                             |
 
 ---
 
@@ -36,16 +36,16 @@
 
 ### 2.1 技术栈与版本基线
 
-| 层 | 技术 | 备注 |
-| --- | --- | --- |
-| 运行时 | **Node.js ≥ 20** | 构建脚本与 Vite 6 基线，低版本会报语法错 |
-| UI | React 19 · react-router-dom 7 · Tailwind CSS 4 | Tailwind 4 用 `@tailwindcss/vite` 插件，**无 tailwind.config.js**（CSS-first 配置在 `src/index.css`） |
-| 动效 | motion（原 framer-motion）12 | ⚠️ 见 4.6 transform 劫持坑 |
-| 内容 | react-markdown 10 + remark-gfm/math + rehype-katex/raw | rehype-raw 启用，但经过自研安全管道（见 2.4） |
-| 高亮 | Shiki 4，`shiki/core` 细粒度 + 语言动态 import | JS 正则引擎（无 oniguruma wasm），CSP 因此可收紧 |
-| 构建 | Vite 6 + 两个自研插件 + prerender.mjs | 见 2.2 |
-| 测试 | vitest（jsdom）+ Playwright 1.59 | E2E 双视口（桌面 + 390×844 移动） |
-| 质量 | ESLint 10 flat config + Prettier 3 + husky/lint-staged | 提交钩子会**原地重写暂存文件**（坑，见 4.1） |
+| 层     | 技术                                                   | 备注                                                                                                  |
+| ------ | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| 运行时 | **Node.js ≥ 20**                                       | 构建脚本与 Vite 6 基线，低版本会报语法错                                                              |
+| UI     | React 19 · react-router-dom 7 · Tailwind CSS 4         | Tailwind 4 用 `@tailwindcss/vite` 插件，**无 tailwind.config.js**（CSS-first 配置在 `src/index.css`） |
+| 动效   | motion（原 framer-motion）12                           | ⚠️ 见 4.6 transform 劫持坑                                                                            |
+| 内容   | react-markdown 10 + remark-gfm/math + rehype-katex/raw | rehype-raw 启用，但经过自研安全管道（见 2.4）                                                         |
+| 高亮   | Shiki 4，`shiki/core` 细粒度 + 语言动态 import         | JS 正则引擎（无 oniguruma wasm），CSP 因此可收紧                                                      |
+| 构建   | Vite 6 + 两个自研插件 + prerender.mjs                  | 见 2.2                                                                                                |
+| 测试   | vitest（jsdom）+ Playwright 1.59                       | E2E 双视口（桌面 + 390×844 移动）                                                                     |
+| 质量   | ESLint 10 flat config + Prettier 3 + husky/lint-staged | 提交钩子会**原地重写暂存文件**（坑，见 4.1）                                                          |
 
 ### 2.2 架构与原理
 
@@ -73,6 +73,7 @@
 ```
 
 **关键点：**
+
 - 文章 frontmatter 改动的生效链路 = vite watcher 失效虚拟模块 → full-reload。若 dev server 行为异常，先怀疑 transform 缓存（见 4.1）
 - `virtual:posts-index` 在浏览器按纯 JS 解析，**不能含 TypeScript 语法**；类型声明在 `src/vite-env.d.ts`
 - 单篇 frontmatter 解析失败不会拖垮构建：降级为最小元数据 + 终端 `[posts-index] ⚠️` 告警（`normalizeFrontmatter` 兜底 title/tags/date）
@@ -90,6 +91,7 @@ src/
 ```
 
 **专注阅读模式（交互最复杂的子系统）：**
+
 - 入口：文章页「专注阅读」按钮或 `?focus=1`；退出：胶囊 `×` 或 `Esc`（**两条路径都走 `useReadingMode` 的 `onExit` 回调统一触发 toast**——改退出逻辑时不要绕过它）
 - 4 套阅读背景：`auto`（跟随站点主题）/ `paper` 纸白 / `sepia` 暖米 / `night` 暖黑，落在 `[data-reading-theme]` 属性上
 - 涉及文件：`hooks/useReadingMode.ts`、`components/reading/*`、`index.css` 第 12–14 节（强主题覆盖——**层叠顺序敏感**，见 4.7）
@@ -97,8 +99,10 @@ src/
 ### 2.3 安全体系（改动前必读）
 
 - **URL 安全**（`src/utils/security.ts`）：协议白名单（http/https/mailto/tel），`javascript:`/`data:` 拦截，控制字符剥离（`java\nscript:` 类绕过无效）；YouTube/Bilibili 嵌入只信白名单 host + 视频 ID 正则，重组成受信 embed URL
-- **渲染安全**：rehype-raw 开启但组件层对 `img/src`、`a/href`、iframe 全部过安全管道；危险图片降级为 `/article-demo-placeholder.svg`
-- **CSP 与安全头**（`vercel.json`）：`default-src 'self'` + frame-src 白名单（youtube/bilibili/giscus）+ nosniff + XFO + HSTS + Referrer-Policy + Permissions-Policy
+- **渲染安全**：rehype-raw 开启但组件层对 `img/src`、`a/href`、iframe 全部过安全管道；危险图片降级为 `/article-demo-placeholder.svg`。Markdown 树清洗已抽离为 `src/utils/markdown-sanitize.ts`（rehype 插件，含单测）
+- **CSP 与安全头**（`vercel.json`）：`default-src 'self'` + frame-src 白名单（youtube/bilibili/giscus）+ nosniff + XFO + HSTS + Referrer-Policy + Permissions-Policy。`index.html` 的 meta CSP 与部署头保持同源同宽（`connect-src 'self' https: wss:`）。
+  - `script-src 'unsafe-inline'` 是首帧防白闪内联脚本的既定取舍：改用 sha256 hash 虽更严，但后续任何对内联脚本的改动忘同步 hash 会静默失效首帧主题，风险大于收益
+  - `style-src 'unsafe-inline'` 同为既定取舍（字号控制/KaTeX 尺寸等大量内联 style）
 - **npm audit 现状**：gray-matter 构建链存在 sprintf-js moderate（DoS）告警。已 `overrides: sprintf-js@^1.1.3`（最新版，无官方修复版）。**实际攻击面为零**：js-yaml 仅在其 CLI bin 里 require argparse，库 API（gray-matter 所用）完全不触及；且仅构建期处理仓库自有 Markdown。勿试图 `npm audit fix --force`（会降级 gray-matter@2 破坏构建）
 - 无任何 secrets 入库；`.env` 均为可选公开配置（站点域名 / giscus）
 
@@ -109,7 +113,9 @@ npm run lint          # tsc --noEmit，必须 0 错误
 npm run lint:eslint   # 0 errors / ~60 warnings（测试文件存量 any，渐进治理中，勿新增）
 npm run test:run      # vitest，~172 用例必须全绿
 npm run test:e2e      # Playwright 83+ 用例（首跑偶发 scroll-restoration 抖动，复跑即可）
-npm run build         # build + prerender，末尾 16 项产物断言必须全过
+npm run build         # build + prerender：末尾输出 16 条路由的预渲染成功/失败计数，
+                      # 必须全部成功；产物存在性断言（10 项 test -f / grep -q）
+                      # 在 CI 的 Verify build artifacts 步骤（.github/workflows/ci.yml）
 ```
 
 E2E 依赖三篇**内置测试文章**（勿删）：`markdown-syntax-test.md`（reading-mode/navigation 用例的载体）、`codeblock-stress-test.md`、`test-duplicate-headings.md`；`文章模板.md` 是写作模板。均为 `draft: true`（syntax-test 除外——它需要出现在列表里供 e2e 断言）。
@@ -137,13 +143,23 @@ npm run dev                 # http://localhost:3000（--host 0.0.0.0 已内置�
 
 ### 3.3 其他静态托管
 
-`npm run build` 后上传 `dist/`。必须配置 SPA 回退（所有未命中路径 → `/index.html`）；预渲染产物在 `dist/<route>/index.html`，与 SPA 回退共存不冲突。Nginx 参考：
+`npm run build` 后上传 `dist/`。必须配置 SPA 回退（所有未命中路径 → `/index.html`）；预渲染产物在 `dist/<route>/index.html`，与 SPA 回退共存不冲突。Nginx 参考（**安全头必配**——否则只剩 meta CSP，meta 中 `frame-ancestors` 不生效、XFO 缺席，点击劫持防护整体缺席）：
 
 ```nginx
-location / { try_files $uri $uri/ /index.html; }
+location / {
+  try_files $uri $uri/ /index.html;
+  add_header X-Content-Type-Options nosniff always;
+  add_header X-Frame-Options SAMEORIGIN always;
+  add_header Referrer-Policy strict-origin-when-cross-origin always;
+  add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+  add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://giscus.app; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' https: data: blob:; media-src 'self' https: data: blob:; connect-src 'self' https: wss:; frame-src https://www.youtube.com https://player.bilibili.com https://giscus.app; object-src 'none'; base-uri 'self'; frame-ancestors 'self'" always;
+}
 location /assets/ { expires 1y; add_header Cache-Control immutable; }
 location /fonts/  { expires 1y; add_header Cache-Control immutable; }
 ```
+
+（与 `vercel.json` 的安全头逐条对齐，改动任何一边时同步另一边。）
 
 ### 3.4 交付前自检清单（Agent 必做）
 
@@ -151,7 +167,11 @@ location /fonts/  { expires 1y; add_header Cache-Control immutable; }
 - [ ] 桌面 + 390×844 移动双视口，亮/暗 × 中/英抽查无布局破坏、无 console error
 - [ ] 改动专注模式时：4 套阅读背景 × 亮/暗站点的矩阵抽查（暗色站 + paper/sepia 亮背景是历史重灾区）
 - [ ] 涉及新汉字内容时：`python3 scripts/font-split.py` 重建字体分片
-- [ ] git 提交被 husky 拦截时：先看是不是真违规（eslint error），修完再提，**不要 --no-verify 绕过**
+- [ ] git 提交被 husky 拦截时：先看是不是真违规（eslint error / 格式不符），手动修复后重提，**不要 --no-verify 绕过**
+
+### 3.5 域名与 SEO 元数据机制
+
+`og:url` / `canonical` / `og:image` 的绝对地址由构建期注入：`vite.config.ts` 会把 `VITE_SITE_URL`（缺省时回退 `VERCEL_PROJECT_PRODUCTION_DOMAIN` / `VERCEL_URL`）提前写入环境，`usePageMeta` 与预渲染产物据此生成正式域名 URL，`index.html` 的 og:url 静态兜底值（`/`）也在构建时被替换。**自定义域名上线时只需设置 `VITE_SITE_URL` 重新构建**，无需改代码；自托管且不设该变量时运行时回退 `window.location.origin`（但预渲染产物会带构建兜底域名，建议自托管必须设置）。
 
 ---
 
@@ -159,9 +179,10 @@ location /fonts/  { expires 1y; add_header Cache-Control immutable; }
 
 ### 4.1 ⚠️ vite 坏缓存 → 页面 500 / 内容陈旧（复发 3+ 次，头号坑）
 
-**症状**：dev server 起着的时候提交代码（husky lint-staged **原地重写**暂存文件），之后文章页 500 或内容不更新。
-**根因**：watcher 在文件被外部重写的瞬间读到空/半截 transform 并长期缓存。
-**解法**：
+**症状**：dev server 起着的时候，任何外部工具（格式化器/lint fix/脚本）**原地重写**源文件，之后文章页 500 或内容不更新。
+**根因**：watcher 在文件被外部重写的瞬间读到空/半截 transform 并长期缓存。历史上主要由 husky lint-staged 的 `--fix`/`--write` 触发（复发 3+ 次）。
+**已根治**：pre-commit 钩子已改为**只校验、不重写**（eslint + prettier --check），提交动作本身不再改写文件。
+**仍需注意**：手动跑 `npm run lint:fix` / `npm run format` 等会写盘的命令时，若 dev server 正在运行，跑完后执行一次三连：
 
 ```bash
 # 杀掉 dev server → 清缓存 → 重启（标准三连）
@@ -170,14 +191,13 @@ rm -rf node_modules/.vite
 npm run dev
 ```
 
-**预防**：仓库 `scripts/dev-watchdog.sh` 每 60s 探测核心模块 transform 体积，异常自动执行三连；长会话建议挂后台 `nohup bash scripts/dev-watchdog.sh &`。
-
 ### 4.2 暗色模式测试方法（测错=白测）
 
 主题由 **localStorage 驱动，不是媒体查询**。`set media dark` 无效！正确姿势：
 
 ```js
-localStorage.setItem('theme-preference', 'dark'); location.reload();
+localStorage.setItem('theme-preference', 'dark');
+location.reload();
 ```
 
 同理语言 `lang-preference`（zh/en）、阅读模式 `reading-mode`。截图验证暗色时先 reload 再截。
@@ -231,6 +251,6 @@ motion 组件上任何 `y`/`scale` 等动画属性会**整体覆盖** CSS 的 `t
 
 **改路由**：`src/App.tsx` 路由表 + `scripts/prerender.mjs` 的路由清单 + `tests/e2e` 相应用例，三处同步。
 
-**改安全策略**：`src/utils/security.ts` + 其单测 `security.test.ts` + `vercel.json` CSP 三处是一套，改一处跑 `npx vitest run src/utils/security.test.ts`。
+**改安全策略**：`src/utils/security.ts` + `src/utils/markdown-sanitize.ts`（及各自单测）+ `vercel.json` CSP + `index.html` meta CSP + AGENTS.md 3.3 Nginx 示例是一套，改任何一处同步其余并跑 `npx vitest run src/utils/security.test.ts src/utils/markdown-sanitize.test.ts`。
 
-**提交代码**：`git add` 后 husky 自动 eslint --fix + prettier 暂存文件；若被拦截，修复真实违规（多为 eslint error 或 tsc 错误）后重新 add。
+**提交代码**：`git add` 后 husky 只校验不改写（eslint error / 格式不符会拦截）。被拦时手动 `npm run lint:fix` / `npm run format`，修完重新 add，**不要 --no-verify 绕过**；若当时 dev server 在跑，格式化后记得执行 4.1 的三连。

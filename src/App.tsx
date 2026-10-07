@@ -1,4 +1,5 @@
 import React, { Suspense, lazy, useEffect, useLayoutEffect, useRef } from 'react';
+import { MotionConfig } from 'motion/react';
 import {
   BrowserRouter,
   Routes,
@@ -104,31 +105,33 @@ function App() {
   }, []);
 
   return (
-    <AppProvider>
-      <BrowserRouter>
-        <ScrollRestoration />
-        <ErrorBoundary>
-          <Layout>
-            <Suspense fallback={<RouteFallback />}>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/posts/:slug" element={<Post />} />
-                <Route path="/categories" element={<Categories />} />
-                <Route path="/weekly" element={<Weekly />} />
-                {/* 精选页已下线：能力归并到分类页的 ◆ 过滤（第三轮定稿），旧链接重定向保 SEO */}
-                <Route
-                  path="/highlights"
-                  element={<Navigate to="/categories?filter=gem" replace />}
-                />
-                <Route path="/about" element={<About />} />
-                <Route path="/status/:code" element={<StatusPage />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </Layout>
-        </ErrorBoundary>
-      </BrowserRouter>
-    </AppProvider>
+    <MotionConfig reducedMotion="user">
+      <AppProvider>
+        <BrowserRouter>
+          <ScrollRestoration />
+          <ErrorBoundary>
+            <Layout>
+              <Suspense fallback={<RouteFallback />}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/posts/:slug" element={<Post />} />
+                  <Route path="/categories" element={<Categories />} />
+                  <Route path="/weekly" element={<Weekly />} />
+                  {/* 精选页已下线：能力归并到分类页的 ◆ 过滤（第三轮定稿），旧链接重定向保 SEO */}
+                  <Route
+                    path="/highlights"
+                    element={<Navigate to="/categories?filter=gem" replace />}
+                  />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/status/:code" element={<StatusPage />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </Layout>
+          </ErrorBoundary>
+        </BrowserRouter>
+      </AppProvider>
+    </MotionConfig>
   );
 }
 

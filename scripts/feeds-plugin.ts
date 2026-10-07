@@ -18,7 +18,8 @@ import { marked } from 'marked';
 import type { Plugin } from 'vite';
 import { buildPostsIndex } from './posts-index-plugin';
 
-const DEFAULT_SITE_URL = 'https://chenblog.vercel.app';
+/** 站点兜底域名（vite.config.ts 的构建期 og:url 注入也复用此常量，勿单边修改） */
+export const DEFAULT_SITE_URL = 'https://chenblog.vercel.app';
 const SITE_NAME = 'MaoChen Blog';
 const SITE_DESC =
   "MaoChen's personal blog - A digital garden sharing thoughts on technology, life, and everything in between.";

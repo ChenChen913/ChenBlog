@@ -16,25 +16,25 @@
 
 ### 功能特性总览
 
-| 领域 | 特性 |
-| --- | --- |
-| 内容 | Markdown 写作 · frontmatter 元数据 · 草稿 · 精选（时间轴金色菱形）· 周刊页（ISO 周历条 + 周分组）· 标签 · 12 个分类 |
-| 阅读 | 专注/引导双预设模式 · 段落聚焦 · 行标尺 · 字号/行高/页宽/背景四维调节 · 分节目录 scroll-spy · 阅读位置记忆 · 节奏提醒 |
-| 排版 | Shiki 代码高亮（40+ 语言按需加载、行号、复制）· KaTeX 数学公式 · 表格 · 任务列表 · 图片 Lightbox · YouTube/Bilibili 嵌入 |
+| 领域 | 特性                                                                                                                               |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 内容 | Markdown 写作 · frontmatter 元数据 · 草稿 · 精选（时间轴金色菱形）· 周刊页（ISO 周历条 + 周分组）· 标签 · 12 个分类                |
+| 阅读 | 专注/引导双预设模式 · 段落聚焦 · 行标尺 · 字号/行高/页宽/背景四维调节 · 分节目录 scroll-spy · 阅读位置记忆 · 节奏提醒              |
+| 排版 | Shiki 代码高亮（40+ 语言按需加载、行号、复制）· KaTeX 数学公式 · 表格 · 任务列表 · 图片 Lightbox · YouTube/Bilibili 嵌入           |
 | 站点 | 中英双语（一键切换）· 亮暗双主题（无白闪）· 站内搜索（⌘K 全文索引）· RSS / sitemap / robots 自动生成 · SEO meta / JSON-LD / 预渲染 |
-| 视觉 | 液态玻璃质感（backdrop-filter）· Motion 动效 · 光影层次 · 手机底部导航 · 离线提示 · 无障碍（skip-link / aria / 键盘导航） |
-| 工程 | TypeScript 全覆盖 · ESLint + Prettier + husky 门禁 · vitest 单测 · Playwright E2E（桌面+移动双视口）· GitHub Actions CI |
+| 视觉 | 液态玻璃质感（backdrop-filter）· Motion 动效 · 光影层次 · 手机底部导航 · 离线提示 · 无障碍（skip-link / aria / 键盘导航）          |
+| 工程 | TypeScript 全覆盖 · ESLint + Prettier + husky 门禁 · vitest 单测 · Playwright E2E（桌面+移动双视口）· GitHub Actions CI            |
 
 ## 快速开始（详细安装）
 
 ### 环境要求
 
-| 依赖 | 版本 | 说明 |
-| --- | --- | --- |
-| Node.js | **≥ 20**（推荐 20 LTS / 22+） | 构建脚本与 Vite 6 的基线 |
-| npm | ≥ 10（随 Node 附带） | 也可换 pnpm/yarn，但 lockfile 是 `package-lock.json` |
-| Python 3 + fontTools + brotli | 可选 | 仅在**新增文章引入新汉字**后需要重建字体分片（见[性能设计](#性能设计)） |
-| Playwright Chromium | 可选 | 仅在需要跑 E2E / 预渲染时：`npx playwright install chromium` |
+| 依赖                          | 版本                          | 说明                                                                    |
+| ----------------------------- | ----------------------------- | ----------------------------------------------------------------------- |
+| Node.js                       | **≥ 20**（推荐 20 LTS / 22+） | 构建脚本与 Vite 6 的基线                                                |
+| npm                           | ≥ 10（随 Node 附带）          | 也可换 pnpm/yarn，但 lockfile 是 `package-lock.json`                    |
+| Python 3 + fontTools + brotli | 可选                          | 仅在**新增文章引入新汉字**后需要重建字体分片（见[性能设计](#性能设计)） |
+| Playwright Chromium           | 可选                          | 仅在需要跑 E2E / 预渲染时：`npx playwright install chromium`            |
 
 ### 本地开发
 
@@ -71,13 +71,13 @@ npm run preview      # 本地预览 dist 产物
 
 复制 `.env.example` 为 `.env` 按需填写：
 
-| 变量 | 作用 |
-| --- | --- |
-| `VITE_SITE_URL` | RSS/sitemap/robots 中的绝对链接域名；**Vercel 部署会自动读取 `VERCEL_PROJECT_PRODUCTION_DOMAIN`，通常无需设置** |
-| `VITE_GISCUS_REPO` | giscus 评论仓（如 `ChenChen913/ChenBlog`），**四项全配才渲染评论区** |
-| `VITE_GISCUS_REPO_ID` | 到 [giscus.app](https://giscus.app) 配置工具获取 |
-| `VITE_GISCUS_CATEGORY` | Discussions 分类名 |
-| `VITE_GISCUS_CATEGORY_ID` | 同上 |
+| 变量                      | 作用                                                                                                            |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `VITE_SITE_URL`           | RSS/sitemap/robots 中的绝对链接域名；**Vercel 部署会自动读取 `VERCEL_PROJECT_PRODUCTION_DOMAIN`，通常无需设置** |
+| `VITE_GISCUS_REPO`        | giscus 评论仓（如 `ChenChen913/ChenBlog`），**四项全配才渲染评论区**                                            |
+| `VITE_GISCUS_REPO_ID`     | 到 [giscus.app](https://giscus.app) 配置工具获取                                                                |
+| `VITE_GISCUS_CATEGORY`    | Discussions 分类名                                                                                              |
+| `VITE_GISCUS_CATEGORY_ID` | 同上                                                                                                            |
 
 ### 部署到 Vercel（推荐，零配置）
 
@@ -97,14 +97,14 @@ npm run preview      # 本地预览 dist 产物
 ```markdown
 ---
 title: '文章标题'
-title_en: 'Article Title'      # 可选，英文标题（英文界面显示）
+title_en: 'Article Title' # 可选，英文标题（英文界面显示）
 date: '2025-01-15'
-category: 'tech'               # 12 个分类见下表
+category: 'tech' # 12 个分类见下表
 tags: ['React', 'TypeScript']
-featured: false                # 可选，精选（时间轴金色菱形轴点）
-weekly: false                  # 可选，进入 /weekly 周刊页
-draft: false                   # 可选，草稿
-coverImage: 'https://...'      # 可选，封面图片
+featured: false # 可选，精选（时间轴金色菱形轴点）
+weekly: false # 可选，进入 /weekly 周刊页
+draft: false # 可选，草稿
+coverImage: 'https://...' # 可选，封面图片
 ---
 
 这里是摘要，会显示在列表页。
@@ -116,17 +116,17 @@ coverImage: 'https://...'      # 可选，封面图片
 
 ### Frontmatter 字段说明
 
-| 字段 | 必填 | 类型 | 说明 |
-| --- | --- | --- | --- |
-| `title` | ✅ | string | 文章标题 |
-| `title_en` | ❌ | string | 英文标题（英文界面显示，缺省回退中文） |
-| `date` | ✅ | string | 发布日期 `YYYY-MM-DD` |
-| `category` | ✅ | string | 分类（12 个）：`tech` 技术 · `life` 生活 · `reading` 读书 · `AI` · `product` 产品 · `career` 职场 · `finance` 理财 · `travel` 旅行 · `food` 美食 · `music` 音乐 · `movie` 电影 · `game` 游戏 |
-| `tags` | ✅ | string[] | 标签数组（**注意用 YAML 数组写法 `['a', 'b']` 或 `[a, b]`**） |
-| `featured` | ❌ | boolean | 精选文章：时间轴金色菱形轴点，分类页可 ◆ 过滤 |
-| `weekly` | ❌ | boolean | 周刊文章：进入 /weekly，与首页时间轴混排无标识 |
-| `draft` | ❌ | boolean | 草稿：不出现在任何列表，但可直接访问 URL 查看 |
-| `coverImage` | ❌ | string | 封面图片 URL |
+| 字段         | 必填 | 类型     | 说明                                                                                                                                                                                         |
+| ------------ | ---- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`      | ✅   | string   | 文章标题                                                                                                                                                                                     |
+| `title_en`   | ❌   | string   | 英文标题（英文界面显示，缺省回退中文）                                                                                                                                                       |
+| `date`       | ✅   | string   | 发布日期 `YYYY-MM-DD`                                                                                                                                                                        |
+| `category`   | ✅   | string   | 分类（12 个）：`tech` 技术 · `life` 生活 · `reading` 读书 · `AI` · `product` 产品 · `career` 职场 · `finance` 理财 · `travel` 旅行 · `food` 美食 · `music` 音乐 · `movie` 电影 · `game` 游戏 |
+| `tags`       | ✅   | string[] | 标签数组（**注意用 YAML 数组写法 `['a', 'b']` 或 `[a, b]`**）                                                                                                                                |
+| `featured`   | ❌   | boolean  | 精选文章：时间轴金色菱形轴点，分类页可 ◆ 过滤                                                                                                                                                |
+| `weekly`     | ❌   | boolean  | 周刊文章：进入 /weekly，与首页时间轴混排无标识                                                                                                                                               |
+| `draft`      | ❌   | boolean  | 草稿：不出现在任何列表，但可直接访问 URL 查看                                                                                                                                                |
+| `coverImage` | ❌   | string   | 封面图片 URL                                                                                                                                                                                 |
 
 > ⚠️ frontmatter 由构建期 gray-matter（js-yaml）解析。含冒号/引号的标题请加引号；`tags` 写错会在终端看到 `[posts-index] ⚠️ 解析失败` 告警并按无元数据降级。
 
@@ -216,14 +216,14 @@ coverImage: 'https://...'      # 可选，封面图片
 
 ## 技术栈
 
-| 层 | 技术 |
-| --- | --- |
-| UI | React 19 · Tailwind CSS 4 · Motion（动效）· lucide-react（图标） |
-| 语言 | TypeScript（全覆盖） |
-| 构建 | Vite 6 · @vitejs/plugin-react · 自研 posts-index / feeds 插件 |
+| 层   | 技术                                                                                                              |
+| ---- | ----------------------------------------------------------------------------------------------------------------- |
+| UI   | React 19 · Tailwind CSS 4 · Motion（动效）· lucide-react（图标）                                                  |
+| 语言 | TypeScript（全覆盖）                                                                                              |
+| 构建 | Vite 6 · @vitejs/plugin-react · 自研 posts-index / feeds 插件                                                     |
 | 内容 | react-markdown · remark-gfm / remark-math · rehype-katex / rehype-raw · gray-matter（构建期）· marked（RSS 摘要） |
-| 高亮 | Shiki 4（JS 正则引擎，零 wasm，语言按需动态 import） |
-| 质量 | ESLint 10 + Prettier 3 + husky/lint-staged · vitest（单测）· Playwright（E2E + 预渲染） |
+| 高亮 | Shiki 4（JS 正则引擎，零 wasm，语言按需动态 import）                                                              |
+| 质量 | ESLint 10 + Prettier 3 + husky/lint-staged · vitest（单测）· Playwright（E2E + 预渲染）                           |
 
 ## 代码规范与 CI
 
@@ -240,7 +240,7 @@ coverImage: 'https://...'      # 可选，封面图片
 <details>
 <summary><b>文章改了但页面内容没变 / 出现 500？</b></summary>
 
-dev server 偶发坏缓存（多由 lint-staged 原地重写文件触发）。解决：停掉 dev server → 删 `node_modules/.vite` → 重启 `npm run dev`。仓库根目录的看门狗脚本（如 `scripts/dev-watchdog.sh`）可在长会话中自动自愈。
+dev server 偶发坏缓存（多由外部工具在 dev server 运行时原地重写源文件触发，如格式化器）。解决：停掉 dev server → 删 `node_modules/.vite` → 重启 `npm run dev`。提交钩子已改为只校验不重写，正常提交不会再触发此问题；手动跑 `npm run format` / `npm run lint:fix` 后若 dev server 正在运行，建议重启一次。
 </details>
 
 <details>

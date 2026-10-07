@@ -41,6 +41,9 @@ function getBeijingHour(): number {
 /**
  * 北京时间自动主题规则（单一实现，useTheme 也从这里导入）。
  * 20:00–次日 06:00 为 dark，其余为 light。
+ *
+ * ⚠️ index.html 的首帧防白闪内联脚本含同一规则的第二份实现（防白闪要求
+ * 内联、无法 import 本模块）。修改时段或优先级时必须同步两边。
  */
 export function getAutoTheme(): ThemeMode {
   const hour = getBeijingHour();
