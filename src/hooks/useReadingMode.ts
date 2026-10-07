@@ -92,6 +92,15 @@ export function useReadingMode({ enabled }: UseReadingModeOptions): ReadingModeA
 
     root.classList.toggle('reading-focus', active);
     root.classList.toggle('reading-guide', guide);
+    if (guide) {
+      // 引导方式写入属性：段落暗化 CSS 仅在 paragraph 方式下生效，
+      // 避免行标尺的几何遮罩与段落 opacity 双重叠加把正文压成曲灵
+      root.setAttribute('data-reading-focus', prefs.focusStyle);
+    } else if (active) {
+      root.removeAttribute('data-reading-focus');
+    } else {
+      root.removeAttribute('data-reading-focus');
+    }
     if (active) {
       root.setAttribute('data-reading-theme', prefs.theme);
     } else {
@@ -114,10 +123,19 @@ export function useReadingMode({ enabled }: UseReadingModeOptions): ReadingModeA
 
     return () => {
       root.classList.remove('reading-focus', 'reading-guide');
+      root.removeAttribute('data-reading-focus');
       root.removeAttribute('data-reading-theme');
       READING_CSS_VAR_NAMES.forEach(name => root.style.removeProperty(name));
     };
-  }, [enabled, mode, prefs.fontSize, prefs.lineHeight, prefs.pageWidth, prefs.theme]);
+  }, [
+    enabled,
+    mode,
+    prefs.fontSize,
+    prefs.lineHeight,
+    prefs.pageWidth,
+    prefs.theme,
+    prefs.focusStyle,
+  ]);
 
   // ---- URL 参数同步（replaceState，不污染历史栈） ----
   useEffect(() => {

@@ -26,6 +26,10 @@ describe('reading-mode preferences', () => {
       pageWidth: 0,
       theme: 'sepia',
       focusStyle: 'line',
+      focusSpan: 2,
+      rulerStyle: 'fixed',
+      rulerLines: 0,
+      rulerPosition: 2,
       bionic: true,
       reminder: true,
     } as const;
@@ -36,22 +40,38 @@ describe('reading-mode preferences', () => {
   test('clamps out-of-range gears to valid indices', () => {
     localStorage.setItem(
       READING_PREFS_STORAGE_KEY,
-      JSON.stringify({ fontSize: 99, lineHeight: -4, pageWidth: 'x' })
+      JSON.stringify({
+        fontSize: 99,
+        lineHeight: -4,
+        pageWidth: 'x',
+        focusSpan: 7,
+        rulerLines: -1,
+        rulerPosition: 'y',
+      })
     );
     const prefs = readReadingPrefs();
     expect(prefs.fontSize).toBe(3);
     expect(prefs.lineHeight).toBe(0);
     expect(prefs.pageWidth).toBe(0);
+    expect(prefs.focusSpan).toBe(2);
+    expect(prefs.rulerLines).toBe(0);
+    expect(prefs.rulerPosition).toBe(0);
   });
 
   test('falls back to defaults for invalid enum values', () => {
     localStorage.setItem(
       READING_PREFS_STORAGE_KEY,
-      JSON.stringify({ theme: 'neon', focusStyle: 'spotlight', bionic: 'yes' })
+      JSON.stringify({
+        theme: 'neon',
+        focusStyle: 'spotlight',
+        rulerStyle: 'teleport',
+        bionic: 'yes',
+      })
     );
     const prefs = readReadingPrefs();
     expect(prefs.theme).toBe('auto');
     expect(prefs.focusStyle).toBe('paragraph');
+    expect(prefs.rulerStyle).toBe('fixed');
     expect(prefs.bionic).toBe(false);
   });
 

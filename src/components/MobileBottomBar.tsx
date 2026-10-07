@@ -5,6 +5,7 @@ import { usePostContext } from '../context/PostContext';
 import { AnimatePresence, motion } from 'motion/react';
 import { X, ArrowLeft, List } from 'lucide-react';
 import type { HeadingNode } from '../utils/headingParser';
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 
 /* ── 文章页底部栏（返回 + 目录）── */
 function PostBottomBar() {
@@ -12,6 +13,19 @@ function PostBottomBar() {
   const { t } = useAppContext();
   const { headings } = usePostContext();
   const [showTOC, setShowTOC] = useState(false);
+
+  // scroll-spy：目录跟随阅读位置高亮（与桌面右侧 TOC 同款逻辑）
+  const activeId = useIntersectionObserver(headings);
+
+  // 高亮变化时让对应条目滚进可视区，长目录下不用手动找
+  const tocListRef = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    if (!activeId || !showTOC || !tocListRef.current) return;
+    const target = tocListRef.current.querySelector(`[data-hid="${activeId}"]`);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [activeId, showTOC]);
 
   const handleBack = () => {
     if (typeof sessionStorage !== 'undefined') {
@@ -39,21 +53,24 @@ function PostBottomBar() {
   }, []);
 
   const renderItems = (items: HeadingNode[], isSub = false) =>
-    items.map(node => (
-      <li key={node.id}>
-        <button
-          onClick={() => scrollToHeading(node.id)}
-          className={`mobile-toc-item w-full text-left py-2.5 px-4 rounded-xl transition-all duration-150 ${
-            isSub ? 'pl-8 text-sm' : 'text-sm font-semibold'
-          }`}
-        >
-          {node.text}
-        </button>
-        {node.children?.length ? (
-          <ul className="mt-0.5">{renderItems(node.children, true)}</ul>
-        ) : null}
-      </li>
-    ));
+    items.map(node => {
+      const isActive = activeId === node.id;
+      return (
+        <li key={node.id} data-hid={node.id}>
+          <button
+            onClick={() => scrollToHeading(node.id)}
+            className={`mobile-toc-item w-full text-left py-2.5 px-4 rounded-xl transition-all duration-150 ${
+              isSub ? 'pl-8 text-sm' : 'text-sm font-semibold'
+            }${isActive ? ' mobile-toc-item--active' : ''}`}
+          >
+            {node.text}
+          </button>
+          {node.children?.length ? (
+            <ul className="mt-0.5">{renderItems(node.children, true)}</ul>
+          ) : null}
+        </li>
+      );
+    });
 
   return (
     <>
@@ -110,7 +127,10 @@ function PostBottomBar() {
                   <X size={18} />
                 </button>
               </div>
-              <ul className="px-3 py-3 max-h-[60vh] overflow-y-auto mobile-toc-scroll">
+              <ul
+                ref={tocListRef}
+                className="px-3 py-3 max-h-[60vh] overflow-y-auto mobile-toc-scroll"
+              >
                 {renderItems(headings)}
               </ul>
             </motion.div>

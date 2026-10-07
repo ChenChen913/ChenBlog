@@ -1818,6 +1818,17 @@ html {
   background: rgba(255, 255, 255, 0.06);
   color: rgba(214, 211, 209, 0.95);
 }
+/* scroll-spy 高亮：跟随阅读位置的当前章节（与桌面右侧 TOC 同款语义） */
+.mobile-toc-item--active {
+  background: rgba(120, 113, 108, 0.13);
+  color: #1c1917;
+  box-shadow: inset 3px 0 0 #78716c;
+}
+.dark .mobile-toc-item--active {
+  background: rgba(255, 255, 255, 0.09);
+  color: #f5f5f4;
+  box-shadow: inset 3px 0 0 #a8a29e;
+}
 .mobile-toc-scroll {
   scrollbar-width: thin;
   scrollbar-color: rgba(168, 162, 158, 0.3) transparent;
@@ -3344,16 +3355,26 @@ html.reading-focus[data-reading-theme='night'] .article-body :is(mark, ins) {
   color: var(--reading-fg);
 }
 
-/* ---------- 4. 引导模式：段落聚焦 ---------- */
-html.reading-guide .article-body > p:not(:has(> .katex-display)),
-html.reading-guide .article-body > blockquote:not(:has(.katex-display)),
-html.reading-guide .article-body > ul > li,
-html.reading-guide .article-body > ol > li {
+/* ---------- 4. 引导模式：段落聚焦（仅 paragraph 方式生效，避免与行标尺遮罩双重叠加） ---------- */
+html.reading-guide[data-reading-focus='paragraph'] .article-body > p:not(:has(> .katex-display)),
+html.reading-guide[data-reading-focus='paragraph']
+  .article-body
+  > blockquote:not(:has(.katex-display)),
+html.reading-guide[data-reading-focus='paragraph'] .article-body > ul > li,
+html.reading-guide[data-reading-focus='paragraph'] .article-body > ol > li {
   opacity: 0.38;
   transition: opacity 0.45s ease;
 }
-html.reading-guide .article-body :is(p, blockquote, li).reading-active {
+html.reading-guide[data-reading-focus='paragraph']
+  .article-body
+  :is(p, blockquote, li).reading-active {
   opacity: 1;
+}
+/* 行标尺模式：正文首尾留白（JS 按标尺几何写入变量）
+   头部留白让第一行初始即落在标尺带内；尾部留白让最后一行能滚进标尺带 */
+html.reading-guide[data-reading-focus='line'] #post-content {
+  padding-top: var(--reading-pad-top, 0px);
+  padding-bottom: var(--reading-pad-bottom, 0px);
 }
 
 /* ---------- 5. Bionic 英文锚定 ---------- */
@@ -3591,11 +3612,14 @@ html.reading-guide .article-body :is(p, blockquote, li).reading-active {
   }
 }
 
-/* ---------- 8. 设置面板（桌面 popover / 移动抽屉） ---------- */
+/* ---------- 8. 设置面板（桌面 popover / 移动抽屉，portal 到 body） ---------- */
+/* 背板与面板不再嵌在 #reading-toolbar 内：那个容器自带 transform（居中），
+   会劫持内部 fixed 元素的包含块，导致背板实际只盖住胶囊大小的一块。
+   现在两者都 portal 到 body，fixed 回到视口坐标系。 */
 .reading-panel-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: 61;
   background: rgba(28, 25, 23, 0.32);
 }
 .reading-panel {
@@ -3603,7 +3627,7 @@ html.reading-guide .article-body :is(p, blockquote, li).reading-active {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 2;
+  z-index: 62;
   display: flex;
   flex-direction: column;
   max-height: 76vh;
@@ -3618,15 +3642,16 @@ html.reading-guide .article-body :is(p, blockquote, li).reading-active {
     inset 0 1.5px 0 rgba(255, 255, 255, 1);
 }
 @media (min-width: 640px) {
+  /* 桌面 popover：透明背板只负责接收点击（点空白关闭），不压暗内容；
+     面板用 margin:auto 居中而非 transform，避免与 motion 的 y 动画互相覆盖 */
   .reading-panel-backdrop {
-    display: none;
+    background: transparent;
   }
   .reading-panel {
-    position: absolute;
-    left: 50%;
-    right: auto;
-    bottom: calc(100% + 12px);
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
+    bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+    margin: 0 auto;
     width: 344px;
     max-height: min(560px, calc(100vh - 180px));
     border-radius: 16px;
@@ -3954,6 +3979,7 @@ html.reading-guide .article-body :is(p, blockquote, li).reading-active {
   background: rgba(120, 113, 108, 0.13);
   color: #1c1917;
   font-weight: 600;
+  box-shadow: inset 3px 0 0 #78716c;
 }
 .reading-toc-sub {
   margin-left: 14px;
@@ -3966,44 +3992,91 @@ html.reading-guide .article-body :is(p, blockquote, li).reading-active {
 .dark .reading-toc-item--active {
   background: rgba(255, 255, 255, 0.09);
   color: #f5f5f4;
+  box-shadow: inset 3px 0 0 #a8a29e;
 }
 .dark .reading-toc-sub {
   border-left-color: rgba(255, 255, 255, 0.1);
 }
 
-/* ---------- 10. 行标尺（引导模式进阶） ---------- */
+/* ---------- 10. 行标尺（引导模式进阶：尺内亮、尺外黑） ---------- */
+/* 双遮罩：标尺带外的上下区域强暗化，边缘约百像素柔和渐变避免硬切拐眼。
+   亮主题用暖石色黑（86%），暗主题/暖黑用纯黑（82%，本来就暗）。 */
+.reading-ruler-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+.reading-ruler-mask--top {
+  top: 0;
+  height: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(28, 25, 23, 0.87),
+    rgba(28, 25, 23, 0.87) calc(100% - 96px),
+    rgba(28, 25, 23, 0)
+  );
+}
+.reading-ruler-mask--bottom {
+  top: auto;
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgba(28, 25, 23, 0.87),
+    rgba(28, 25, 23, 0.87) calc(100% - 96px),
+    rgba(28, 25, 23, 0)
+  );
+}
+.dark .reading-ruler-mask--top,
+html[data-reading-theme='night'] .reading-ruler-mask--top {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.84),
+    rgba(0, 0, 0, 0.84) calc(100% - 96px),
+    rgba(0, 0, 0, 0)
+  );
+}
+.dark .reading-ruler-mask--bottom,
+html[data-reading-theme='night'] .reading-ruler-mask--bottom {
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.84),
+    rgba(0, 0, 0, 0.84) calc(100% - 96px),
+    rgba(0, 0, 0, 0)
+  );
+}
+/* 标尺带：靠强对比形成“亮窗”——backdrop-filter 提亮下方内容 + 暖白叠加 + 边界线 */
 .reading-ruler {
   position: fixed;
   z-index: 30;
   pointer-events: none;
-  border-radius: 9px;
-  background: linear-gradient(
-    to bottom,
-    rgba(120, 113, 108, 0.03),
-    rgba(120, 113, 108, 0.085) 20%,
-    rgba(120, 113, 108, 0.085) 80%,
-    rgba(120, 113, 108, 0.03)
-  );
-  border-top: 1px solid rgba(120, 113, 108, 0.3);
-  border-bottom: 1px solid rgba(120, 113, 108, 0.3);
+  border-radius: 10px;
+  background: rgba(255, 253, 246, 0.34);
+  backdrop-filter: brightness(1.12) saturate(1.04);
+  -webkit-backdrop-filter: brightness(1.12) saturate(1.04);
+  border-top: 1px solid rgba(120, 113, 108, 0.38);
+  border-bottom: 1px solid rgba(120, 113, 108, 0.38);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+    0 0 30px rgba(255, 253, 246, 0.16),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 .dark .reading-ruler,
 html[data-reading-theme='night'] .reading-ruler {
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.015),
-    rgba(255, 255, 255, 0.05) 20%,
-    rgba(255, 255, 255, 0.05) 80%,
-    rgba(255, 255, 255, 0.015)
-  );
-  border-top: 1px solid rgba(255, 255, 255, 0.17);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.17);
+  background: rgba(255, 240, 214, 0.055);
+  backdrop-filter: brightness(1.24);
+  -webkit-backdrop-filter: brightness(1.24);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+    0 0 30px rgba(255, 230, 180, 0.07),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-ruler,
+  .reading-ruler-mask {
+    transition: none;
+  }
 }
 
 /* ---------- 11. 节奏提醒 + 续读提示 ---------- */

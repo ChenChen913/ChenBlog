@@ -20,6 +20,14 @@ export type ReadingFontSize = 0 | 1 | 2 | 3;
 export type ReadingLineHeight = 0 | 1 | 2;
 export type ReadingPageWidth = 0 | 1 | 2;
 export type ReadingFocusStyle = 'paragraph' | 'line';
+/** 段落聚焦范围：窄=仅最近 1 段 / 标准=3 段 / 宽松=5 段 */
+export type ReadingFocusSpan = 0 | 1 | 2;
+/** 行标尺驱动方式：跟随光标（实体阅读尺隐喻）/ 固定位置（Immersive Reader 的 Line Focus） */
+export type ReadingRulerStyle = 'follow' | 'fixed';
+/** 固定标尺的行数：1 / 3 / 5 行 */
+export type ReadingRulerLines = 0 | 1 | 2;
+/** 固定标尺的位置：偏上 / 居中 / 偏下（以视口百分比定位） */
+export type ReadingRulerPosition = 0 | 1 | 2;
 
 export interface ReadingPrefs {
   fontSize: ReadingFontSize;
@@ -27,6 +35,11 @@ export interface ReadingPrefs {
   pageWidth: ReadingPageWidth;
   theme: ReadingTheme;
   focusStyle: ReadingFocusStyle;
+  /** 段落聚焦的同时保持全亮的段数（1/3/5，由档位映射） */
+  focusSpan: ReadingFocusSpan;
+  rulerStyle: ReadingRulerStyle;
+  rulerLines: ReadingRulerLines;
+  rulerPosition: ReadingRulerPosition;
   bionic: boolean;
   reminder: boolean;
 }
@@ -37,9 +50,20 @@ export const DEFAULT_READING_PREFS: ReadingPrefs = {
   pageWidth: 1,
   theme: 'auto',
   focusStyle: 'paragraph',
+  focusSpan: 1,
+  rulerStyle: 'fixed',
+  rulerLines: 1,
+  rulerPosition: 1,
   bionic: false,
   reminder: false,
 };
+
+/** 段落聚焦范围档位 → 实际保持全亮的段数 */
+export const READING_FOCUS_SPAN_PARAS: readonly number[] = [1, 3, 5];
+/** 固定标尺位置档位 → 视口高度百分比（标尺带中心点） */
+export const READING_RULER_POSITION_PCT: readonly number[] = [0.34, 0.48, 0.62];
+/** 固定标尺行数档位 → 标尺带覆盖的正文行数 */
+export const READING_RULER_LINES_COUNT: readonly number[] = [1, 3, 5];
 
 /**
  * CSS 变量映射表。字号/行高/页宽的每一档都对应一个具体值，
@@ -106,6 +130,7 @@ export const READING_CSS_VAR_NAMES = [
 
 const THEMES: readonly ReadingTheme[] = ['auto', 'paper', 'sepia', 'night'];
 const FOCUS_STYLES: readonly ReadingFocusStyle[] = ['paragraph', 'line'];
+const RULER_STYLES: readonly ReadingRulerStyle[] = ['follow', 'fixed'];
 
 function isOneOf<T extends string | number>(value: unknown, allowed: readonly T[]): value is T {
   return allowed.includes(value as T);
@@ -148,6 +173,12 @@ export function readReadingPrefs(): ReadingPrefs {
     focusStyle: isOneOf(stored.focusStyle, FOCUS_STYLES)
       ? stored.focusStyle
       : DEFAULT_READING_PREFS.focusStyle,
+    focusSpan: clampGear(stored.focusSpan, 2) as ReadingFocusSpan,
+    rulerStyle: isOneOf(stored.rulerStyle, RULER_STYLES)
+      ? stored.rulerStyle
+      : DEFAULT_READING_PREFS.rulerStyle,
+    rulerLines: clampGear(stored.rulerLines, 2) as ReadingRulerLines,
+    rulerPosition: clampGear(stored.rulerPosition, 2) as ReadingRulerPosition,
     bionic: stored.bionic === true,
     reminder: stored.reminder === true,
   };

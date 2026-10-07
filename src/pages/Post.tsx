@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getPostMetaBySlug, loadPostContent, getAllPosts, type Post } from '../utils/markdown';
-import { incrementViews, getViews } from '../utils/storage';
+import { incrementViews } from '../utils/storage';
 import { useAppContext } from '../context/AppContext';
 import { usePostContext } from '../context/PostContext';
 import ReactMarkdown from 'react-markdown';
@@ -13,7 +13,7 @@ import PostNavigation from '../components/PostNavigation';
 import WeeklyNavigation from '../components/WeeklyNavigation';
 import RelatedPosts from '../components/RelatedPosts';
 import { Lightbox } from '../components/Lightbox';
-import { ArrowLeft, Eye, Share2, Check } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import CodeBlock from '../components/CodeBlock';
 import { getCategoryLabel } from '../config/categories';
@@ -391,10 +391,8 @@ export default function Post() {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const { lang, t } = useAppContext();
-  const [copied, setCopied] = useState(false);
-  const [views, setViews] = useState(0);
   const [articleFontSize, setArticleFontSize] = useState<ArticleFontSizeMode>(() =>
-    readArticleFontSizeMode()
+    typeof window === 'undefined' ? 'standard' : readArticleFontSizeMode()
   );
 
   // 同步元数据 + 按需正文：头部信息（标题/日期/分类）即刻渲染，
@@ -558,36 +556,18 @@ export default function Post() {
     imageUrl: post?.frontmatter.coverImage,
   });
 
-  const handleCopyLink = useCallback(() => {
-    if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
-      const url = window.location.href;
-      if (navigator.clipboard) {
-        navigator.clipboard
-          .writeText(url)
-          .then(() => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-          })
-          .catch(() => {
-            console.error('Failed to copy link');
-          });
-      }
-    }
-  }, []);
-
   const handleArticleFontSizeChange = useCallback((mode: ArticleFontSizeMode) => {
     setArticleFontSize(mode);
     saveArticleFontSizeMode(mode);
   }, []);
 
+  // 阅读量统计仍在后台累计（未来若恢复展示可直接读取），只是不再占用界面
   useEffect(() => {
     if (slug && post && !post.frontmatter.draft) {
       const viewed = sessionStorage.getItem(`viewed-${slug}`);
       if (!viewed) {
-        setViews(incrementViews(slug));
+        incrementViews(slug);
         sessionStorage.setItem(`viewed-${slug}`, '1');
-      } else {
-        setViews(getViews(slug));
       }
     }
   }, [slug, post]);
@@ -715,30 +695,9 @@ export default function Post() {
             {reading.mode === 'standard' && (
               <div
                 id="post-meta-bottom"
-                className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-6"
+                className="flex items-center justify-end border-b border-stone-200 dark:border-stone-800 pb-6"
               >
-                <div
-                  id="post-stats"
-                  className="flex flex-wrap items-center gap-3 text-sm text-stone-500 dark:text-stone-400"
-                >
-                  <span id="post-views" className="flex items-center gap-1.5">
-                    <Eye size={16} />
-                    {views} {t('views')}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <ReadingFocusButton onEnter={() => reading.enter()} label={t('focus_reading')} />
-
-                  <button
-                    id="copy-link-button"
-                    onClick={handleCopyLink}
-                    className="flex items-center gap-2 text-sm font-medium text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
-                  >
-                    {copied ? <Check size={16} className="text-green-500" /> : <Share2 size={16} />}
-                    <span className="hidden sm:inline">{copied ? t('copied') : t('copy')}</span>
-                  </button>
-                </div>
+                <ReadingFocusButton onEnter={() => reading.enter()} label={t('focus_reading')} />
               </div>
             )}
           </header>
@@ -943,9 +902,16 @@ export default function Post() {
             onClose={() => reading.setTocOpen(false)}
             title={t('toc_title')}
           />
-          <ReadingRuler active={reading.mode === 'guide' && reading.prefs.focusStyle === 'line'} />
+          <ReadingRuler
+            active={reading.mode === 'guide' && reading.prefs.focusStyle === 'line'}
+            rulerStyle={reading.prefs.rulerStyle}
+            lines={reading.prefs.rulerLines}
+            position={reading.prefs.rulerPosition}
+            contentKey={`${post.slug}:${post.content ? 'loaded' : 'pending'}:${reading.prefs.fontSize}:${reading.prefs.lineHeight}`}
+          />
           <ReadingParagraphFocus
             active={reading.mode === 'guide' && reading.prefs.focusStyle === 'paragraph'}
+            span={reading.prefs.focusSpan}
             contentKey={`${post.slug}:${post.content ? 'loaded' : 'pending'}:${mathExtensions ? 'math' : 'plain'}:${bionicActive ? 'bio' : 'raw'}`}
           />
           <ReadingReminder
