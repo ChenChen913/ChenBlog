@@ -4559,3 +4559,213 @@ html[data-reading-theme='sepia'] .reading-resume-toast {
     transition: none;
   }
 }
+
+/* ---------- 14. 专注强主题 × 站点暗色的层叠收口（黑夜模式字体虚化修复） ----------
+   复现路径：亮色打开文章 → 手动切黑夜 → 进专注阅读（选纸白/暖米背景）。
+   根因（两层叠加）：
+   1) 标题虚化：.dark .article-body h2~h6 的 !important 规则位于 @layer base。
+      CSS 层叠规则中 important 声明层间反转——base 层的 important 优先于
+      unlayered 的 important，也优先于 utilities 层的 dark:!text-*。于是第 3 节
+      （unlayered）的强主题文字覆盖永远打不赢，标题呈 stone-200 浅灰叠在
+      纸白/暖米正文上发虚。解法：同回 @layer base，靠 specificity 压制
+      (0,2,2) > (0,2,1)，同时层间反转天然压住 utilities 的 dark:!text-*。
+   2) 工具浮层虚化：第 12 节把 paper/sepia 的面板/胶囊背景覆盖成了亮玻璃，
+      但容器内子元素文字仍被 .dark 的浅灰规则直接命中（元素级规则赢过容器
+      继承），亮底浅字 = 面板文字整体发虚。解法：为 paper/sepia 补全子元素
+      亮色覆盖（对齐 night 版做法，值取各控件的基础亮色）。 */
+
+/* A. 标题颜色：进 base 层打 important 层叠反转战（三主题齐备） */
+@layer base {
+  html[data-reading-theme='paper'] .article-body :is(h1, h2, h3, h4, h5, h6),
+  html[data-reading-theme='sepia'] .article-body :is(h1, h2, h3, h4, h5, h6),
+  html[data-reading-theme='night'] .article-body :is(h1, h2, h3, h4, h5, h6) {
+    color: var(--reading-fg) !important;
+  }
+}
+
+/* B. 行内 code：强主题接管（.dark 版浅字半透明深底叠亮正文，观感发灰蒙） */
+html[data-reading-theme='paper'] .article-body code:not(.hljs),
+html[data-reading-theme='sepia'] .article-body code:not(.hljs) {
+  background: rgba(243, 244, 246, 0.7);
+  color: #1f2937;
+  border-color: rgba(209, 213, 219, 0.5);
+}
+html[data-reading-theme='sepia'] .article-body code:not(.hljs) {
+  background: rgba(255, 252, 243, 0.78);
+  border-color: rgba(196, 181, 148, 0.55);
+}
+html[data-reading-theme='night'] .article-body code:not(.hljs) {
+  background: rgba(55, 65, 81, 0.5);
+  color: #e5e7eb;
+  border-color: rgba(55, 65, 81, 0.5);
+}
+
+/* C. paper/sepia 下工具层子元素的亮色版（值全部对齐各控件的基础亮色） */
+html[data-reading-theme='paper'] .reading-capsule::before,
+html[data-reading-theme='sepia'] .reading-capsule::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0.05) 45%,
+    rgba(255, 255, 255, 0.16) 100%
+  );
+}
+html[data-reading-theme='paper'] .reading-capsule-btn:hover,
+html[data-reading-theme='paper'] .reading-capsule-btn--active,
+html[data-reading-theme='sepia'] .reading-capsule-btn:hover,
+html[data-reading-theme='sepia'] .reading-capsule-btn--active {
+  background: rgba(120, 113, 108, 0.1);
+  color: #1c1917;
+}
+html[data-reading-theme='paper'] .reading-capsule-btn--exit:hover,
+html[data-reading-theme='sepia'] .reading-capsule-btn--exit:hover {
+  color: #b91c1c;
+}
+html[data-reading-theme='paper'] .reading-panel .reading-panel-title,
+html[data-reading-theme='sepia'] .reading-panel .reading-panel-title {
+  color: #44403c;
+}
+html[data-reading-theme='paper'] .reading-panel .reading-panel-close,
+html[data-reading-theme='sepia'] .reading-panel .reading-panel-close {
+  color: #78716c;
+}
+html[data-reading-theme='paper'] .reading-panel .reading-panel-close:hover,
+html[data-reading-theme='sepia'] .reading-panel .reading-panel-close:hover {
+  background: rgba(120, 113, 108, 0.12);
+  color: #1c1917;
+}
+html[data-reading-theme='paper'] .reading-panel .reading-panel-label,
+html[data-reading-theme='sepia'] .reading-panel .reading-panel-label {
+  color: #44403c;
+}
+html[data-reading-theme='paper'] .reading-panel .reading-toggle-hint,
+html[data-reading-theme='sepia'] .reading-panel .reading-toggle-hint {
+  color: #a8a29e;
+}
+html[data-reading-theme='paper'] .reading-panel .reading-panel-divider,
+html[data-reading-theme='sepia'] .reading-panel .reading-panel-divider {
+  background: rgba(120, 113, 108, 0.16);
+}
+html[data-reading-theme='paper'] .reading-seg,
+html[data-reading-theme='sepia'] .reading-seg {
+  background: rgba(120, 113, 108, 0.12);
+}
+html[data-reading-theme='paper'] .reading-seg-btn,
+html[data-reading-theme='sepia'] .reading-seg-btn {
+  color: #78716c;
+}
+html[data-reading-theme='paper'] .reading-seg-btn:hover,
+html[data-reading-theme='sepia'] .reading-seg-btn:hover {
+  color: #1c1917;
+}
+html[data-reading-theme='paper'] .reading-seg-btn--active,
+html[data-reading-theme='sepia'] .reading-seg-btn--active {
+  color: #1c1917;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.12);
+}
+html[data-reading-theme='paper'] .reading-swatch,
+html[data-reading-theme='sepia'] .reading-swatch {
+  color: #57534e;
+  border-color: rgba(120, 113, 108, 0.22);
+}
+html[data-reading-theme='paper'] .reading-swatch:hover,
+html[data-reading-theme='sepia'] .reading-swatch:hover {
+  background: rgba(120, 113, 108, 0.08);
+  color: #1c1917;
+}
+html[data-reading-theme='paper'] .reading-swatch--active,
+html[data-reading-theme='sepia'] .reading-swatch--active {
+  color: #1c1917;
+  border-color: rgba(41, 37, 36, 0.5);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.1);
+}
+html[data-reading-theme='paper'] .reading-switch--on,
+html[data-reading-theme='sepia'] .reading-switch--on {
+  background: #57534e;
+}
+html[data-reading-theme='paper'] .reading-toc-panel .toc-item,
+html[data-reading-theme='sepia'] .reading-toc-panel .toc-item {
+  color: rgba(120, 113, 108, 0.85);
+}
+html[data-reading-theme='paper'] .reading-toc-panel .toc-item:hover,
+html[data-reading-theme='sepia'] .reading-toc-panel .toc-item:hover {
+  color: rgb(68, 64, 60);
+  background: rgba(120, 113, 108, 0.08);
+}
+html[data-reading-theme='paper'] .reading-toc-panel .toc-item--active,
+html[data-reading-theme='sepia'] .reading-toc-panel .toc-item--active {
+  color: rgb(28, 25, 23);
+  background: rgba(120, 113, 108, 0.12);
+}
+/* h2 级条目加粗色：.dark 版选择器 specificity 高 (0,3,2)，带前缀后 (0,4,3) 反超 */
+html[data-reading-theme='paper'] .toc-scroll > ul > li > div > .toc-item:not(.toc-item--h3),
+html[data-reading-theme='sepia'] .toc-scroll > ul > li > div > .toc-item:not(.toc-item--h3) {
+  color: rgba(41, 37, 36, 0.9);
+}
+html[data-reading-theme='paper'] .reading-toc-panel .reading-toc-count,
+html[data-reading-theme='sepia'] .reading-toc-panel .reading-toc-count {
+  color: #78716c;
+  background: rgba(120, 113, 108, 0.14);
+}
+html[data-reading-theme='paper'] .reading-toc-panel .reading-toc-close,
+html[data-reading-theme='sepia'] .reading-toc-panel .reading-toc-close {
+  color: #78716c;
+}
+html[data-reading-theme='paper'] .reading-toc-panel .reading-toc-close:hover,
+html[data-reading-theme='sepia'] .reading-toc-panel .reading-toc-close:hover {
+  background: rgba(120, 113, 108, 0.12);
+  color: #1c1917;
+}
+html[data-reading-theme='paper'] .reading-resume-toast .reading-resume-go,
+html[data-reading-theme='sepia'] .reading-resume-toast .reading-resume-go {
+  color: #2563eb;
+}
+/* 回顶钮与行标尺：.dark 版是暗玻璃，浮在亮正文上突兀，回到基础亮版 */
+html[data-reading-theme='paper'] .reading-backtop-btn,
+html[data-reading-theme='sepia'] .reading-backtop-btn {
+  color: #44403c;
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(210, 205, 200, 0.6);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 6px 18px rgba(0, 0, 0, 0.1),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+}
+html[data-reading-theme='paper'] .reading-backtop-btn:hover,
+html[data-reading-theme='sepia'] .reading-backtop-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+}
+html[data-reading-theme='paper'] .reading-ruler,
+html[data-reading-theme='sepia'] .reading-ruler {
+  background: rgba(255, 253, 246, 0.34);
+  backdrop-filter: brightness(1.12) saturate(1.04);
+  -webkit-backdrop-filter: brightness(1.12) saturate(1.04);
+  border-top: 1px solid rgba(120, 113, 108, 0.38);
+  border-bottom: 1px solid rgba(120, 113, 108, 0.38);
+  box-shadow:
+    0 0 30px rgba(255, 253, 246, 0.16),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+/* 键盘焦点圈回到亮色版（.dark 的浅色圈在亮面板上不可见） */
+html[data-reading-theme='paper'] .reading-capsule-btn:focus-visible,
+html[data-reading-theme='paper'] .reading-mode-btn:focus-visible,
+html[data-reading-theme='paper'] .reading-seg-btn:focus-visible,
+html[data-reading-theme='paper'] .reading-swatch:focus-visible,
+html[data-reading-theme='paper'] .reading-switch:focus-visible,
+html[data-reading-theme='paper'] .reading-toc-close:focus-visible,
+html[data-reading-theme='paper'] .reading-toc-panel .toc-item:focus-visible,
+html[data-reading-theme='paper'] .reading-backtop-btn:focus-visible,
+html[data-reading-theme='paper'] .reading-panel-close:focus-visible,
+html[data-reading-theme='sepia'] .reading-capsule-btn:focus-visible,
+html[data-reading-theme='sepia'] .reading-mode-btn:focus-visible,
+html[data-reading-theme='sepia'] .reading-seg-btn:focus-visible,
+html[data-reading-theme='sepia'] .reading-swatch:focus-visible,
+html[data-reading-theme='sepia'] .reading-switch:focus-visible,
+html[data-reading-theme='sepia'] .reading-toc-close:focus-visible,
+html[data-reading-theme='sepia'] .reading-toc-panel .toc-item:focus-visible,
+html[data-reading-theme='sepia'] .reading-backtop-btn:focus-visible,
+html[data-reading-theme='sepia'] .reading-panel-close:focus-visible {
+  outline-color: rgba(87, 83, 78, 0.75);
+}

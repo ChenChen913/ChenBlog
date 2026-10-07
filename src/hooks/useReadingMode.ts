@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   DEFAULT_READING_PREFS,
   READING_CSS_VAR_NAMES,
@@ -20,6 +20,8 @@ import {
 interface UseReadingModeOptions {
   /** 文章页且正文可渲染时才允许进入专注模式（404/草稿/未加载均禁用） */
   enabled: boolean;
+  /** 从专注/引导退回标准模式的回调（叉号、Esc 键等所有退出路径统一触发） */
+  onExit?: (prevMode: NonStandardReadingMode) => void;
 }
 
 export interface ReadingModeApi {
@@ -50,13 +52,22 @@ export interface ReadingModeApi {
  * 卸载安全：组件卸载（路由离开文章页）时彻底清理 html 类与 URL 参数，
  * 否则残留的 reading-focus 会把其他页面的站点 chrome 一并藏掉。
  */
-export function useReadingMode({ enabled }: UseReadingModeOptions): ReadingModeApi {
+export function useReadingMode({ enabled, onExit }: UseReadingModeOptions): ReadingModeApi {
   const [mode, setMode] = useState<ReadingMode>('standard');
   const [prefs, setPrefsState] = useState<ReadingPrefs>(() =>
     typeof window === 'undefined' ? { ...DEFAULT_READING_PREFS } : readReadingPrefs()
   );
   const [tocOpen, setTocOpen] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
+
+  // 回调与当前模式用 ref 保活：exit 保持稳定引用（useCallback 无依赖），
+  // Esc 监听器里调 exit() 时也能读到最新值，且不会因回调变化重挂监听
+  const onExitRef = useRef(onExit);
+  const modeRef = useRef(mode);
+  useEffect(() => {
+    onExitRef.current = onExit;
+    modeRef.current = mode;
+  });
 
   // ---- 初始化：URL 参数 > 上次保存的模式 ----
   useEffect(() => {
@@ -157,6 +168,10 @@ export function useReadingMode({ enabled }: UseReadingModeOptions): ReadingModeA
   }, []);
 
   const exit = useCallback(() => {
+    const prev = modeRef.current;
+    if (prev === 'focus' || prev === 'guide') {
+      onExitRef.current?.(prev);
+    }
     setMode('standard');
     setTocOpen(false);
     setPanelOpen(false);
@@ -199,11 +214,12 @@ export function useReadingMode({ enabled }: UseReadingModeOptions): ReadingModeA
         setTocOpen(false);
         return;
       }
-      setMode('standard');
+      // 走统一的 exit()：Esc 退出同样触发 onExit 回调（退出轻提示）
+      exit();
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [mode, panelOpen, tocOpen]);
+  }, [mode, panelOpen, tocOpen, exit]);
 
   // ---- 浮层滚动锁：TOC 浮层全端锁定；设置面板仅移动端（桌面是 popover） ----
   useEffect(() => {

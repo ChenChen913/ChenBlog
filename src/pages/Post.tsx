@@ -475,27 +475,24 @@ export default function Post() {
     };
   }, [needsMath, mathExtensions, mathLoadFailed]);
 
+  // 退出专注/引导模式时的轻提示（用户反馈：退出后需要一条“已退出XX模式”确认）。
+  // 声明在 useReadingMode 之前：onExit 回调闭包里要引用这两个句柄
+  const [exitToast, setExitToast] = useState<ReadingExitToastData | null>(null);
+  const exitToastIdRef = useRef(0);
+
   // 专注阅读模式：文章可读且非草稿时才可用（须在 rehypePlugins 之前，bionic 开关依赖它）
   const reading = useReadingMode({
     enabled: Boolean(slug && postMeta && !postMeta.frontmatter.draft),
-  });
-
-  // 退出专注/引导模式时的轻提示（用户反馈：退出后需要一条“已退出XX模式”确认）
-  const [exitToast, setExitToast] = useState<ReadingExitToastData | null>(null);
-  const exitToastIdRef = useRef(0);
-  const handleReadingExit = useCallback(() => {
-    const prevMode = reading.mode;
-    reading.exit();
-    if (prevMode === 'focus' || prevMode === 'guide') {
+    // 所有退出路径（叉号 / Esc 键 / 面板内退出）统一在这里发轻提示
+    onExit: prevMode => {
       exitToastIdRef.current += 1;
       setExitToast({
         text: prevMode === 'guide' ? t('exit_toast_guide') : t('exit_toast_focus'),
         id: exitToastIdRef.current,
       });
-    }
-    // t 随语言变化但 exit 瞬间取值即可；reading.exit 是稳定引用（useReadingMode 内 useCallback）
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reading.mode, reading.exit, t]);
+    },
+  });
+
   const clearExitToast = useCallback(() => setExitToast(null), []);
 
   const remarkPlugins = useMemo<PluggableList>(
@@ -917,13 +914,7 @@ export default function Post() {
       {/* 专注阅读：工具胶囊 + 分节浮层 + 行标尺 + 节奏提醒 */}
       {reading.mode !== 'standard' && (
         <>
-          <ReadingToolbar
-            api={reading}
-            hasToc={headings.length > 0}
-            content={post.content}
-            t={t}
-            onExit={handleReadingExit}
-          />
+          <ReadingToolbar api={reading} hasToc={headings.length > 0} content={post.content} t={t} />
           <ReadingTocOverlay
             headings={headings}
             open={reading.tocOpen}

@@ -71,6 +71,31 @@ test.describe('专注阅读模式', () => {
     await expect(page.locator('#reading-toolbar')).toBeHidden();
   });
 
+  test('Esc 退出与叉号退出均弹退出轻提示（约 1 秒后自动消失）', async ({ page }) => {
+    // 用户反馈：叉号退出有轻提示，Esc 退出没有——两路径必须一致。
+    // 注：停留时长精确值（800ms+160ms 退场）由 ReadingExitToast.test.tsx 的
+    // fake-timer 单测锁定；headless e2e 中动画与断言轮询争抡主线程，
+    // 消失超时放宽到 3s 只验“会出现且会自动消失”。
+    await enterFocusViaButton(page);
+    await page.waitForTimeout(400); // 等工具胶囊入场动画稳定，避免进出动画叠加
+
+    // Esc 退出：toast 出现并自动消失
+    await page.keyboard.press('Escape');
+    const toastByEsc = page.locator('.reading-exit-toast');
+    await expect(toastByEsc).toBeVisible();
+    await expect(toastByEsc).toContainText(/已退出专注模式|Exited Focus/);
+    await expect(toastByEsc).toBeHidden({ timeout: 3000 });
+
+    // 叉号退出：同样有轻提示
+    await enterFocusViaButton(page);
+    await page.waitForTimeout(400);
+    await page.locator('.reading-capsule-btn--exit').click();
+    const toastByButton = page.locator('.reading-exit-toast');
+    await expect(toastByButton).toBeVisible();
+    await expect(toastByButton).toContainText(/已退出专注模式|Exited Focus/);
+    await expect(toastByButton).toBeHidden({ timeout: 3000 });
+  });
+
   test('?focus=1 直接进入专注模式（可分享的纯净链接）', async ({ page }) => {
     await page.goto(`${POST_URL}?focus=1`);
     await page.waitForLoadState('networkidle');
