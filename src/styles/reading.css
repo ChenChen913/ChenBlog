@@ -140,10 +140,10 @@ html.reading-focus[data-reading-theme='sepia'] .article-body :is(td, th, hr),
 html.reading-focus[data-reading-theme='night'] .article-body :is(td, th, hr) {
   border-color: var(--reading-border);
 }
-html.reading-focus[data-reading-theme='paper'] .article-body blockquote,
-html.reading-focus[data-reading-theme='sepia'] .article-body blockquote,
-html.reading-focus[data-reading-theme='night'] .article-body blockquote {
-  border-left-color: var(--reading-border);
+html.reading-focus[data-reading-theme='paper'] .article-body blockquote::before,
+html.reading-focus[data-reading-theme='sepia'] .article-body blockquote::before,
+html.reading-focus[data-reading-theme='night'] .article-body blockquote::before {
+  background: var(--reading-border);
 }
 html.reading-focus[data-reading-theme='paper'] .article-body :is(mark, ins),
 html.reading-focus[data-reading-theme='sepia'] .article-body :is(mark, ins),

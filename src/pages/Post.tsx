@@ -33,6 +33,7 @@ import { getSafeLinkAttributes, isSafeResourceUrl, toTrustedEmbedUrl } from '../
 import { hasMathDelimiters } from '../utils/math-detect';
 import { rehypeBionic } from '../utils/bionic';
 import { rehypeSanitizeMarkdown } from '../utils/markdown-sanitize';
+import { rehypeFigureCaption } from '../utils/rehype-figure-caption';
 import { useReadingMode } from '../hooks/useReadingMode';
 import ReadingExitToast, {
   type ReadingExitToastData,
@@ -334,6 +335,8 @@ export default function Post() {
     const base: PluggableList = [
       rehypeRaw,
       rehypeHighlightMarks,
+      // 图片说明合并：图片段 + 紧随短文本段 → figure/figcaption（写法约定见 src/posts/文章模板.md）
+      rehypeFigureCaption,
       rehypeSanitizeMarkdown,
       rehypeSequentialIds,
     ];
@@ -694,9 +697,9 @@ export default function Post() {
             </footer>
           )}
 
-          {/* 相关文章推荐（按标签交集，回退同分类）—— 专注模式下隐藏，读完全文退出后再看 */}
+          {/* 相关文章推荐（只认共同标签，无相关文章时整个栏目不渲染）—— 专注模式下隐藏 */}
           {reading.mode === 'standard' && (
-            <RelatedPosts currentSlug={post.slug} tags={tags} category={category} />
+            <RelatedPosts currentSlug={post.slug} tags={tags} />
           )}
         </motion.article>
         {reading.mode === 'standard' && <TableOfContents parsedHeadings={headings} />}

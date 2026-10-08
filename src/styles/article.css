@@ -199,7 +199,7 @@
   --article-h3-size: 1.375rem;
   --article-body-line-height: 2.05;
   --article-list-line-height: 1.95;
-  --article-blockquote-line-height: 2;
+  --article-blockquote-line-height: 1.4;
   --article-code-size: 0.92rem;
   font-family: var(--font-kai);
   font-size: var(--article-body-size);
@@ -213,7 +213,7 @@
   --article-h3-size: 1.16rem;
   --article-body-line-height: 1.9;
   --article-list-line-height: 1.9;
-  --article-blockquote-line-height: 1.9;
+  --article-blockquote-line-height: 1.4;
   --article-code-size: 0.84rem;
 }
 
@@ -224,7 +224,7 @@
   --article-h3-size: 1.5rem;
   --article-body-line-height: 2.08;
   --article-list-line-height: 2.08;
-  --article-blockquote-line-height: 2.08;
+  --article-blockquote-line-height: 1.5;
   --article-code-size: 1rem;
 }
 
@@ -322,9 +322,45 @@
   margin-left: -1.5rem;
 }
 .article-body blockquote {
-  @apply border-l-4 border-stone-300 dark:border-stone-600 pl-4 italic text-stone-600 dark:text-stone-400 mb-4;
+  @apply relative pl-4 italic text-stone-600 dark:text-stone-400 mb-4;
   font-family: var(--font-kai);
+  font-size: calc(var(--article-body-size) * 0.88);
   line-height: var(--article-blockquote-line-height);
+}
+/* 左侧竖线用伪元素绘制，上下各缩 0.1em：竖线长度与内容高度基本一致，
+   不再像 border 那样撑满整个盒子（用户反馈竖线比内容长出一截） */
+.article-body blockquote::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  bottom: 0.1em;
+  width: 4px;
+  border-radius: 2px;
+  background: var(--stone-300);
+}
+.dark .article-body blockquote::before {
+  background: var(--stone-600);
+}
+/* 引用块内的段落间距收紧（原继承 p 的 mb-4，引用行间显得松散） */
+.article-body blockquote p {
+  @apply mb-0.5;
+}
+.article-body blockquote p:last-child {
+  @apply mb-0;
+}
+/* 图片说明（rehype-figure-caption 生成 figure/figcaption）：
+   说明紧贴图片正下方，小字、淡色、居中 */
+.article-body figure {
+  @apply my-6;
+}
+.article-body figure img {
+  @apply my-0;
+}
+.article-body figcaption {
+  @apply mt-2 text-center text-[0.875rem] text-stone-500 dark:text-stone-400;
+  font-family: var(--font-kai);
+  line-height: 1.6;
 }
 /* (repaired comment) */
 .article-body img {
