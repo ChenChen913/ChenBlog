@@ -16,8 +16,11 @@ import path from 'node:path';
 import http from 'node:http';
 import { createRequire } from 'node:module';
 import { spawn } from 'node:child_process';
+// Windows 下 file:///D:/... 的 .pathname 是 "/D:/..."，直接拼接会得到
+// "D:\D:\..." 的错误路径；必须用 fileURLToPath 转成真实盘符路径
+import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
 const PORT = 4173;
 const BASE_URL = `http://localhost:${PORT}`;
@@ -98,7 +101,13 @@ async function main() {
   log(`待预渲染路由 ${routes.length} 条`);
 
   // 启动 preview 服务器
-  const preview = spawn('npx', ['vite', 'preview', `--port=${PORT}`, '--strictPort'], {
+  // 不经 npx/shell，直接用当前 node 可执行文件运行 vite 的 bin 入口：
+  //  - Windows 下 npx 是 .cmd 批处理，Node 出于安全（CVE-2024-27980）禁止
+  //    无 shell 直接 spawn，而 shell 包装又有参数转义告警（DEP0190）；
+  //  - process.execPath 是 node 本体，跨平台可直接 spawn，且直接子进程
+  //    就是 vite preview 进程，stopServer 常规 kill 即可生效。
+  const viteBin = path.join(ROOT, 'node_modules', 'vite', 'bin', 'vite.js');
+  const preview = spawn(process.execPath, [viteBin, 'preview', `--port=${PORT}`, '--strictPort'], {
     cwd: ROOT,
     stdio: 'ignore',
     detached: false,
