@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { motion } from 'motion/react';
 import { X } from 'lucide-react';
 
@@ -30,7 +31,10 @@ export function Lightbox({ src, alt, onClose }: LightboxProps) {
     };
   }, [onClose]);
 
-  return (
+  // Portal 到 document.body：Lightbox 的 DOM 原本渲染在 .article-body 内部，
+  // 会被 article.css 的 .article-body img（大屏下 max-width: 580px / max-height: 450px）
+  // 覆盖 .lightbox-image 的 90vw/90vh，导致点开后的图片偏小。挂到 body 即可脱离该作用域
+  return createPortal(
     <motion.div
       ref={lightboxRef}
       role="dialog"
@@ -57,6 +61,7 @@ export function Lightbox({ src, alt, onClose }: LightboxProps) {
         className="lightbox-image"
         onClick={e => e.stopPropagation()}
       />
-    </motion.div>
+    </motion.div>,
+    document.body
   );
 }

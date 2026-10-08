@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { type Post, getAllPosts, loadPostContent } from '../utils/markdown';
 import { useAppContext } from '../context/AppContext';
-import { formatListDate } from '../utils/weekly';
 import { prefetchRoute } from '../utils/route-prefetch';
 
 interface RelatedPostsProps {
@@ -87,17 +86,11 @@ export default function RelatedPosts({ currentSlug, tags, limit = 4 }: RelatedPo
               to={`/posts/${post.slug}`}
               onPointerEnter={makePrefetch(post.slug)}
               onFocus={makePrefetch(post.slug)}
-              className="group flex items-baseline gap-3 py-1.5"
+              className="group block py-1.5"
             >
-              <span className="font-kai text-[17px] font-normal text-stone-900 dark:text-stone-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors min-w-0">
+              <span className="font-kai text-[17px] font-normal text-stone-900 dark:text-stone-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                 {titleOf(post)}
               </span>
-              <time
-                className="ml-auto shrink-0 font-kai text-sm text-stone-500 dark:text-stone-400"
-                dateTime={post.frontmatter.date}
-              >
-                {formatListDate(post.frontmatter.date, lang)}
-              </time>
             </Link>
           </li>
         ))}
