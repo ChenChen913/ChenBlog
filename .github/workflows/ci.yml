@@ -65,7 +65,7 @@ jobs:
           test "$ZINDEX" -le 36
           test "$ZINDEX_BAD" -eq 0
           test "$ZINDEX_TSX_BAD" -eq 0
-          test "$LINES" -le 5245
+          test "$LINES" -le 5253
 
       - name: CSS color budget check (ratchet)
         run: python3 scripts/css_color_budget.py --budget 0

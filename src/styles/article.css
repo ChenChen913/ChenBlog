@@ -300,6 +300,11 @@
 }
 .article-body a {
   @apply text-blue-600 dark:text-blue-400 hover:underline;
+  /* 长裸 URL 必须可在任意字符处换行：否则会撑破移动端 layout viewport
+     （window.innerWidth 390→691px），fixed 定位的返回顶部按钮相对扩展后
+     的视口定位，跑出手机屏幕，需 pinch 缩小才能看到（2026-10 实测修复） */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .article-body ul {
   @apply list-disc pl-6 mb-4;
@@ -406,6 +411,9 @@
 .article-body th,
 .article-body td {
   @apply border border-stone-300 dark:border-stone-600 px-4 py-2;
+  /* 单元格内长词/长 URL 可断行，避免 table 的 min-content 超宽（配合上方
+     table 的 display:block + overflow-x:auto，撑宽时整表横向滚动） */
+  overflow-wrap: anywhere;
 }
 .article-body th {
   @apply bg-stone-100 dark:bg-stone-800 font-semibold;

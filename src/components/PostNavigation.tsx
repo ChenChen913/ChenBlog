@@ -46,7 +46,7 @@ export default function PostNavigation({ olderPost, newerPost }: PostNavigationP
           to={`/posts/${newerPost.slug}`}
           onPointerEnter={makePrefetch(newerPost.slug)}
           onFocus={makePrefetch(newerPost.slug)}
-          className="group flex items-center gap-3 rounded-xl border border-stone-200 dark:border-stone-700/60 bg-white/60 dark:bg-stone-800/40 hover:bg-white/90 dark:hover:bg-stone-800/70 hover:border-stone-300 dark:hover:border-stone-600 transition-all duration-300 px-4 py-3.5 text-left"
+          className="group flex min-w-0 items-center gap-3 rounded-xl border border-stone-200 dark:border-stone-700/60 bg-white/60 dark:bg-stone-800/40 hover:bg-white/90 dark:hover:bg-stone-800/70 hover:border-stone-300 dark:hover:border-stone-600 transition-all duration-300 px-4 py-3.5 text-left"
         >
           <span className="flex shrink-0 items-center justify-center w-8 h-8 rounded-lg bg-stone-100 dark:bg-stone-700/60 text-stone-500 dark:text-stone-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:-translate-x-0.5 transition-all">
             <ArrowLeft size={16} />
@@ -70,7 +70,7 @@ export default function PostNavigation({ olderPost, newerPost }: PostNavigationP
           to={`/posts/${olderPost.slug}`}
           onPointerEnter={makePrefetch(olderPost.slug)}
           onFocus={makePrefetch(olderPost.slug)}
-          className="group flex items-center justify-end gap-3 rounded-xl border border-stone-200 dark:border-stone-700/60 bg-white/60 dark:bg-stone-800/40 hover:bg-white/90 dark:hover:bg-stone-800/70 hover:border-stone-300 dark:hover:border-stone-600 transition-all duration-300 px-4 py-3.5 text-right"
+          className="group flex min-w-0 items-center justify-end gap-3 rounded-xl border border-stone-200 dark:border-stone-700/60 bg-white/60 dark:bg-stone-800/40 hover:bg-white/90 dark:hover:bg-stone-800/70 hover:border-stone-300 dark:hover:border-stone-600 transition-all duration-300 px-4 py-3.5 text-right"
         >
           <span className="min-w-0">
             <span className="block text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wider">
