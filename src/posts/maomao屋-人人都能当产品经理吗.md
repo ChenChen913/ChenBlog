@@ -1,7 +1,7 @@
 ---
 title: "人人都能当产品经理吗？"
 title_en: "Can Everyone Be a Product Manager?"
-date: "2026-03-22"
+date: "2025-12-08"
 category: "tech"
 tags: ["AI", "产品经理", "思考"]
 featured: false
