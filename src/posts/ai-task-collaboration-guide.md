@@ -4,6 +4,7 @@ title_en: "AI Task Collaboration Guide: A Three-Stage Workflow from Requirement 
 date: "2026-05-11"
 category: "AI"
 tags: ["AI", "工作流", "提示词"]
+gem: true
 ---
 
 前两天我整理了吴恩达老师的 AI 课程，文章链接在这：[吴恩达课程笔记：AI Prompting for Everyone](https://mp.weixin.qq.com/s?__biz=MzkwNDUxMjE4Ng==&mid=2247486566&idx=1&sn=baaa2331cb66d20e5861cae4564c72b2&scene=21#wechat_redirect)

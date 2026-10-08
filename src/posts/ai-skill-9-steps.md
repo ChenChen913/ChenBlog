@@ -4,6 +4,7 @@ title_en: "From Idea to Launch: 9 Practical Steps to Build a High-Quality AI Ski
 date: "2026-04-29"
 category: "AI"
 tags: ["AI", "Skill", "实践"]
+gem: true
 ---
 
 ## 引言

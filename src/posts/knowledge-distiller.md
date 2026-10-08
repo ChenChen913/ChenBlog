@@ -4,6 +4,7 @@ title_en: "Knowledge Distiller Skill: Let AI Draw Out Your Tacit Knowledge"
 date: "2026-03-01"
 category: "AI"
 tags: ["AI", "Skill", "知识管理"]
+gem: true
 ---
 
 在某些 AI 群里潜水久了，我养成了一个坏毛病。
