@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { HeadingNode } from '../utils/headingParser';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { scrollToHeading } from '../utils/scrollToHeading';
 import { motion } from 'motion/react';
 
 interface Props {
@@ -27,15 +28,11 @@ export default function TableOfContents({ parsedHeadings }: Props) {
     }
   }, [activeId, collapsed]);
 
-  const scrollToHeading = useCallback((id: string) => {
-    const el = document.getElementById(id);
-    if (!el) return;
+  // 目录跳转：scrollToHeading 内部带懒加载图片预载与落点纠偏，
+  // 修复「点靠下标题时滚到一半停下」的问题
+  const handleTocClick = useCallback((id: string) => {
     const header = document.querySelector('header');
-    const offset = header?.offsetHeight ?? 0;
-    window.scrollTo({
-      top: el.getBoundingClientRect().top + window.scrollY - offset - 16,
-      behavior: 'smooth',
-    });
+    scrollToHeading(id, { offset: header?.offsetHeight ?? 0, gap: 16 });
   }, []);
 
   if (parsedHeadings.length === 0) return null;
@@ -58,7 +55,7 @@ export default function TableOfContents({ parsedHeadings }: Props) {
               />
             )}
             <button
-              onClick={() => scrollToHeading(node.id)}
+              onClick={() => handleTocClick(node.id)}
               className={
                 'toc-item' +
                 (isSubList ? ' toc-item--h3' : '') +

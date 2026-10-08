@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { usePostContext } from '../context/PostContext';
@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { X, ArrowLeft, List } from 'lucide-react';
 import type { HeadingNode } from '../utils/headingParser';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { scrollToHeading } from '../utils/scrollToHeading';
 
 /* ── 文章页底部栏（返回 + 目录）── */
 function PostBottomBar() {
@@ -38,17 +39,14 @@ function PostBottomBar() {
     }
   };
 
-  const scrollToHeading = useCallback((id: string) => {
+  // 目录跳转：先关抽屉再跳（rAF 等抽屉开始退场），
+  // scrollToHeading 内部带懒加载图片预载与落点纠偏，
+  // 修复「点靠下标题时滚到一半停下」的问题
+  const handleTocClick = useCallback((id: string) => {
     setShowTOC(false);
     requestAnimationFrame(() => {
-      const el = document.getElementById(id);
-      if (!el) return;
       const header = document.querySelector('header');
-      const offset = header?.getBoundingClientRect().bottom ?? 0;
-      window.scrollTo({
-        top: el.getBoundingClientRect().top + window.scrollY - offset - 16,
-        behavior: 'smooth',
-      });
+      scrollToHeading(id, { offset: header?.getBoundingClientRect().bottom ?? 0, gap: 16 });
     });
   }, []);
 
@@ -58,7 +56,7 @@ function PostBottomBar() {
       return (
         <li key={node.id} data-hid={node.id}>
           <button
-            onClick={() => scrollToHeading(node.id)}
+            onClick={() => handleTocClick(node.id)}
             className={`mobile-toc-item w-full text-left py-2.5 px-4 rounded-xl transition-all duration-150 ${
               isSub ? 'pl-8 text-sm' : 'text-sm font-semibold'
             }${isActive ? ' mobile-toc-item--active' : ''}`}

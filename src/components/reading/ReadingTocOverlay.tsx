@@ -5,6 +5,7 @@ import { X } from 'lucide-react';
 import type { HeadingNode } from '../../utils/headingParser';
 import { flattenHeadings } from '../../utils/headingParser';
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
+import { scrollToHeading } from '../../utils/scrollToHeading';
 
 interface ReadingTocOverlayProps {
   headings: HeadingNode[];
@@ -53,17 +54,11 @@ export default function ReadingTocOverlay({
     }
   }, [currentId, open]);
 
-  const scrollToHeading = useCallback(
+  // 目录跳转：scrollToHeading 内部带懒加载图片预载与落点纠偏，
+  // 修复「点靠下标题时滚到一半停下」的问题；专注模式下无固定页头，仅留呼吸空间
+  const handleTocClick = useCallback(
     (id: string) => {
-      const el = document.getElementById(id);
-      if (!el) {
-        return;
-      }
-      // 专注模式下无固定页头，仅留少量呼吸空间
-      window.scrollTo({
-        top: el.getBoundingClientRect().top + window.scrollY - 20,
-        behavior: 'smooth',
-      });
+      scrollToHeading(id, { offset: 0, gap: 20 });
       onClose();
     },
     [onClose]
@@ -90,7 +85,7 @@ export default function ReadingTocOverlay({
             )}
             <button
               type="button"
-              onClick={() => scrollToHeading(node.id)}
+              onClick={() => handleTocClick(node.id)}
               className={
                 'toc-item' + (isSub ? ' toc-item--h3' : '') + (isActive ? ' toc-item--active' : '')
               }

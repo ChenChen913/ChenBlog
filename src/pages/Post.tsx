@@ -5,6 +5,7 @@ import { incrementViews } from '../utils/storage';
 import { useAppContext } from '../context/AppContext';
 import { usePostContext } from '../context/PostContext';
 import ReactMarkdown from 'react-markdown';
+import type { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import type { PluggableList } from 'unified';
@@ -218,6 +219,74 @@ function ArticleBodySkeleton() {
     </div>
   );
 }
+
+/**
+ * ReactMarkdown 的组件映射：必须是模块级稳定引用。
+ *
+ * 教训（2026-10 目录跳转排查）：这里若写成 JSX 内联对象，每次 Post 重渲染
+ * （如关闭专注模式目录抽屉）都会产生新的函数引用，react-markdown 视为组件
+ * 类型变化而将整棵正文子树 remount——后果是目录跳转纠偏闭包里捕获的标题
+ * 元素脱离 DOM、图片被重置回 lazy 重新塌陷，滚动落点彻底失准。
+ * 全部渲染器只依赖模块级函数，无组件态依赖，天然稳定。
+ */
+const markdownComponents: Components = {
+  pre({ children, ...props }) {
+    return <CodeBlock {...props}>{children}</CodeBlock>;
+  },
+  img({ src, alt }) {
+    if (!src) return null;
+    return <ArticleImage src={src} alt={alt || ''} />;
+  },
+  a({ href, children, ...props }) {
+    const safeAttributes = getSafeLinkAttributes(href);
+    if (!safeAttributes.href) {
+      return <>{children}</>;
+    }
+
+    return (
+      <a {...props} {...safeAttributes}>
+        {children}
+      </a>
+    );
+  },
+  video({ src }) {
+    return <VideoPlayer src={src} />;
+  },
+  iframe({ src, title }) {
+    if (!src) return null;
+    return <VideoPlayer src={src} title={title} />;
+  },
+  audio({ src }) {
+    if (!src) return null;
+    return <AudioPlayer src={src} />;
+  },
+  p: ({ children }) => {
+    return <p className="mb-4">{children}</p>;
+  },
+
+  // h1 渲染器：排版全部由 article.css 的 .article-body h1~h6 统一接管
+  // （2026-10 重要偿还：内联样式与 dark:! 工具类曾是 base.css 被迫用
+  //   ！important 对冲的根源，三方争夺已收敛为 CSS 单一事实源）
+  h1: ({ children, id, ...props }) => (
+    <h1 id={id} {...props} className="heading-anchor">
+      {children}
+    </h1>
+  ),
+
+  // h2 渲染器：ID 已由 rehypeSequentialIds 插件注入，直接透传
+  h2: ({ children, id, ...props }) => (
+    <h2 id={id} {...props} className="heading-anchor">
+      {children}
+    </h2>
+  ),
+
+  // h3 渲染器：ID 已由 rehypeSequentialIds 插件注入，直接透传
+  h3: ({ children, id, ...props }) => (
+    <h3 id={id} {...props} className="heading-anchor">
+      {children}
+    </h3>
+  ),
+};
 
 export default function Post() {
   const navigate = useNavigate();
@@ -602,64 +671,7 @@ export default function Post() {
               <ReactMarkdown
                 remarkPlugins={remarkPlugins}
                 rehypePlugins={rehypePlugins}
-                components={{
-                  pre({ children, ...props }) {
-                    return <CodeBlock {...props}>{children}</CodeBlock>;
-                  },
-                  img({ src, alt }) {
-                    if (!src) return null;
-                    return <ArticleImage src={src} alt={alt || ''} />;
-                  },
-                  a({ href, children, ...props }) {
-                    const safeAttributes = getSafeLinkAttributes(href);
-                    if (!safeAttributes.href) {
-                      return <>{children}</>;
-                    }
-
-                    return (
-                      <a {...props} {...safeAttributes}>
-                        {children}
-                      </a>
-                    );
-                  },
-                  video({ src }) {
-                    return <VideoPlayer src={src} />;
-                  },
-                  iframe({ src, title }) {
-                    if (!src) return null;
-                    return <VideoPlayer src={src} title={title} />;
-                  },
-                  audio({ src }) {
-                    if (!src) return null;
-                    return <AudioPlayer src={src} />;
-                  },
-                  p: ({ children }) => {
-                    return <p className="mb-4">{children}</p>;
-                  },
-
-                  // h1 渲染器：排版全部由 article.css 的 .article-body h1~h6 统一接管
-                  // （2026-10 重要偿还：内联样式与 dark:! 工具类曾是 base.css 被迫用
-                  //   ！important 对冲的根源，三方争夺已收敛为 CSS 单一事实源）
-                  h1: ({ children, id, ...props }) => (
-                    <h1 id={id} {...props} className="heading-anchor">
-                      {children}
-                    </h1>
-                  ),
-
-                  // h2 渲染器：ID 已由 rehypeSequentialIds 插件注入，直接透传
-                  h2: ({ children, id, ...props }) => (
-                    <h2 id={id} {...props} className="heading-anchor">
-                      {children}
-                    </h2>
-                  ),
-
-                  // h3 渲染器：ID 已由 rehypeSequentialIds 插件注入，直接透传
-                  h3: ({ children, id, ...props }) => (
-                    <h3 id={id} {...props} className="heading-anchor">
-                      {children}
-                    </h3>
-                  ),
-                }}
+                components={markdownComponents}
               >
                 {post.content}
               </ReactMarkdown>
