@@ -103,7 +103,7 @@ jobs:
           test -f dist/categories/index.html
           test -f dist/weekly/index.html
           test -f dist/posts/markdown-syntax-test/index.html
-          test -f dist/posts/typescript-advanced/index.html
+          test -f dist/posts/congcong-nanian-1/index.html
           test -f dist/rss.xml
           test -f dist/sitemap.xml
           test -f dist/robots.txt

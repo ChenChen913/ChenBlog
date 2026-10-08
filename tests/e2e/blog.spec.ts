@@ -29,18 +29,18 @@ test.describe('博客基础功能', () => {
 
 test.describe('文章代码框', () => {
   test('代码较多的文章会显示代码框、语言标签和复制按钮', async ({ page }) => {
-    await page.goto('/posts/typescript-advanced');
+    await page.goto('/posts/markdown-syntax-test');
     await page.waitForLoadState('networkidle');
 
     const codeBlock = page.locator('.code-block').first();
     await expect(codeBlock).toBeVisible();
-    await expect(codeBlock.locator('.code-block__language')).toContainText(/TypeScript/i);
+    await expect(codeBlock.locator('.code-block__language')).toContainText(/JavaScript/i);
     await expect(codeBlock.getByRole('button', { name: /copy code/i })).toBeVisible();
   });
 
   test('代码框复制后会显示反馈', async ({ page, context }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-    await page.goto('/posts/typescript-advanced');
+    await page.goto('/posts/markdown-syntax-test');
     await page.waitForLoadState('networkidle');
 
     const copyButton = page
@@ -59,7 +59,7 @@ test.describe('文章代码框', () => {
 
   test('移动端代码框不会造成页面横向溢出', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('/posts/react-hooks');
+    await page.goto('/posts/markdown-syntax-test');
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('.code-block').first()).toBeVisible();
@@ -72,7 +72,7 @@ test.describe('文章代码框', () => {
   });
 
   test('代码框顶部栏更紧凑，行号和代码行保持对齐', async ({ page }) => {
-    await page.goto('/posts/typescript-advanced');
+    await page.goto('/posts/markdown-syntax-test');
     await page.waitForLoadState('networkidle');
 
     const codeBlock = page.locator('.code-block').first();
@@ -101,7 +101,7 @@ test.describe('文章代码框', () => {
     await page.addInitScript(() => {
       window.localStorage.setItem('theme-preference', 'light');
     });
-    await page.goto('/posts/typescript-advanced');
+    await page.goto('/posts/markdown-syntax-test');
     await page.waitForLoadState('networkidle');
 
     const minimumContrast = await page
@@ -151,7 +151,7 @@ test.describe('文章代码框', () => {
     await page.addInitScript(() => {
       window.localStorage.setItem('theme-preference', 'dark');
     });
-    await page.goto('/posts/typescript-advanced');
+    await page.goto('/posts/markdown-syntax-test');
     await page.waitForLoadState('networkidle');
 
     const minimumContrast = await page
@@ -201,7 +201,7 @@ test.describe('文章字号控制', () => {
     await page.addInitScript(() => {
       window.localStorage.removeItem('article-font-size-mode');
     });
-    await page.goto('/posts/typescript-advanced');
+    await page.goto('/posts/markdown-syntax-test');
     await page.waitForLoadState('networkidle');
 
     const content = page.locator('#post-content');
@@ -221,7 +221,7 @@ test.describe('文章字号控制', () => {
   });
 
   test('刷新后保留字号选择', async ({ page }) => {
-    await page.goto('/posts/typescript-advanced');
+    await page.goto('/posts/markdown-syntax-test');
     await page.waitForLoadState('networkidle');
 
     await page.getByRole('button', { name: /^大$|^Large$/ }).click();
@@ -242,7 +242,7 @@ test.describe('文章字号控制', () => {
     await page.addInitScript(() => {
       window.localStorage.setItem('article-font-size-mode', 'large');
     });
-    await page.goto('/posts/typescript-advanced');
+    await page.goto('/posts/markdown-syntax-test');
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('#post-content')).toHaveAttribute('data-article-font-size', 'large');

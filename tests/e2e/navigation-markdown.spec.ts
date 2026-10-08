@@ -98,7 +98,7 @@ test.describe('Navigation scroll restoration', () => {
   }, testInfo) => {
     test.skip(isMobileProject(testInfo.project.name), 'Desktop-only Back button behavior');
 
-    await page.goto('/posts/typescript-advanced');
+    await page.goto('/posts/markdown-syntax-test');
     await waitForArticle(page);
 
     const backButton = page.locator('#back-button');
@@ -122,7 +122,7 @@ test.describe('Navigation scroll restoration', () => {
   }, testInfo) => {
     test.skip(!isMobileProject(testInfo.project.name), 'Mobile-only layout behavior');
 
-    await page.goto('/posts/typescript-advanced');
+    await page.goto('/posts/markdown-syntax-test');
     await waitForArticle(page);
 
     const metrics = await page.evaluate(() => ({

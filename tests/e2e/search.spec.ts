@@ -44,12 +44,12 @@ test.describe('站内搜索弹窗', () => {
     // 等全文索引就绪（输入行右侧 Esc 键帽出现，DOM 中先于底部提示）
     await expect(dialog.locator('.search-kbd').first()).toBeVisible({ timeout: 15000 });
 
-    // "rct hoks" 无精确子串，仅能靠子序列模糊匹配 "React Hooks"
-    await dialog.locator('#search-dialog-input').fill('rct hoks');
+    // "md synt" 无精确子串，仅能靠子序列/跨字段模糊命中 "Markdown 语法测试"
+    await dialog.locator('#search-dialog-input').fill('md synt');
 
     const firstResult = dialog.locator('.search-result-item').first();
     await expect(firstResult).toBeVisible();
-    await expect(firstResult.locator('.font-semibold')).toContainText(/React Hooks/i);
+    await expect(firstResult.locator('.font-semibold')).toContainText(/Markdown/i);
     // 模糊命中字符以 <mark> 高亮
     await expect(firstResult.locator('mark').first()).toBeVisible();
   });
